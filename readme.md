@@ -32,6 +32,7 @@ To run the scripts in ePIC, follow these steps:
 
 2. Configure the build with CMake (run once):
     ```bash
+    cd epic/
     cmake -B build -S . -DCMAKE_INSTALL_PREFIX=install
     ```
 
