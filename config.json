@@ -1,0 +1,5 @@
+{
+    "setup_script": "setup_script.sh",
+    "scripts": "/sciclone/home/hnayak/scheduler/epic/build/epic_full.xml",
+    "output_file": "epic_output.root"
+}
