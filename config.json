@@ -1,5 +1,6 @@
 {
     "setup_script": "setup_script.sh",
     "scripts": "/sciclone/home/hnayak/scheduler/epic/build/epic_full.xml",
-    "output_file": "epic_output.root"
+    "output_file": "epic_output.root",
+    "path_to_sif_image": "/mnt/d/eic/local/lib/jug_xl-nightly.sif"
 }

@@ -2,6 +2,7 @@ import os
 import subprocess
 import json
 import joblib
+from joblib import Parallel, delayed
 from typing import NamedTuple
 import sys
 
@@ -44,9 +45,7 @@ def run_user_script(script_path):
     path_to_sif = config["path_to_sif_image"]
 
     # Determine the appropriate interpreter based on the script extension
-    if script_path.endswith('.py'):
-        interpreter = 'python3'
-    elif script_path.endswith('.sh'):
+    if script_path.endswith('.sh'):
         interpreter = 'bash'
     else:
         raise ValueError(f"Unsupported script type: {script_path}")
@@ -65,22 +64,23 @@ class JoblibJob(NamedTuple):
 
 class JoblibQueueClient:
     def __init__(self, n_jobs: int = 1):
-        self.jobs = {}
+        self.jobs = None
         self.total_jobs = 0
         self.n_jobs = n_jobs
 
-    def schedule_job_with_parameters(self, user_script):
-        print(f"Scheduling job for script: {user_script}")
-        job = joblib.delayed(run_user_script)(user_script)
+    def schedule_job_with_parameters(self):
+        #print(f"Scheduling job for script: {user_script}")
+        #job = joblib.delayed(run_user_script)(user_script)
+        self.jobs = Parallel(n_jobs=self.n_jobs, return_as = "generator")
         job_id = self.total_jobs
-        self.jobs[job_id] = JoblibJob(job_id, job)
+        #self.jobs[job_id] = JoblibJob(job_id, job)
         print(f"Job {job_id} submitted to joblib.")
         self.total_jobs += 1
         return job_id
 
-    def run_jobs(self):
+    def run_jobs(self, user_script):
         print("Running scheduled jobs...")
-        results = joblib.Parallel(n_jobs=self.n_jobs)(job.job for job in self.jobs.values())
+        results = self.jobs(delayed(run_user_script)(user_script) for user_script in range(self.n_jobs))
         for job_id, result in enumerate(results):
             print(f"Job {job_id} completed.")
             self.jobs[job_id] = result
@@ -95,7 +95,7 @@ class JoblibQueueClient:
             return {}
         return {'result': self.jobs[job_id]}
 
-JOB_QUEUE_CLIENT = JoblibQueueClient(n_jobs=-1)  # Set the number of parallel jobs
+JOB_QUEUE_CLIENT = JoblibQueueClient(n_jobs=4)  # Set the number of parallel jobs
 
 def get_joblib_queue_client():
     return JOB_QUEUE_CLIENT
@@ -111,6 +111,7 @@ if __name__ == "__main__":
     #run_eic_shell(user_script_path)
    
     job_id = JOB_QUEUE_CLIENT.schedule_job_with_parameters(user_script_path)
+    job_id = 0
     JOB_QUEUE_CLIENT.run_jobs()
     print(f"Job {job_id} status: {JOB_QUEUE_CLIENT.get_job_status(job_id)}")
     print(f"Job {job_id} result: {JOB_QUEUE_CLIENT.get_outcome_value_for_completed_job(job_id)}")
