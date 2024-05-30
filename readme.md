@@ -25,7 +25,7 @@ To get started, follow the following steps:
 
 To run the scripts in ePIC, follow these steps:
 
-1. Start `eic-shell` (this needs to be done every time you start a new terminal session):
+1. Start `eic-shell` (run once):
     ```bash
     ./eic-shell
     ```
@@ -40,9 +40,9 @@ To run the scripts in ePIC, follow these steps:
     cmake --build build -- install -j7
     ```
 
-4. Source the setup script (run every time you want to execute any ePIC scripts):
+4. To execute any script inside eic-shell (run every time you want to execute any scripts(.sh or .py)):
     ```bash
-    source install/setup.sh
+    python3 load_container.py path/to/user_script
     ```
 
 For more detailed instructions on running the scripts, follow the [ePIC tutorial](https://eic.github.io/documentation/tutorials.html).
