@@ -1,8 +1,8 @@
 site_name: Scheduler for AID2E
 site_description: A Python library for scheduling and managing optimization trials for the ePIC EIC detector design using Ax
 site_author: AID2E Team
-repo_url: https://github.com/aid2e/scheduler_epic
-repo_name: aid2e/scheduler_epic
+repo_url: https://github.com/yourusername/scheduler
+repo_name: yourusername/scheduler
 
 theme:
   name: material
