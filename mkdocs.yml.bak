@@ -5,28 +5,21 @@ site_url: https://aid2e.github.io/scheduler_epic/
 repo_url: https://github.com/aid2e/scheduler_epic
 repo_name: aid2e/scheduler_epic
 
-# Theme configuration
+# Theme configuration - GitBook style
 theme:
-  name: material
+  name: gitbook
   logo: assets/logo.png
   favicon: assets/favicon.png
-  palette:
-    # Light mode
-    - media: "(prefers-color-scheme: light)"
-      scheme: default
-      primary: indigo
-      accent: indigo
-      toggle:
-        icon: material/weather-night
-        name: Switch to dark mode
-    # Dark mode
-    - media: "(prefers-color-scheme: dark)"
-      scheme: slate
-      primary: indigo
-      accent: indigo
-      toggle:
-        icon: material/weather-sunny
-        name: Switch to light mode
+  
+# Extra configuration
+extra:
+  # GitHub integration
+  repo_icon: github
+  edit_uri: edit/main/docs/
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/aid2e/scheduler_epic
+      name: AID2E Scheduler on GitHub
   features:
     - navigation.tabs
     - navigation.sections
@@ -99,3 +92,13 @@ nav:
 # Plugins for additional functionality
 plugins:
   - search
+  - git-committers:
+      repository: aid2e/scheduler_epic
+      branch: main
+  - social:
+      cards_color:
+        fill: "#7e56c2" 
+        text: "#FFFFFF"
+  - git-revision-date-localized:
+      enable_creation_date: true
+
