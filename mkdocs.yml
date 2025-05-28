@@ -1,21 +1,51 @@
 site_name: Scheduler for AID2E
 site_description: A Python library for scheduling and managing optimization trials for the ePIC EIC detector design using Ax
 site_author: AID2E Team
-repo_url: https://github.com/yourusername/scheduler
-repo_name: yourusername/scheduler
+site_url: https://aid2e.github.io/scheduler_epic/
+repo_url: https://github.com/aid2e/scheduler_epic
+repo_name: aid2e/scheduler_epic
+
+# GitHub repository information
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/aid2e/scheduler_epic
+      name: Scheduler on GitHub
+  
+  # Edit link to redirect to GitHub
+  repo_icon: github
+  edit_uri: edit/main/docs/
 
 theme:
   name: material
   palette:
-    primary: indigo
+    # GitBook-like colors
+    primary: white
     accent: indigo
   icon:
     repo: fontawesome/brands/github
+  custom_dir: docs/overrides
   features:
+    # GitBook-like navigation
     - navigation.tabs
     - navigation.sections
     - navigation.expand
+    - navigation.indexes
+    - navigation.top
+    - toc.follow
     - content.code.copy
+    # GitHub integration
+    - content.action.edit  # Adds "Edit this page" button
+    - content.action.view  # Adds "View source" button
+  font:
+    text: Roboto
+    code: Roboto Mono
+  logo: assets/aid2e_logo.png
+  favicon: assets/aid2e_logo.png
+
+# Add custom CSS to make it more GitBook-like
+extra_css:
+  - stylesheets/gitbook.css
 
 markdown_extensions:
   - pymdownx.highlight
