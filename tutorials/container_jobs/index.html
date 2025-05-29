@@ -12,26 +12,28 @@
         <meta name="author" content="AID2E Team">
       
       
-        <link rel="canonical" href="https://aid2e.github.io/scheduler_epic/">
+        <link rel="canonical" href="https://aid2e.github.io/scheduler_epic/tutorials/container_jobs/">
       
       
+        <link rel="prev" href="../container_based_optimization/">
       
-        <link rel="next" href="installation/">
+      
+        <link rel="next" href="../batch_trial_submission/">
       
       
-      <link rel="icon" href="assets/favicon.png">
+      <link rel="icon" href="../../assets/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
     
     
       
-        <title>Scheduler for AID2E</title>
+        <title>Container Jobs - Scheduler for AID2E</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.342714a4.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.342714a4.min.css">
       
         
-        <link rel="stylesheet" href="assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -50,9 +52,9 @@
       
     
     
-      <link rel="stylesheet" href="stylesheets/gitbook.css">
+      <link rel="stylesheet" href="../../stylesheets/gitbook.css">
     
-    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -78,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#scheduler-for-aid2e-documentation" class="md-skip">
+        <a href="#container-jobs" class="md-skip">
           Skip to content
         </a>
       
@@ -92,9 +94,9 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="." title="Scheduler for AID2E" class="md-header__button md-logo" aria-label="Scheduler for AID2E" data-md-component="logo">
+    <a href="../.." title="Scheduler for AID2E" class="md-header__button md-logo" aria-label="Scheduler for AID2E" data-md-component="logo">
       
-  <img src="assets/logo.png" alt="logo">
+  <img src="../../assets/logo.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -111,7 +113,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Home
+              Container Jobs
             
           </span>
         </div>
@@ -222,11 +224,9 @@
   
   
   
-    
   
-  
-    <li class="md-tabs__item md-tabs__item--active">
-      <a href="." class="md-tabs__link">
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
         
   
   
@@ -245,7 +245,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="installation/" class="md-tabs__link">
+      <a href="../../installation/" class="md-tabs__link">
         
   
   
@@ -264,7 +264,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="quickstart/" class="md-tabs__link">
+      <a href="../../quickstart/" class="md-tabs__link">
         
   
   
@@ -281,11 +281,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="tutorials/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -305,7 +307,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="api/" class="md-tabs__link">
+        <a href="../../api/" class="md-tabs__link">
           
   
   
@@ -323,7 +325,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="architecture/" class="md-tabs__link">
+      <a href="../../architecture/" class="md-tabs__link">
         
   
   
@@ -342,7 +344,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="github_pages_setup/" class="md-tabs__link">
+      <a href="../../github_pages_setup/" class="md-tabs__link">
         
   
   
@@ -377,9 +379,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="." title="Scheduler for AID2E" class="md-nav__button md-logo" aria-label="Scheduler for AID2E" data-md-component="logo">
+    <a href="../.." title="Scheduler for AID2E" class="md-nav__button md-logo" aria-label="Scheduler for AID2E" data-md-component="logo">
       
-  <img src="assets/logo.png" alt="logo">
+  <img src="../../assets/logo.png" alt="logo">
 
     </a>
     Scheduler for AID2E
@@ -403,6 +405,210 @@
       
   
   
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Installation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../quickstart/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Quick Start
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    Tutorials
+    
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Tutorials
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Overview
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../detector_optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Basic Detector Optimization
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../slurm_execution/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Slurm Execution
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../container_based_optimization/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Container-Based Optimization
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
     
   
   
@@ -420,7 +626,7 @@
   
   
   <span class="md-ellipsis">
-    Home
+    Container Jobs
     
   </span>
   
@@ -428,12 +634,12 @@
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <a href="." class="md-nav__link md-nav__link--active">
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
   <span class="md-ellipsis">
-    Home
+    Container Jobs
     
   </span>
   
@@ -465,36 +671,27 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-features" class="md-nav__link">
+  <a href="#prerequisites" class="md-nav__link">
     <span class="md-ellipsis">
-      Key Features
+      Prerequisites
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#getting-started" class="md-nav__link">
+  <a href="#implementation" class="md-nav__link">
     <span class="md-ellipsis">
-      Getting Started
+      Implementation
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#about-this-documentation" class="md-nav__link">
+  <a href="#examples" class="md-nav__link">
     <span class="md-ellipsis">
-      About This Documentation
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#architecture" class="md-nav__link">
-    <span class="md-ellipsis">
-      Architecture
+      Examples
     </span>
   </a>
   
@@ -507,113 +704,6 @@
     </li>
   
 
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="installation/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Installation
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="quickstart/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Quick Start
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-    
-    
-      
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
-        
-          
-          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
-            
-  
-  
-  <span class="md-ellipsis">
-    Tutorials
-    
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_4">
-            <span class="md-nav__icon md-icon"></span>
-            Tutorials
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="tutorials/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Overview
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
               
             
               
@@ -623,99 +713,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/detector_optimization/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Basic Detector Optimization
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="tutorials/slurm_execution/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Slurm Execution
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="tutorials/container_based_optimization/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Container-Based Optimization
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="tutorials/container_jobs/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Container Jobs
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="tutorials/batch_trial_submission/" class="md-nav__link">
+      <a href="../batch_trial_submission/" class="md-nav__link">
         
   
   
@@ -738,7 +736,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/script_based_optimization/" class="md-nav__link">
+      <a href="../script_based_optimization/" class="md-nav__link">
         
   
   
@@ -761,7 +759,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/panda_execution/" class="md-nav__link">
+      <a href="../panda_execution/" class="md-nav__link">
         
   
   
@@ -784,7 +782,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/asynchronous_execution/" class="md-nav__link">
+      <a href="../asynchronous_execution/" class="md-nav__link">
         
   
   
@@ -807,7 +805,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/experiment_persistence/" class="md-nav__link">
+      <a href="../experiment_persistence/" class="md-nav__link">
         
   
   
@@ -878,7 +876,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api/" class="md-nav__link">
+      <a href="../../api/" class="md-nav__link">
         
   
   
@@ -901,7 +899,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api/ax_scheduler/" class="md-nav__link">
+      <a href="../../api/ax_scheduler/" class="md-nav__link">
         
   
   
@@ -924,7 +922,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api/trial/" class="md-nav__link">
+      <a href="../../api/trial/" class="md-nav__link">
         
   
   
@@ -947,7 +945,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api/job/" class="md-nav__link">
+      <a href="../../api/job/" class="md-nav__link">
         
   
   
@@ -970,7 +968,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api/runners/" class="md-nav__link">
+      <a href="../../api/runners/" class="md-nav__link">
         
   
   
@@ -1000,7 +998,7 @@
   
   
     <li class="md-nav__item">
-      <a href="architecture/" class="md-nav__link">
+      <a href="../../architecture/" class="md-nav__link">
         
   
   
@@ -1022,7 +1020,7 @@
   
   
     <li class="md-nav__item">
-      <a href="github_pages_setup/" class="md-nav__link">
+      <a href="../../github_pages_setup/" class="md-nav__link">
         
   
   
@@ -1073,36 +1071,27 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-features" class="md-nav__link">
+  <a href="#prerequisites" class="md-nav__link">
     <span class="md-ellipsis">
-      Key Features
+      Prerequisites
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#getting-started" class="md-nav__link">
+  <a href="#implementation" class="md-nav__link">
     <span class="md-ellipsis">
-      Getting Started
+      Implementation
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#about-this-documentation" class="md-nav__link">
+  <a href="#examples" class="md-nav__link">
     <span class="md-ellipsis">
-      About This Documentation
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#architecture" class="md-nav__link">
-    <span class="md-ellipsis">
-      Architecture
+      Examples
     </span>
   </a>
   
@@ -1124,7 +1113,7 @@
 
 
   
-    <a href="https://github.com/aid2e/scheduler_epic/edit/master/docs/index.md" title="Edit this page" class="md-content__button md-icon">
+    <a href="https://github.com/aid2e/scheduler_epic/edit/master/docs/tutorials/container_jobs.md" title="Edit this page" class="md-content__button md-icon">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1132,45 +1121,23 @@
   
 
 
-<h1 id="scheduler-for-aid2e-documentation">Scheduler for AID2E Documentation<a class="headerlink" href="#scheduler-for-aid2e-documentation" title="Permanent link">&para;</a></h1>
-<p>Welcome to the documentation for the Scheduler library, a Python package for scheduling and managing optimization trials for the ePIC EIC detector design using Ax.</p>
+<h1 id="container-jobs">Container Jobs<a class="headerlink" href="#container-jobs" title="Permanent link">&para;</a></h1>
+<div class="admonition note">
+<p class="admonition-title">Work in Progress</p>
+<p>This documentation page is currently under development. Check back soon for complete information.</p>
+</div>
+<p>This tutorial explains how to use container jobs with the Scheduler for AID2E.</p>
 <h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
-<p>The Scheduler library extends the Ax platform for Bayesian optimization with additional features for managing and executing trials on various compute backends. It's designed to facilitate parameter optimization for detector simulations and other computationally intensive tasks.</p>
-<h2 id="key-features">Key Features<a class="headerlink" href="#key-features" title="Permanent link">&para;</a></h2>
+<p>Container jobs allow you to package your optimization workloads in containers (Docker, Singularity, etc.) for better portability and reproducibility.</p>
+<h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Ax Integration</strong>: Seamlessly works with the Ax platform for Bayesian optimization</li>
-<li><strong>Multiple Job Types</strong>:</li>
-<li>Python functions</li>
-<li>Shell/Python scripts</li>
-<li>Containers (Docker/Singularity)</li>
-<li><strong>Multiple Execution Backends</strong>:</li>
-<li>JobLib for local parallel execution</li>
-<li>Slurm for cluster computing</li>
-<li>PanDA for distributed computing</li>
-<li><strong>Trial Management</strong>: Comprehensive trial state tracking and monitoring</li>
-<li><strong>Flexible Execution</strong>: Support for synchronous or asynchronous execution modes</li>
-<li><strong>Batch Processing</strong>: Submit multiple trials in parallel for efficient exploration</li>
-<li><strong>Persistence</strong>: Save and load experiments to resume optimization</li>
+<li>Basic understanding of container technologies (Docker, Singularity)</li>
+<li>A working installation of Scheduler for AID2E</li>
 </ul>
-<h2 id="getting-started">Getting Started<a class="headerlink" href="#getting-started" title="Permanent link">&para;</a></h2>
-<ul>
-<li><a href="installation/">Installation</a>: How to install the Scheduler library</li>
-<li><a href="quickstart/">Quick Start</a>: Get up and running with simple examples</li>
-<li><a href="tutorials/">Tutorials</a>: Step-by-step guides for common use cases</li>
-<li><a href="api/">API Reference</a>: Detailed documentation of classes and methods</li>
-</ul>
-<h2 id="about-this-documentation">About This Documentation<a class="headerlink" href="#about-this-documentation" title="Permanent link">&para;</a></h2>
-<p>This documentation is built using <a href="https://www.mkdocs.org/">MkDocs</a> with the <a href="https://squidfunk.github.io/mkdocs-material/">Material theme</a>, customized to have a GitBook-like appearance. It includes:</p>
-<ul>
-<li>Comprehensive API reference</li>
-<li>Step-by-step tutorials</li>
-<li>Architectural overview</li>
-<li>Code examples</li>
-<li>Dark/light mode toggle</li>
-</ul>
-<p>The documentation source is available in the <a href="https://github.com/aid2e/scheduler_epic">GitHub repository</a> under the <code>docs/</code> directory. Contributions to improve the documentation are welcome!</p>
-<h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h2>
-<p>See the <a href="architecture/">Architecture Overview</a> for a high-level understanding of how the components interact.</p>
+<h2 id="implementation">Implementation<a class="headerlink" href="#implementation" title="Permanent link">&para;</a></h2>
+<p>More detailed documentation coming soon.</p>
+<h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
+<p>Code examples will be provided in future updates.</p>
 
 
 
@@ -1237,10 +1204,10 @@
     
     
       
-      <script id="__config" type="application/json">{"base": ".", "features": ["navigation.top", "toc.follow", "content.code.copy", "content.code.annotate", "content.action.edit", "search.highlight", "search.suggest", "navigation.tabs", "navigation.instant", "header.autohide"], "search": "assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top", "toc.follow", "content.code.copy", "content.code.annotate", "content.action.edit", "search.highlight", "search.suggest", "navigation.tabs", "navigation.instant", "header.autohide"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="assets/javascripts/bundle.13a4f30d.min.js"></script>
+      <script src="../../assets/javascripts/bundle.13a4f30d.min.js"></script>
       
     
   </body>

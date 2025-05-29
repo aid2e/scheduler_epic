@@ -2,92 +2,90 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://aid2e.github.io/scheduler_epic/</loc>
-         <lastmod>2025-05-28</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2025-05-29</lastmod>
     </url>
     <url>
          <loc>https://aid2e.github.io/scheduler_epic/404/</loc>
-         <lastmod>2025-05-28</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2025-05-29</lastmod>
     </url>
     <url>
          <loc>https://aid2e.github.io/scheduler_epic/architecture/</loc>
-         <lastmod>2025-05-28</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2025-05-29</lastmod>
     </url>
     <url>
          <loc>https://aid2e.github.io/scheduler_epic/github_pages_setup/</loc>
-         <lastmod>2025-05-28</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2025-05-29</lastmod>
     </url>
     <url>
          <loc>https://aid2e.github.io/scheduler_epic/installation/</loc>
-         <lastmod>2025-05-28</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2025-05-29</lastmod>
     </url>
     <url>
          <loc>https://aid2e.github.io/scheduler_epic/quickstart/</loc>
-         <lastmod>2025-05-28</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2025-05-29</lastmod>
     </url>
     <url>
          <loc>https://aid2e.github.io/scheduler_epic/api/</loc>
-         <lastmod>2025-05-28</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2025-05-29</lastmod>
     </url>
     <url>
          <loc>https://aid2e.github.io/scheduler_epic/api/ax_scheduler/</loc>
-         <lastmod>2025-05-28</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2025-05-29</lastmod>
     </url>
     <url>
          <loc>https://aid2e.github.io/scheduler_epic/api/job/</loc>
-         <lastmod>2025-05-28</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2025-05-29</lastmod>
     </url>
     <url>
          <loc>https://aid2e.github.io/scheduler_epic/api/runners/</loc>
-         <lastmod>2025-05-28</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2025-05-29</lastmod>
     </url>
     <url>
          <loc>https://aid2e.github.io/scheduler_epic/api/trial/</loc>
-         <lastmod>2025-05-28</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2025-05-29</lastmod>
     </url>
     <url>
          <loc>https://aid2e.github.io/scheduler_epic/assets/</loc>
-         <lastmod>2025-05-28</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2025-05-29</lastmod>
     </url>
     <url>
          <loc>https://aid2e.github.io/scheduler_epic/tutorials/</loc>
-         <lastmod>2025-05-28</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2025-05-29</lastmod>
+    </url>
+    <url>
+         <loc>https://aid2e.github.io/scheduler_epic/tutorials/asynchronous_execution/</loc>
+         <lastmod>2025-05-29</lastmod>
     </url>
     <url>
          <loc>https://aid2e.github.io/scheduler_epic/tutorials/batch_trial_submission/</loc>
-         <lastmod>2025-05-28</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2025-05-29</lastmod>
     </url>
     <url>
          <loc>https://aid2e.github.io/scheduler_epic/tutorials/container_based_optimization/</loc>
-         <lastmod>2025-05-28</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2025-05-29</lastmod>
+    </url>
+    <url>
+         <loc>https://aid2e.github.io/scheduler_epic/tutorials/container_jobs/</loc>
+         <lastmod>2025-05-29</lastmod>
     </url>
     <url>
          <loc>https://aid2e.github.io/scheduler_epic/tutorials/detector_optimization/</loc>
-         <lastmod>2025-05-28</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2025-05-29</lastmod>
     </url>
     <url>
          <loc>https://aid2e.github.io/scheduler_epic/tutorials/experiment_persistence/</loc>
-         <lastmod>2025-05-28</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2025-05-29</lastmod>
+    </url>
+    <url>
+         <loc>https://aid2e.github.io/scheduler_epic/tutorials/panda_execution/</loc>
+         <lastmod>2025-05-29</lastmod>
+    </url>
+    <url>
+         <loc>https://aid2e.github.io/scheduler_epic/tutorials/script_based_optimization/</loc>
+         <lastmod>2025-05-29</lastmod>
     </url>
     <url>
          <loc>https://aid2e.github.io/scheduler_epic/tutorials/slurm_execution/</loc>
-         <lastmod>2025-05-28</lastmod>
-         <changefreq>daily</changefreq>
+         <lastmod>2025-05-29</lastmod>
     </url>
 </urlset>
