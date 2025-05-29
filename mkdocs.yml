@@ -36,7 +36,11 @@ theme:
     - search.highlight
     - search.suggest
     - navigation.tabs
-    # Removed navigation sidebar features
+    # add navigation sidebar features
+    - navigation.tabs.sticky
+    - navigation.tabs.sticky_header
+    - navigation.tabs.instant
+    - navigation.tabs.autohide
     - navigation.instant
     - header.autohide
   icon:
@@ -104,6 +108,7 @@ nav:
     - GitHub Pages Setup: github_pages_setup.md
     - Step-by-Step Guide: step_by_step_guide.md
     - Deployment Options: deployment_options.md
+    - API Documentation: api_documentation.md
   
 # Plugins for additional functionality
 plugins:

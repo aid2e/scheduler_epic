@@ -1,0 +1,79 @@
+name: API Documentation Check
+
+on:
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - 'scheduler/**/*.py'
+      - 'docs/**'
+
+jobs:
+  check-docstrings:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -e .
+        pip install -r docs/requirements-docs.txt
+    
+    - name: Check docstrings
+      run: |
+        python docs_create/check_docstrings.py scheduler
+    
+    - name: Generate API documentation
+      run: |
+        python docs_create/generate_api_docs.py
+    
+    - name: Build documentation
+      run: |
+        mkdocs build --strict
+    
+    - name: Check for new documentation changes
+      id: git-check
+      run: |
+        git status
+        if [[ -n $(git status -s | grep 'docs/api/') ]]; then
+          echo "API documentation is not up to date with code."
+          echo "::set-output name=docs_changed::true"
+        else
+          echo "API documentation is up to date."
+          echo "::set-output name=docs_changed::false"
+        fi
+    
+    - name: Upload API documentation report
+      if: steps.git-check.outputs.docs_changed == 'true'
+      uses: actions/upload-artifact@v3
+      with:
+        name: api-documentation
+        path: docs/api/
+        
+    - name: Comment on PR
+      if: steps.git-check.outputs.docs_changed == 'true'
+      uses: actions/github-script@v6
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: `⚠️ **API Documentation Needs Update**
+            
+            The API documentation is not up to date with the current code.
+            
+            Please run the following command locally and commit the changes:
+            ```bash
+            ./api_docs_helper.sh generate
+            ```
+            
+            Documentation has been generated and uploaded as an artifact for reference.`
+          })

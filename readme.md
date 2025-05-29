@@ -233,6 +233,20 @@ mkdocs build
 
 Then visit http://127.0.0.1:8000/ in your browser.
 
+### Generating API Documentation
+
+We provide tools to automatically generate API documentation from source code:
+
+```bash
+# Generate API documentation
+./api_docs_helper.sh generate
+
+# Generate, preview, and optionally deploy
+./api_docs_helper.sh deploy "Update API documentation"
+```
+
+This scans your Python code, extracts docstrings, and builds formatted Markdown files that integrate with MkDocs.
+
 ### Deploying Documentation
 
 We provide multiple options for deploying documentation to GitHub Pages:

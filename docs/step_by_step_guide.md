@@ -189,6 +189,37 @@ This section contains tutorials for using the project.
 EOF
 ```
 
+### Automatically Generate API Documentation
+
+To automatically generate API documentation from your source code:
+
+1. Use the provided API documentation generator script:
+
+```bash
+# Make the script executable
+chmod +x docs_create/generate_api_docs.py
+
+# Generate API documentation
+./docs_create/generate_api_docs.py
+```
+
+This script:
+- Parses your Python modules and classes
+- Extracts docstrings and signatures
+- Generates formatted Markdown files in the `docs/api/` directory
+- Creates a consistent API reference with proper formatting
+
+2. For convenience, you can use the update script that also previews and deploys:
+
+```bash
+./update_api_docs.sh "Update API documentation"
+```
+
+This automatically:
+- Generates the API documentation
+- Starts a preview server so you can review the changes
+- Optionally deploys to GitHub Pages when you're satisfied
+
 ## Step 5: Create a GitBook-like CSS (Optional)
 
 For a GitBook-like appearance:
@@ -334,6 +365,11 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+      
+      - name: Generate API Documentation
+        run: |
+          # Generate API documentation from source code
+          python docs_create/generate_api_docs.py
       
       - name: Deploy documentation
         run: |
