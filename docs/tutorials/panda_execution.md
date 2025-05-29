@@ -7,7 +7,7 @@ This tutorial explains how to use PANDA execution with the Scheduler for AID2E.
 
 ## Overview
 
-PANDA (PArticle physics Numerical Data Analysis) is a framework for analyzing physics data. This tutorial covers how to integrate PANDA workflows with the Scheduler.
+Write a detailed information about `PAnDA` framework.
 
 ## Prerequisites
 
