@@ -9,6 +9,10 @@
          <lastmod>2025-05-29</lastmod>
     </url>
     <url>
+         <loc>https://aid2e.github.io/scheduler_epic/api_documentation/</loc>
+         <lastmod>2025-05-29</lastmod>
+    </url>
+    <url>
          <loc>https://aid2e.github.io/scheduler_epic/architecture/</loc>
          <lastmod>2025-05-29</lastmod>
     </url>
@@ -45,11 +49,23 @@
          <lastmod>2025-05-29</lastmod>
     </url>
     <url>
+         <loc>https://aid2e.github.io/scheduler_epic/api/base_runner/</loc>
+         <lastmod>2025-05-29</lastmod>
+    </url>
+    <url>
          <loc>https://aid2e.github.io/scheduler_epic/api/job/</loc>
          <lastmod>2025-05-29</lastmod>
     </url>
     <url>
+         <loc>https://aid2e.github.io/scheduler_epic/api/joblib_runner/</loc>
+         <lastmod>2025-05-29</lastmod>
+    </url>
+    <url>
          <loc>https://aid2e.github.io/scheduler_epic/api/runners/</loc>
+         <lastmod>2025-05-29</lastmod>
+    </url>
+    <url>
+         <loc>https://aid2e.github.io/scheduler_epic/api/slurm_runner/</loc>
          <lastmod>2025-05-29</lastmod>
     </url>
     <url>

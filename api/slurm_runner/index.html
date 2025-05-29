@@ -12,26 +12,24 @@
         <meta name="author" content="AID2E Team">
       
       
-        <link rel="canonical" href="https://aid2e.github.io/scheduler_epic/">
+        <link rel="canonical" href="https://aid2e.github.io/scheduler_epic/api/slurm_runner/">
       
       
       
-        <link rel="next" href="overview/">
       
-      
-      <link rel="icon" href="assets/favicon.png">
+      <link rel="icon" href="../../assets/favicon.png">
       <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
     
     
       
-        <title>Scheduler for AID2E</title>
+        <title>SlurmRunner - Scheduler for AID2E</title>
       
     
     
-      <link rel="stylesheet" href="assets/stylesheets/main.342714a4.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.342714a4.min.css">
       
         
-        <link rel="stylesheet" href="assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -50,9 +48,9 @@
       
     
     
-      <link rel="stylesheet" href="stylesheets/gitbook.css">
+      <link rel="stylesheet" href="../../stylesheets/gitbook.css">
     
-    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -78,7 +76,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#scheduler-for-aid2e-documentation" class="md-skip">
+        <a href="#slurmrunner" class="md-skip">
           Skip to content
         </a>
       
@@ -94,9 +92,9 @@
 
 <header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="." title="Scheduler for AID2E" class="md-header__button md-logo" aria-label="Scheduler for AID2E" data-md-component="logo">
+    <a href="../.." title="Scheduler for AID2E" class="md-header__button md-logo" aria-label="Scheduler for AID2E" data-md-component="logo">
       
-  <img src="assets/logo.png" alt="logo">
+  <img src="../../assets/logo.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -113,7 +111,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Home
+              SlurmRunner
             
           </span>
         </div>
@@ -218,11 +216,9 @@
   
   
   
-    
   
-  
-    <li class="md-tabs__item md-tabs__item--active">
-      <a href="." class="md-tabs__link">
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
         
   
   
@@ -241,7 +237,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="overview/" class="md-tabs__link">
+      <a href="../../overview/" class="md-tabs__link">
         
   
   
@@ -260,7 +256,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="installation/" class="md-tabs__link">
+      <a href="../../installation/" class="md-tabs__link">
         
   
   
@@ -279,7 +275,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="quickstart/" class="md-tabs__link">
+      <a href="../../quickstart/" class="md-tabs__link">
         
   
   
@@ -300,7 +296,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="tutorials/" class="md-tabs__link">
+        <a href="../../tutorials/" class="md-tabs__link">
           
   
   
@@ -320,7 +316,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="api/" class="md-tabs__link">
+        <a href="../" class="md-tabs__link">
           
   
   
@@ -338,7 +334,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="architecture/" class="md-tabs__link">
+      <a href="../../architecture/" class="md-tabs__link">
         
   
   
@@ -359,7 +355,7 @@
     
     
       <li class="md-tabs__item">
-        <a href="github_pages_setup/" class="md-tabs__link">
+        <a href="../../github_pages_setup/" class="md-tabs__link">
           
   
   
@@ -399,9 +395,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="." title="Scheduler for AID2E" class="md-nav__button md-logo" aria-label="Scheduler for AID2E" data-md-component="logo">
+    <a href="../.." title="Scheduler for AID2E" class="md-nav__button md-logo" aria-label="Scheduler for AID2E" data-md-component="logo">
       
-  <img src="assets/logo.png" alt="logo">
+  <img src="../../assets/logo.png" alt="logo">
 
     </a>
     Scheduler for AID2E
@@ -425,32 +421,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    Home
-    
-  </span>
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="." class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
         
   
   
@@ -461,71 +435,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
-    <span class="md-ellipsis">
-      Overview
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#key-features" class="md-nav__link">
-    <span class="md-ellipsis">
-      Key Features
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#getting-started" class="md-nav__link">
-    <span class="md-ellipsis">
-      Getting Started
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#about-this-documentation" class="md-nav__link">
-    <span class="md-ellipsis">
-      About This Documentation
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#architecture" class="md-nav__link">
-    <span class="md-ellipsis">
-      Architecture
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -537,7 +446,7 @@
   
   
     <li class="md-nav__item">
-      <a href="overview/" class="md-nav__link">
+      <a href="../../overview/" class="md-nav__link">
         
   
   
@@ -559,7 +468,7 @@
   
   
     <li class="md-nav__item">
-      <a href="installation/" class="md-nav__link">
+      <a href="../../installation/" class="md-nav__link">
         
   
   
@@ -581,7 +490,7 @@
   
   
     <li class="md-nav__item">
-      <a href="quickstart/" class="md-nav__link">
+      <a href="../../quickstart/" class="md-nav__link">
         
   
   
@@ -644,7 +553,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/" class="md-nav__link">
+      <a href="../../tutorials/" class="md-nav__link">
         
   
   
@@ -667,7 +576,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/detector_optimization/" class="md-nav__link">
+      <a href="../../tutorials/detector_optimization/" class="md-nav__link">
         
   
   
@@ -690,7 +599,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/slurm_execution/" class="md-nav__link">
+      <a href="../../tutorials/slurm_execution/" class="md-nav__link">
         
   
   
@@ -713,7 +622,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/container_based_optimization/" class="md-nav__link">
+      <a href="../../tutorials/container_based_optimization/" class="md-nav__link">
         
   
   
@@ -736,7 +645,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/container_jobs/" class="md-nav__link">
+      <a href="../../tutorials/container_jobs/" class="md-nav__link">
         
   
   
@@ -759,7 +668,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/batch_trial_submission/" class="md-nav__link">
+      <a href="../../tutorials/batch_trial_submission/" class="md-nav__link">
         
   
   
@@ -782,7 +691,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/script_based_optimization/" class="md-nav__link">
+      <a href="../../tutorials/script_based_optimization/" class="md-nav__link">
         
   
   
@@ -805,7 +714,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/panda_execution/" class="md-nav__link">
+      <a href="../../tutorials/panda_execution/" class="md-nav__link">
         
   
   
@@ -828,7 +737,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/asynchronous_execution/" class="md-nav__link">
+      <a href="../../tutorials/asynchronous_execution/" class="md-nav__link">
         
   
   
@@ -851,7 +760,7 @@
   
   
     <li class="md-nav__item">
-      <a href="tutorials/experiment_persistence/" class="md-nav__link">
+      <a href="../../tutorials/experiment_persistence/" class="md-nav__link">
         
   
   
@@ -922,7 +831,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api/" class="md-nav__link">
+      <a href="../" class="md-nav__link">
         
   
   
@@ -945,7 +854,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api/ax_scheduler/" class="md-nav__link">
+      <a href="../ax_scheduler/" class="md-nav__link">
         
   
   
@@ -968,7 +877,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api/trial/" class="md-nav__link">
+      <a href="../trial/" class="md-nav__link">
         
   
   
@@ -991,7 +900,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api/job/" class="md-nav__link">
+      <a href="../job/" class="md-nav__link">
         
   
   
@@ -1014,7 +923,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api/runners/" class="md-nav__link">
+      <a href="../runners/" class="md-nav__link">
         
   
   
@@ -1044,7 +953,7 @@
   
   
     <li class="md-nav__item">
-      <a href="architecture/" class="md-nav__link">
+      <a href="../../architecture/" class="md-nav__link">
         
   
   
@@ -1107,7 +1016,7 @@
   
   
     <li class="md-nav__item">
-      <a href="github_pages_setup/" class="md-nav__link">
+      <a href="../../github_pages_setup/" class="md-nav__link">
         
   
   
@@ -1130,7 +1039,7 @@
   
   
     <li class="md-nav__item">
-      <a href="step_by_step_guide/" class="md-nav__link">
+      <a href="../../step_by_step_guide/" class="md-nav__link">
         
   
   
@@ -1153,7 +1062,7 @@
   
   
     <li class="md-nav__item">
-      <a href="deployment_options/" class="md-nav__link">
+      <a href="../../deployment_options/" class="md-nav__link">
         
   
   
@@ -1176,7 +1085,7 @@
   
   
     <li class="md-nav__item">
-      <a href="api_documentation/" class="md-nav__link">
+      <a href="../../api_documentation/" class="md-nav__link">
         
   
   
@@ -1226,47 +1135,62 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
+  <a href="#class-definition" class="md-nav__link">
     <span class="md-ellipsis">
-      Overview
+      Class Definition
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-features" class="md-nav__link">
+  <a href="#methods" class="md-nav__link">
     <span class="md-ellipsis">
-      Key Features
+      Methods
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#getting-started" class="md-nav__link">
+  <a href="#method-details" class="md-nav__link">
     <span class="md-ellipsis">
-      Getting Started
+      Method Details
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Method Details">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cancel_job" class="md-nav__link">
+    <span class="md-ellipsis">
+      cancel_job
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#about-this-documentation" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#check_job_status" class="md-nav__link">
     <span class="md-ellipsis">
-      About This Documentation
+      check_job_status
     </span>
   </a>
   
 </li>
-      
-        <li class="md-nav__item">
-  <a href="#architecture" class="md-nav__link">
+        
+          <li class="md-nav__item">
+  <a href="#run_job" class="md-nav__link">
     <span class="md-ellipsis">
-      Architecture
+      run_job
     </span>
   </a>
+  
+</li>
+        
+      </ul>
+    </nav>
   
 </li>
       
@@ -1286,7 +1210,7 @@
 
 
   
-    <a href="https://github.com/aid2e/scheduler_epic/edit/master/docs/index.md" title="Edit this page" class="md-content__button md-icon">
+    <a href="https://github.com/aid2e/scheduler_epic/edit/master/docs/api/slurm_runner.md" title="Edit this page" class="md-content__button md-icon">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1294,45 +1218,74 @@
   
 
 
-<h1 id="scheduler-for-aid2e-documentation">Scheduler for AID2E Documentation<a class="headerlink" href="#scheduler-for-aid2e-documentation" title="Permanent link">&para;</a></h1>
-<p>Welcome to the documentation for the Scheduler library, a Python package for scheduling and managing optimization trials for the ePIC EIC detector design using Ax.</p>
-<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
-<p>The Scheduler library extends the Ax platform for Bayesian optimization with additional features for managing and executing trials on various compute backends. It's designed to facilitate parameter optimization for detector simulations and other computationally intensive tasks.</p>
-<h2 id="key-features">Key Features<a class="headerlink" href="#key-features" title="Permanent link">&para;</a></h2>
-<ul>
-<li><strong>Ax Integration</strong>: Seamlessly works with the Ax platform for Bayesian optimization</li>
-<li><strong>Multiple Job Types</strong>:</li>
-<li>Python functions</li>
-<li>Shell/Python scripts</li>
-<li>Containers (Docker/Singularity)</li>
-<li><strong>Multiple Execution Backends</strong>:</li>
-<li>JobLib for local parallel execution</li>
-<li>Slurm for cluster computing</li>
-<li>PanDA for distributed computing</li>
-<li><strong>Trial Management</strong>: Comprehensive trial state tracking and monitoring</li>
-<li><strong>Flexible Execution</strong>: Support for synchronous or asynchronous execution modes</li>
-<li><strong>Batch Processing</strong>: Submit multiple trials in parallel for efficient exploration</li>
-<li><strong>Persistence</strong>: Save and load experiments to resume optimization</li>
-</ul>
-<h2 id="getting-started">Getting Started<a class="headerlink" href="#getting-started" title="Permanent link">&para;</a></h2>
-<ul>
-<li><a href="installation/">Installation</a>: How to install the Scheduler library</li>
-<li><a href="quickstart/">Quick Start</a>: Get up and running with simple examples</li>
-<li><a href="tutorials/">Tutorials</a>: Step-by-step guides for common use cases</li>
-<li><a href="api/">API Reference</a>: Detailed documentation of classes and methods</li>
-</ul>
-<h2 id="about-this-documentation">About This Documentation<a class="headerlink" href="#about-this-documentation" title="Permanent link">&para;</a></h2>
-<p>This documentation is built using <a href="https://www.mkdocs.org/">MkDocs</a> with the <a href="https://squidfunk.github.io/mkdocs-material/">Material theme</a>, customized to have a GitBook-like appearance. It includes:</p>
-<ul>
-<li>Comprehensive API reference</li>
-<li>Step-by-step tutorials</li>
-<li>Architectural overview</li>
-<li>Code examples</li>
-<li>Dark/light mode toggle</li>
-</ul>
-<p>The documentation source is available in the <a href="https://github.com/aid2e/scheduler_epic">GitHub repository</a> under the <code>docs/</code> directory. Contributions to improve the documentation are welcome!</p>
-<h2 id="architecture">Architecture<a class="headerlink" href="#architecture" title="Permanent link">&para;</a></h2>
-<p>See the <a href="architecture/">Architecture Overview</a> for a high-level understanding of how the components interact.</p>
+<h1 id="slurmrunner">SlurmRunner<a class="headerlink" href="#slurmrunner" title="Permanent link">&para;</a></h1>
+<p><em>Defined in <a href="https://github.com/aid2e/scheduler_epic/blob/main/scheduler/runners/slurm_runner.py"><code>scheduler.runners.slurm_runner</code></a></em></p>
+<p>A runner that submits jobs to a Slurm cluster.
+This runner creates temporary job scripts and submits them to Slurm.
+It can handle different job types:
+- Function: Serializes and runs Python functions
+- Script: Executes scripts directly
+- Container: Runs containers using Singularity</p>
+<p><strong>Inherits from:</strong> <a href="baserunner.md">BaseRunner</a></p>
+<h2 id="class-definition">Class Definition<a class="headerlink" href="#class-definition" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">class</span> <span class="nc">SlurmRunner</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">partition</span><span class="p">:</span> <span class="o">&lt;</span><span class="k">class</span> <span class="err">&#39;</span><span class="nc">str</span><span class="s1">&#39;&gt; = batch, time_limit: &lt;class &#39;</span><span class="nb">str</span><span class="s1">&#39;&gt; = 01:00:00, memory: &lt;class &#39;</span><span class="nb">str</span><span class="s1">&#39;&gt; = 4G, cpus_per_task: &lt;class &#39;</span><span class="nb">int</span><span class="s1">&#39;&gt; = 1, config: Dict[str, Any] = None):</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="sd">    Initialize a new SlurmRunner.</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="sd">    **Args:**</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="sd">    * **partition**: Slurm partition to submit jobs to</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="sd">    * **time_limit**: Time limit for jobs (HH:MM:SS)</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="sd">    * **memory**: Memory to allocate per job</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="sd">    * **cpus_per_task**: Number of CPUs to allocate per job</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="sd">    * **config**: Additional configuration options:</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="sd">    * **modules**: List of modules to load (default: [&#39;python&#39;])</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="sd">    * **singularity_path**: Path to singularity executable (default: &#39;singularity&#39;)</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="sd">    * **job_dir**: Directory to store job files (default: ~/slurm_jobs)</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="sd">    &quot;&quot;&quot;</span>
+</code></pre></div>
+<h2 id="methods">Methods<a class="headerlink" href="#methods" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="#cancel_job"><code>cancel_job</code></a></td>
+<td>Cancel a job.</td>
+</tr>
+<tr>
+<td><a href="#check_job_status"><code>check_job_status</code></a></td>
+<td>Check the status of a job and update its state.</td>
+</tr>
+<tr>
+<td><a href="#run_job"><code>run_job</code></a></td>
+<td>Submit a job to Slurm.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="method-details">Method Details<a class="headerlink" href="#method-details" title="Permanent link">&para;</a></h2>
+<h3 id="cancel_job">cancel_job<a class="headerlink" href="#cancel_job" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">def</span> <span class="nf">cancel_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+<p>Cancel a job.
+<strong>Args:</strong>
+* <strong>job</strong>: The job to cancel</p>
+<hr />
+<h3 id="check_job_status">check_job_status<a class="headerlink" href="#check_job_status" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">def</span> <span class="nf">check_job_status</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+<p>Check the status of a job and update its state.
+<strong>Args:</strong>
+* <strong>job</strong>: The job to check</p>
+<hr />
+<h3 id="run_job">run_job<a class="headerlink" href="#run_job" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">def</span> <span class="nf">run_job</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">job</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+<p>Submit a job to Slurm.
+<strong>Args:</strong>
+* <strong>job</strong>: The job to run</p>
 
 
 
@@ -1399,10 +1352,10 @@
     
     
       
-      <script id="__config" type="application/json">{"base": ".", "features": ["navigation.top", "toc.follow", "content.code.copy", "content.code.annotate", "content.action.edit", "search.highlight", "search.suggest", "navigation.tabs", "navigation.tabs.sticky", "navigation.tabs.sticky_header", "navigation.tabs.instant", "navigation.tabs.autohide", "navigation.instant", "header.autohide"], "search": "assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top", "toc.follow", "content.code.copy", "content.code.annotate", "content.action.edit", "search.highlight", "search.suggest", "navigation.tabs", "navigation.tabs.sticky", "navigation.tabs.sticky_header", "navigation.tabs.instant", "navigation.tabs.autohide", "navigation.instant", "header.autohide"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="assets/javascripts/bundle.13a4f30d.min.js"></script>
+      <script src="../../assets/javascripts/bundle.13a4f30d.min.js"></script>
       
     
   </body>

@@ -92,7 +92,9 @@
     
       
 
-<header class="md-header" data-md-component="header">
+  
+
+<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="../.." title="Scheduler for AID2E" class="md-header__button md-logo" aria-label="Scheduler for AID2E" data-md-component="logo">
       
@@ -208,14 +210,8 @@
     
   </nav>
   
-</header>
     
-    <div class="md-container" data-md-component="container">
       
-      
-        
-          
-            
 <nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
   <div class="md-grid">
     <ul class="md-tabs__list">
@@ -380,7 +376,13 @@
     </ul>
   </div>
 </nav>
-          
+    
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
         
       
       <main class="md-main" data-md-component="main">
@@ -922,46 +924,118 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-methods" class="md-nav__link">
+  <a href="#methods" class="md-nav__link">
     <span class="md-ellipsis">
-      Key Methods
+      Methods
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Key Methods">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#method-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      Method Details
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Method Details">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#setting-objective-functions" class="md-nav__link">
+  <a href="#batch_trial_context" class="md-nav__link">
     <span class="md-ellipsis">
-      Setting Objective Functions
+      batch_trial_context
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#running-optimization" class="md-nav__link">
+  <a href="#complete_trial" class="md-nav__link">
     <span class="md-ellipsis">
-      Running Optimization
+      complete_trial
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#batch-trial-submission" class="md-nav__link">
+  <a href="#get_next_trial" class="md-nav__link">
     <span class="md-ellipsis">
-      Batch Trial Submission
+      get_next_trial
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#experiment-persistence" class="md-nav__link">
+  <a href="#load_experiment" class="md-nav__link">
     <span class="md-ellipsis">
-      Experiment Persistence
+      load_experiment
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monitor_trials" class="md-nav__link">
+    <span class="md-ellipsis">
+      monitor_trials
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run_optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      run_optimization
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run_trial" class="md-nav__link">
+    <span class="md-ellipsis">
+      run_trial
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#save_experiment" class="md-nav__link">
+    <span class="md-ellipsis">
+      save_experiment
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set_container_objective" class="md-nav__link">
+    <span class="md-ellipsis">
+      set_container_objective
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set_objective_function" class="md-nav__link">
+    <span class="md-ellipsis">
+      set_objective_function
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set_script_objective" class="md-nav__link">
+    <span class="md-ellipsis">
+      set_script_objective
     </span>
   </a>
   
@@ -969,24 +1043,6 @@
         
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#configuration-options" class="md-nav__link">
-    <span class="md-ellipsis">
-      Configuration Options
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#example-usage" class="md-nav__link">
-    <span class="md-ellipsis">
-      Example Usage
-    </span>
-  </a>
   
 </li>
       
@@ -1207,6 +1263,29 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../api_documentation/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    API Documentation
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1250,46 +1329,118 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#key-methods" class="md-nav__link">
+  <a href="#methods" class="md-nav__link">
     <span class="md-ellipsis">
-      Key Methods
+      Methods
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Key Methods">
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#method-details" class="md-nav__link">
+    <span class="md-ellipsis">
+      Method Details
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Method Details">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#setting-objective-functions" class="md-nav__link">
+  <a href="#batch_trial_context" class="md-nav__link">
     <span class="md-ellipsis">
-      Setting Objective Functions
+      batch_trial_context
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#running-optimization" class="md-nav__link">
+  <a href="#complete_trial" class="md-nav__link">
     <span class="md-ellipsis">
-      Running Optimization
+      complete_trial
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#batch-trial-submission" class="md-nav__link">
+  <a href="#get_next_trial" class="md-nav__link">
     <span class="md-ellipsis">
-      Batch Trial Submission
+      get_next_trial
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#experiment-persistence" class="md-nav__link">
+  <a href="#load_experiment" class="md-nav__link">
     <span class="md-ellipsis">
-      Experiment Persistence
+      load_experiment
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#monitor_trials" class="md-nav__link">
+    <span class="md-ellipsis">
+      monitor_trials
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run_optimization" class="md-nav__link">
+    <span class="md-ellipsis">
+      run_optimization
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#run_trial" class="md-nav__link">
+    <span class="md-ellipsis">
+      run_trial
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#save_experiment" class="md-nav__link">
+    <span class="md-ellipsis">
+      save_experiment
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set_container_objective" class="md-nav__link">
+    <span class="md-ellipsis">
+      set_container_objective
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set_objective_function" class="md-nav__link">
+    <span class="md-ellipsis">
+      set_objective_function
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#set_script_objective" class="md-nav__link">
+    <span class="md-ellipsis">
+      set_script_objective
     </span>
   </a>
   
@@ -1297,24 +1448,6 @@
         
       </ul>
     </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#configuration-options" class="md-nav__link">
-    <span class="md-ellipsis">
-      Configuration Options
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#example-usage" class="md-nav__link">
-    <span class="md-ellipsis">
-      Example Usage
-    </span>
-  </a>
   
 </li>
       
@@ -1343,152 +1476,166 @@
 
 
 <h1 id="axscheduler">AxScheduler<a class="headerlink" href="#axscheduler" title="Permanent link">&para;</a></h1>
-<p>The <code>AxScheduler</code> class is the main entry point for using the Scheduler library. It integrates with Ax for optimization and manages the execution of trials.</p>
+<p><em>Defined in <a href="https://github.com/aid2e/scheduler_epic/blob/main/scheduler/ax_scheduler.py"><code>scheduler.ax_scheduler</code></a></em></p>
+<p>A scheduler that integrates with Ax for optimization.
+This scheduler allows running Ax trials using different runners.</p>
 <h2 id="class-definition">Class Definition<a class="headerlink" href="#class-definition" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">class</span><span class="w"> </span><span class="nc">AxScheduler</span><span class="p">:</span>
-<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>                 <span class="n">ax_client_or_experiment</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">AxClient</span><span class="p">,</span> <span class="n">Experiment</span><span class="p">],</span> 
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>                 <span class="n">runner</span><span class="p">:</span> <span class="n">BaseRunner</span><span class="p">,</span> 
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>                 <span class="n">config</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="sd">        Initialize a new AxScheduler.</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>
-<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="sd">        Args:</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="sd">            ax_client_or_experiment: The Ax client or experiment to use for optimization</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="sd">            runner: The runner to use for executing jobs</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="sd">            config: Additional configuration options</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="sd">        &quot;&quot;&quot;</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">class</span> <span class="nc">AxScheduler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ax_client_or_experiment</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">ax</span><span class="o">.</span><span class="n">service</span><span class="o">.</span><span class="n">ax_client</span><span class="o">.</span><span class="n">AxClient</span><span class="p">,</span> <span class="n">ax</span><span class="o">.</span><span class="n">core</span><span class="o">.</span><span class="n">experiment</span><span class="o">.</span><span class="n">Experiment</span><span class="p">],</span> <span class="n">runner</span><span class="p">:</span> <span class="o">&lt;</span><span class="k">class</span> <span class="err">&#39;</span><span class="nc">BaseRunner</span><span class="s1">&#39;&gt;, config: Dict[str, Any] = None):</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="sd">    Initialize a new AxScheduler.</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="sd">    **Args:**</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="sd">    * **ax_client_or_experiment**: The Ax client or experiment to use for optimization</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="sd">    * **runner**: The runner to use for executing jobs</span>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="sd">    * **config**: Additional configuration options:</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="sd">    * **monitoring_interval**: Seconds between monitoring checks (default: 10)</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="sd">    * **max_trial_monitoring_time**: Maximum time to monitor a trial in seconds (default: 86400 = 24 hours)</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="sd">    * **job_output_dir**: Directory to store job outputs (default: ~/ax_scheduler_output)</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="sd">    * **cleanup_after_completion**: Whether to clean up job files after completion (default: False)</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="sd">    * **synchronous**: Whether to run trials synchronously (default: False)</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="sd">    &quot;&quot;&quot;</span>
 </code></pre></div>
-<h2 id="key-methods">Key Methods<a class="headerlink" href="#key-methods" title="Permanent link">&para;</a></h2>
-<h3 id="setting-objective-functions">Setting Objective Functions<a class="headerlink" href="#setting-objective-functions" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">set_objective_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">function</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="sd">    Set the objective function to use for trials.</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="sd">    Args:</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="sd">        function: A function that takes a dict of parameters and returns a dict of metrics</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="sd">    &quot;&quot;&quot;</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">set_script_objective</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">script_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">script_options</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="sd">    Set a script as the objective function.</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="sd">    Args:</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="sd">        script_path: Path to the script to run</span>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="sd">        script_options: Additional options for script execution</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="sd">    &quot;&quot;&quot;</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">set_container_objective</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">container_image</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">container_command</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>                         <span class="n">container_options</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="sd">    Set a container as the objective function.</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
-<a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="sd">    Args:</span>
-<a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="sd">        container_image: Container image to run</span>
-<a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="sd">        container_command: Command to run in the container</span>
-<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="sd">        container_options: Additional options for container execution</span>
-<a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="sd">    &quot;&quot;&quot;</span>
-</code></pre></div>
-<h3 id="running-optimization">Running Optimization<a class="headerlink" href="#running-optimization" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">run_optimization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_trials</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
-<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>                  <span class="n">synchronous</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]:</span>
-<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="sd">    Run the optimization process.</span>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
-<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="sd">    Args:</span>
-<a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="sd">        max_trials: Maximum number of trials to run</span>
-<a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="sd">        timeout: Maximum time to run the optimization (in seconds)</span>
-<a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="sd">        synchronous: Whether to run trials synchronously</span>
-<a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>
-<a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="sd">    Returns:</span>
-<a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="sd">        The best parameters found</span>
-<a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="sd">    &quot;&quot;&quot;</span>
-</code></pre></div>
-<h3 id="batch-trial-submission">Batch Trial Submission<a class="headerlink" href="#batch-trial-submission" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="nd">@contextmanager</span>
-<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">batch_trial_context</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;BatchTrialContext&quot;</span><span class="p">:</span>
-<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="sd">    Context manager for batch trial submission.</span>
-<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>
-<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="sd">    Usage:</span>
-<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="sd">        with scheduler.batch_trial_context() as batch:</span>
-<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="sd">            batch.add_trial({&quot;x&quot;: 0.1, &quot;y&quot;: 0.2})</span>
-<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="sd">            batch.add_trial({&quot;x&quot;: 0.3, &quot;y&quot;: 0.4})</span>
-<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="sd">    &quot;&quot;&quot;</span>
-</code></pre></div>
-<h3 id="experiment-persistence">Experiment Persistence<a class="headerlink" href="#experiment-persistence" title="Permanent link">&para;</a></h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">save_experiment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="sd">    Save the current experiment to a file.</span>
-<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>
-<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="sd">    Args:</span>
-<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="sd">        path: Path to save the experiment to</span>
-<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="sd">    &quot;&quot;&quot;</span>
-</code></pre></div>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">load_experiment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="sd">    Load an experiment from a file.</span>
-<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
-<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="sd">    Args:</span>
-<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="sd">        path: Path to load the experiment from</span>
-<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="sd">    &quot;&quot;&quot;</span>
-</code></pre></div>
-<h2 id="configuration-options">Configuration Options<a class="headerlink" href="#configuration-options" title="Permanent link">&para;</a></h2>
-<p>The <code>AxScheduler</code> accepts a configuration dictionary with the following options:</p>
+<h2 id="methods">Methods<a class="headerlink" href="#methods" title="Permanent link">&para;</a></h2>
 <table>
 <thead>
 <tr>
-<th>Option</th>
-<th>Type</th>
-<th>Default</th>
+<th>Method</th>
 <th>Description</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>monitoring_interval</code></td>
-<td>int</td>
-<td>10</td>
-<td>Seconds between status checks</td>
+<td><a href="#batch_trial_context"><code>batch_trial_context</code></a></td>
+<td>Context manager for creating and running a batch of trials.</td>
 </tr>
 <tr>
-<td><code>job_output_dir</code></td>
-<td>str</td>
-<td>'./outputs'</td>
-<td>Directory for job outputs</td>
+<td><a href="#complete_trial"><code>complete_trial</code></a></td>
+<td>Mark a trial as completed in Ax.</td>
 </tr>
 <tr>
-<td><code>synchronous</code></td>
-<td>bool</td>
-<td>True</td>
-<td>Run trials synchronously</td>
+<td><a href="#get_next_trial"><code>get_next_trial</code></a></td>
+<td>Generate a new trial using Ax and return its index.</td>
 </tr>
 <tr>
-<td><code>cleanup_after_completion</code></td>
-<td>bool</td>
-<td>True</td>
-<td>Clean up files after completion</td>
+<td><a href="#load_experiment"><code>load_experiment</code></a></td>
+<td>Load an experiment from a file.</td>
+</tr>
+<tr>
+<td><a href="#monitor_trials"><code>monitor_trials</code></a></td>
+<td>Monitor all running trials.</td>
+</tr>
+<tr>
+<td><a href="#run_optimization"><code>run_optimization</code></a></td>
+<td>Run the optimization process.</td>
+</tr>
+<tr>
+<td><a href="#run_trial"><code>run_trial</code></a></td>
+<td>Run a specific trial.</td>
+</tr>
+<tr>
+<td><a href="#save_experiment"><code>save_experiment</code></a></td>
+<td>Save the experiment to a file.</td>
+</tr>
+<tr>
+<td><a href="#set_container_objective"><code>set_container_objective</code></a></td>
+<td>Set a container to use as the objective function.</td>
+</tr>
+<tr>
+<td><a href="#set_objective_function"><code>set_objective_function</code></a></td>
+<td>Set the objective function to optimize.</td>
+</tr>
+<tr>
+<td><a href="#set_script_objective"><code>set_script_objective</code></a></td>
+<td>Set a script to use as the objective function.</td>
 </tr>
 </tbody>
 </table>
-<h2 id="example-usage">Example Usage<a class="headerlink" href="#example-usage" title="Permanent link">&para;</a></h2>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Create a scheduler with custom configuration</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="n">scheduler</span> <span class="o">=</span> <span class="n">AxScheduler</span><span class="p">(</span>
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>    <span class="n">ax_client</span><span class="p">,</span> 
-<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>    <span class="n">runner</span><span class="p">,</span>
-<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>    <span class="n">config</span><span class="o">=</span><span class="p">{</span>
-<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>        <span class="s1">&#39;monitoring_interval&#39;</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>  <span class="c1"># Check status every 5 seconds</span>
-<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>        <span class="s1">&#39;job_output_dir&#39;</span><span class="p">:</span> <span class="s1">&#39;./trial_outputs&#39;</span><span class="p">,</span>  <span class="c1"># Custom output directory</span>
-<a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>        <span class="s1">&#39;synchronous&#39;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>  <span class="c1"># Run trials asynchronously</span>
-<a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a>    <span class="p">}</span>
-<a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="p">)</span>
-<a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a>
-<a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="c1"># Set the objective function</span>
-<a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="n">scheduler</span><span class="o">.</span><span class="n">set_objective_function</span><span class="p">(</span><span class="n">my_objective_function</span><span class="p">)</span>
-<a id="__codelineno-8-14" name="__codelineno-8-14" href="#__codelineno-8-14"></a>
-<a id="__codelineno-8-15" name="__codelineno-8-15" href="#__codelineno-8-15"></a><span class="c1"># Run the optimization</span>
-<a id="__codelineno-8-16" name="__codelineno-8-16" href="#__codelineno-8-16"></a><span class="n">best_params</span> <span class="o">=</span> <span class="n">scheduler</span><span class="o">.</span><span class="n">run_optimization</span><span class="p">(</span><span class="n">max_trials</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+<h2 id="method-details">Method Details<a class="headerlink" href="#method-details" title="Permanent link">&para;</a></h2>
+<h3 id="batch_trial_context">batch_trial_context<a class="headerlink" href="#batch_trial_context" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">def</span> <span class="nf">batch_trial_context</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span>
 </code></pre></div>
+<p>Context manager for creating and running a batch of trials.
+This is useful for running multiple trials in parallel.
+Example:
+    <div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">with</span> <span class="n">scheduler</span><span class="o">.</span><span class="n">batch_trial_context</span><span class="p">()</span> <span class="k">as</span> <span class="n">batch</span><span class="p">:</span>
+<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;x&#39;</span><span class="p">:</span> <span class="n">i</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">:</span> <span class="n">i</span> <span class="o">*</span> <span class="mf">0.2</span><span class="p">}</span>
+<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>        <span class="n">batch</span><span class="o">.</span><span class="n">add_trial</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="n">batch</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+</code></pre></div></p>
+<hr />
+<h3 id="complete_trial">complete_trial<a class="headerlink" href="#complete_trial" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="k">def</span> <span class="nf">complete_trial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trial_index</span><span class="p">:</span> <span class="o">&lt;</span><span class="k">class</span> <span class="err">&#39;</span><span class="nc">int</span><span class="s1">&#39;&gt;, raw_data: Optional[Dict[str, Any]] = None) -&gt; None</span>
+</code></pre></div>
+<p>Mark a trial as completed in Ax.
+<strong>Args:</strong>
+* <strong>trial_index</strong>: The index of the trial to complete
+* <strong>raw_data</strong>: Raw data to attach to the trial</p>
+<hr />
+<h3 id="get_next_trial">get_next_trial<a class="headerlink" href="#get_next_trial" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">def</span> <span class="nf">get_next_trial</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span>
+</code></pre></div>
+<p>Generate a new trial using Ax and return its index.
+<strong>Returns:</strong>
+  The index of the new trial, or None if no more trials can be generated</p>
+<hr />
+<h3 id="load_experiment">load_experiment<a class="headerlink" href="#load_experiment" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">def</span> <span class="nf">load_experiment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="o">&lt;</span><span class="k">class</span> <span class="err">&#39;</span><span class="nc">str</span><span class="s1">&#39;&gt;) -&gt; None</span>
+</code></pre></div>
+<p>Load an experiment from a file.
+<strong>Args:</strong>
+* <strong>path</strong>: Path to load the experiment from</p>
+<hr />
+<h3 id="monitor_trials">monitor_trials<a class="headerlink" href="#monitor_trials" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">def</span> <span class="nf">monitor_trials</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+</code></pre></div>
+<p>Monitor all running trials.</p>
+<hr />
+<h3 id="run_optimization">run_optimization<a class="headerlink" href="#run_optimization" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="k">def</span> <span class="nf">run_optimization</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">max_trials</span><span class="p">:</span> <span class="o">&lt;</span><span class="k">class</span> <span class="err">&#39;</span><span class="nc">int</span><span class="s1">&#39;&gt; = 10) -&gt; Dict[str, Any]</span>
+</code></pre></div>
+<p>Run the optimization process.
+<strong>Args:</strong>
+* <strong>max_trials</strong>: Maximum number of trials to run</p>
+<p><strong>Returns:</strong>
+  The best parameters found</p>
+<hr />
+<h3 id="run_trial">run_trial<a class="headerlink" href="#run_trial" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">def</span> <span class="nf">run_trial</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trial_index</span><span class="p">:</span> <span class="o">&lt;</span><span class="k">class</span> <span class="err">&#39;</span><span class="nc">int</span><span class="s1">&#39;&gt;) -&gt; &lt;class &#39;</span><span class="n">Trial</span><span class="s1">&#39;&gt;</span>
+</code></pre></div>
+<p>Run a specific trial.
+<strong>Args:</strong>
+* <strong>trial_index</strong>: The index of the trial to run</p>
+<p><strong>Returns:</strong>
+  The Trial object</p>
+<hr />
+<h3 id="save_experiment">save_experiment<a class="headerlink" href="#save_experiment" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="k">def</span> <span class="nf">save_experiment</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="o">&lt;</span><span class="k">class</span> <span class="err">&#39;</span><span class="nc">str</span><span class="s1">&#39;&gt;) -&gt; None</span>
+</code></pre></div>
+<p>Save the experiment to a file.
+<strong>Args:</strong>
+* <strong>path</strong>: Path to save the experiment to</p>
+<hr />
+<h3 id="set_container_objective">set_container_objective<a class="headerlink" href="#set_container_objective" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">def</span> <span class="nf">set_container_objective</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">container_image</span><span class="p">:</span> <span class="o">&lt;</span><span class="k">class</span> <span class="err">&#39;</span><span class="nc">str</span><span class="s1">&#39;&gt;, container_command: Optional[str] = None) -&gt; Any</span>
+</code></pre></div>
+<p>Set a container to use as the objective function.
+<strong>Args:</strong>
+* <strong>container_image</strong>: Container image to run for each trial
+* <strong>container_command</strong>: Command to run in the container (optional)</p>
+<hr />
+<h3 id="set_objective_function">set_objective_function<a class="headerlink" href="#set_objective_function" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a><span class="k">def</span> <span class="nf">set_objective_function</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">objective_fn</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="n">Any</span>
+</code></pre></div>
+<p>Set the objective function to optimize.
+<strong>Args:</strong>
+* <strong>objective_fn</strong>: The objective function to optimize</p>
+<hr />
+<h3 id="set_script_objective">set_script_objective<a class="headerlink" href="#set_script_objective" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">def</span> <span class="nf">set_script_objective</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">script_path</span><span class="p">:</span> <span class="o">&lt;</span><span class="k">class</span> <span class="err">&#39;</span><span class="nc">str</span><span class="s1">&#39;&gt;) -&gt; Any</span>
+</code></pre></div>
+<p>Set a script to use as the objective function.
+<strong>Args:</strong>
+* <strong>script_path</strong>: Path to the script to run for each trial</p>
 
 
 
@@ -1555,7 +1702,7 @@
     
     
       
-      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top", "toc.follow", "content.code.copy", "content.code.annotate", "content.action.edit", "search.highlight", "search.suggest", "navigation.tabs", "navigation.instant", "header.autohide"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+      <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top", "toc.follow", "content.code.copy", "content.code.annotate", "content.action.edit", "search.highlight", "search.suggest", "navigation.tabs", "navigation.tabs.sticky", "navigation.tabs.sticky_header", "navigation.tabs.instant", "navigation.tabs.autohide", "navigation.instant", "header.autohide"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
       <script src="../../assets/javascripts/bundle.13a4f30d.min.js"></script>
