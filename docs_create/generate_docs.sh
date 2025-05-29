@@ -441,6 +441,52 @@ mkdocs serve
 mkdocs build
 \`\`\`
 
+This will generate the static HTML files in the \`site/\` directory.
+
+## Deploying to GitHub Pages
+
+There are two ways to deploy your documentation to GitHub Pages:
+
+### Option 1: Automated Deployment with GitHub Actions
+
+The included GitHub Actions workflow automatically builds and deploys your documentation when you push to the main branch.
+
+To enable it:
+1. Go to your repository settings > Pages
+2. Set the source to "GitHub Actions"
+
+### Option 2: Manual Deployment
+
+If you prefer to manually deploy your documentation:
+
+1. Build the documentation:
+   \`\`\`bash
+   mkdocs build
+   \`\`\`
+
+2. Deploy the static site to the gh-pages branch:
+   \`\`\`bash
+   # Switch to gh-pages branch (create if it doesn't exist)
+   git checkout gh-pages || git checkout --orphan gh-pages
+   
+   # Remove existing content
+   find . -maxdepth 1 -not -path "./.git" -not -path "." -exec rm -rf {} \;
+   
+   # Copy the built site
+   cp -r site/* .
+   
+   # Add a .nojekyll file to disable Jekyll processing
+   touch .nojekyll
+   
+   # Commit and push
+   git add .
+   git commit -m "Update documentation"
+   git push origin gh-pages
+   
+   # Switch back to original branch
+   git checkout -
+   \`\`\`
+
 ## Documentation Structure
 
 - \`docs/\`: Documentation source files
@@ -457,3 +503,137 @@ EOF
 echo "Documentation structure generated successfully!"
 echo "To preview the documentation, run: cd $(pwd) && mkdocs serve"
 echo "Don't forget to add your logo.png and favicon.png to the docs/assets directory."
+
+# Create the deployment scripts
+echo "Creating deployment scripts..."
+
+# Standard deployment script (with stashing)
+cat > deploy_docs.sh << EOF
+#!/bin/bash
+# Script to help deploy MkDocs documentation to GitHub Pages
+# Usage: ./deploy_docs.sh [commit_message]
+
+set -e
+
+COMMIT_MESSAGE=\${1:-"Update documentation"}
+
+echo "Deploying documentation to GitHub Pages..."
+
+# Step 1: Build the documentation
+echo "Building documentation..."
+mkdocs build
+
+# Step 2: Create a temporary directory for the gh-pages branch
+echo "Creating temporary directory..."
+TEMP_DIR=\$(mktemp -d)
+cp -r site/* \$TEMP_DIR/
+
+# Step 3: Stash any uncommitted changes to avoid conflicts
+echo "Stashing uncommitted changes..."
+git stash push -m "Stashing changes before deploying docs" --include-untracked || true
+
+# Step 4: Check if gh-pages branch exists
+if git rev-parse --verify gh-pages >/dev/null 2>&1; then
+  echo "Switching to existing gh-pages branch..."
+  git checkout gh-pages
+else
+  echo "Creating new gh-pages branch..."
+  git checkout --orphan gh-pages
+  # Remove all files when creating a new branch
+  git rm -rf . || true
+fi
+
+# Step 5: Remove existing content (except .git directory)
+echo "Removing existing content..."
+find . -maxdepth 1 -not -path "./.git" -not -path "." -exec rm -rf {} \; || true
+
+# Step 6: Copy the built site
+echo "Copying built site..."
+cp -r \$TEMP_DIR/* .
+
+# Step 7: Create .nojekyll file to prevent Jekyll processing
+echo "Creating .nojekyll file..."
+touch .nojekyll
+
+# Step 8: Add, commit, and push the changes
+echo "Committing changes..."
+git add .
+git commit -m "\$COMMIT_MESSAGE" || echo "No changes to commit"
+
+echo "Pushing to GitHub..."
+git push origin gh-pages
+
+# Step 9: Switch back to the original branch
+ORIGINAL_BRANCH=\$(git rev-parse --abbrev-ref HEAD@{1})
+echo "Switching back to original branch (\$ORIGINAL_BRANCH)..."
+git checkout "\$ORIGINAL_BRANCH"
+
+# Step 10: Restore uncommitted changes if there were any
+if git stash list | grep -q "Stashing changes before deploying docs"; then
+  echo "Restoring stashed changes..."
+  git stash pop || echo "Note: There might be conflicts when restoring your changes"
+fi
+
+# Step 11: Clean up
+echo "Cleaning up..."
+rm -rf \$TEMP_DIR
+
+echo "Documentation successfully deployed to GitHub Pages!"
+echo "It should be available at: https://[username].github.io/[repository]/"
+EOF
+
+# Simple deployment script (requires committed changes)
+cat > deploy_docs_simple.sh << EOF
+#!/bin/bash
+# Simple script to deploy MkDocs documentation to GitHub Pages
+# This script assumes you've committed all your changes first
+# Usage: ./deploy_docs_simple.sh [commit_message]
+
+set -e
+
+COMMIT_MESSAGE=\${1:-"Update documentation"}
+
+echo "Deploying documentation to GitHub Pages..."
+
+# Check if there are uncommitted changes
+if [[ -n \$(git status -s) ]]; then
+  echo "Error: You have uncommitted changes. Please commit or stash them first."
+  echo "Run 'git status' to see the changes."
+  exit 1
+fi
+
+# Build the documentation
+echo "Building documentation..."
+mkdocs build
+
+# Switch to gh-pages branch or create it
+if git rev-parse --verify gh-pages >/dev/null 2>&1; then
+  git checkout gh-pages
+else
+  git checkout --orphan gh-pages
+  git rm -rf . || true
+fi
+
+# Remove existing content
+find . -maxdepth 1 -not -path "./.git" -not -path "." -exec rm -rf {} \; || true
+
+# Copy the built site
+cp -r site/* .
+
+# Create .nojekyll file
+touch .nojekyll
+
+# Add, commit, and push
+git add .
+git commit -m "\$COMMIT_MESSAGE" || echo "No changes to commit"
+git push origin gh-pages
+
+# Switch back
+git checkout -
+
+echo "Documentation successfully deployed to GitHub Pages!"
+echo "It should be available at: https://[username].github.io/[repository]/"
+EOF
+
+# Make the deployment scripts executable
+chmod +x deploy_docs.sh deploy_docs_simple.sh

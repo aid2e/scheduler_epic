@@ -251,14 +251,78 @@ jobs:
 
 This workflow includes retry logic to handle potential race conditions during deployment, which can sometimes occur with GitHub Pages.
 
-## Step 6: Enable GitHub Pages
+## Step 6: Deploy to GitHub Pages
+
+There are three ways to deploy your documentation to GitHub Pages:
+
+### Option 1: Automated Deployment with GitHub Actions
 
 1. Go to your repository on GitHub
 2. Navigate to Settings > Pages
 3. Under "Source", select "GitHub Actions"
 4. Commit and push your changes to the main branch
 
-After pushing your changes, GitHub Actions will automatically build and deploy your documentation to GitHub Pages. The documentation will be available at:
+After pushing your changes, GitHub Actions will automatically build and deploy your documentation to GitHub Pages.
+
+### Option 2: Direct Deployment without Branch Switching
+
+This approach avoids switching branches locally, which prevents issues with uncommitted changes:
+
+```bash
+# Build and deploy in one step
+./docs_create/push_site_to_ghpages.sh "Update documentation"
+
+# Or if you've already built the site
+./docs_create/push_existing_site.sh "Deploy existing site"
+```
+
+This approach:
+1. Builds the documentation (for push_site_to_ghpages.sh)
+2. Creates the gh-pages branch remotely if it doesn't exist
+3. Clones the gh-pages branch to a temporary directory
+4. Copies your built site to this temporary directory
+5. Commits and pushes the changes
+6. Cleans up without touching your working directory
+
+### Option 3: Manual Deployment with Branch Switching
+
+If you prefer to manually deploy your documentation:
+
+1. Build the documentation:
+   ```bash
+   mkdocs build
+   ```
+
+2. Deploy the static site to the gh-pages branch:
+   ```bash
+   # Make sure to commit your changes first
+   git add .
+   git commit -m "Update documentation content"
+   
+   # Switch to gh-pages branch (create if it doesn't exist)
+   git checkout gh-pages || git checkout --orphan gh-pages
+   
+   # Remove existing content
+   find . -maxdepth 1 -not -path "./.git" -not -path "." -exec rm -rf {} \;
+   
+   # Copy the built site
+   cp -r site/* .
+   
+   # Add a .nojekyll file to disable Jekyll processing
+   touch .nojekyll
+   
+   # Commit and push
+   git add .
+   git commit -m "Update documentation"
+   git push origin gh-pages
+   
+   # Switch back to original branch
+   git checkout -
+   ```
+
+   **Note:** If you have uncommitted changes, you'll need to commit or stash them before switching branches. You can use `git stash` before switching branches and `git stash pop` after returning to your original branch.
+
+Your documentation will be available at:
 
 ```
 https://<username>.github.io/<repository>/

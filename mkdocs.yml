@@ -79,6 +79,7 @@ markdown_extensions:
 # Navigation structure
 nav:
   - Home: index.md
+  - Overview: overview.md
   - Installation: installation.md
   - Quick Start: quickstart.md
   - Tutorials:
@@ -99,7 +100,10 @@ nav:
     - Job: api/job.md
     - Runners: api/runners.md
   - Architecture: architecture.md
-  - GitHub Pages Setup: github_pages_setup.md
+  - Documentation:
+    - GitHub Pages Setup: github_pages_setup.md
+    - Step-by-Step Guide: step_by_step_guide.md
+    - Deployment Options: deployment_options.md
   
 # Plugins for additional functionality
 plugins:

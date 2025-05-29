@@ -1,4 +1,4 @@
-# Scheduler for AID2E
+# Project Overview
 
 A Python library for scheduling and managing optimization trials for the ePIC EIC detector design using Ax, with support for multiple execution backends and job types.
 
@@ -31,7 +31,7 @@ pip install -e .[slurm]
 pip install -e .[panda]
 ```
 
-## Usage
+## Usage Examples
 
 ### Basic Function-based Optimization
 
@@ -203,60 +203,10 @@ See the `examples` directory for more advanced usage examples:
 - `slurm_optimization.py` - Optimization using Slurm for compute
 - `container_detector_optimization.py` - Container-based optimization
 
-## Documentation
+## Further Resources
 
-Comprehensive documentation is available in the `docs/` directory. You can also access the hosted documentation at:
-
-https://aid2e.github.io/scheduler_epic/installation/
-
-The documentation includes:
-- Installation instructions
-- Quick start guide
-- Detailed tutorials
-- API reference
-- Architecture overview
-
-### Building Documentation Locally
-
-To build the documentation locally:
-
-```bash
-# Install documentation requirements
-pip install -r docs/requirements-docs.txt
-
-# Serve documentation for development
-mkdocs serve
-
-# Build static site
-mkdocs build
-```
-
-Then visit http://127.0.0.1:8000/ in your browser.
-
-### Deploying Documentation
-
-We provide multiple options for deploying documentation to GitHub Pages:
-
-1. **Interactive Deployment** (Recommended)
-   ```bash
-   ./interactive_deploy_docs.sh
-   ```
-   This guides you through the deployment process with multiple options.
-
-2. **Direct Deployment** (No branch switching)
-   ```bash
-   ./docs_create/push_site_to_ghpages.sh "Update documentation"
-   ```
-   This builds and deploys without switching branches, avoiding issues with uncommitted changes.
-
-3. **Traditional Deployment** (With branch switching)
-   ```bash
-   ./docs_create/deploy_docs.sh "Update documentation"
-   ```
-   This uses the traditional gh-pages branch switching approach.
-
-For more details, see `docs_create/deployment-options-summary.md`.
-
-## License
-
-[MIT License](LICENSE)
+- [Installation Guide](installation.md) - Detailed installation instructions
+- [Quick Start Guide](quickstart.md) - Get up and running quickly
+- [Tutorials](tutorials/index.md) - Step-by-step tutorials for common tasks
+- [API Reference](api/index.md) - Detailed API documentation
+- [Architecture Overview](architecture.md) - Understanding the system design

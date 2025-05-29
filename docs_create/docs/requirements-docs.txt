@@ -1,6 +1,0 @@
-mkdocs>=1.4.0
-mkdocs-material>=8.5.0
-pymdown-extensions>=9.0
-cairosvg>=2.5.0
-pillow>=9.0.0
-pygments>=2.14.0
