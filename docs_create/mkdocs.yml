@@ -1,9 +1,9 @@
-site_name: Scheduler for AID2E
-site_description: A Python library for scheduling and managing optimization trials for the ePIC EIC detector design using Ax
-site_author: AID2E Team
-site_url: https://aid2e.github.io/scheduler_epic/
-repo_url: https://github.com/aid2e/scheduler_epic
-repo_name: aid2e/scheduler_epic
+site_name: test
+site_description: Documentation for test
+site_author: Author
+site_url: https://test.github.io/test/
+repo_url: https://github.com/test
+repo_name: test
 
 # Theme configuration
 theme:
@@ -36,9 +36,6 @@ theme:
     - search.highlight
     - search.suggest
     - navigation.tabs
-    # Removed navigation sidebar features
-    - navigation.instant
-    - header.autohide
   icon:
     repo: fontawesome/brands/github
 
@@ -46,8 +43,8 @@ theme:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/aid2e/scheduler_epic
-      name: AID2E Scheduler on GitHub
+      link: https://github.com/test
+      name: test on GitHub
   
   # Add GitHub edit capabilities
   repo_icon: github
@@ -83,23 +80,9 @@ nav:
   - Quick Start: quickstart.md
   - Tutorials:
     - Overview: tutorials/index.md
-    - Basic Detector Optimization: tutorials/detector_optimization.md
-    - Slurm Execution: tutorials/slurm_execution.md
-    - Container-Based Optimization: tutorials/container_based_optimization.md
-    - Container Jobs: tutorials/container_jobs.md
-    - Batch Trial Submission: tutorials/batch_trial_submission.md
-    - Script-Based Optimization: tutorials/script_based_optimization.md
-    - PANDA Execution: tutorials/panda_execution.md
-    - Asynchronous Execution: tutorials/asynchronous_execution.md
-    - Experiment Persistence: tutorials/experiment_persistence.md
+    - Tutorial 1: tutorials/tutorial1.md
   - API Reference:
     - Overview: api/index.md
-    - AxScheduler: api/ax_scheduler.md
-    - Trial: api/trial.md
-    - Job: api/job.md
-    - Runners: api/runners.md
-  - Architecture: architecture.md
-  - GitHub Pages Setup: github_pages_setup.md
   
 # Plugins for additional functionality
 plugins:

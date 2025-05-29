@@ -17,6 +17,19 @@ body {
 }
 
 /* Left sidebar styling */
+.md-sidebar--primary {
+  display: none !important;
+}
+
+.md-content {
+  margin-left: 0;
+}
+
+.md-main__inner {
+  margin-left: 0;
+  max-width: none;
+}
+
 .md-sidebar--primary .md-sidebar__scrollwrap {
   background-color: #fafafa;
   padding-top: 1rem;

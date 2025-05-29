@@ -207,7 +207,7 @@ See the `examples` directory for more advanced usage examples:
 
 Comprehensive documentation is available in the `docs/` directory. You can also access the hosted documentation at:
 
-https://yourusername.github.io/scheduler/
+https://aid2e.github.io/scheduler_epic/installation/
 
 The documentation includes:
 - Installation instructions

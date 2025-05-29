@@ -1,0 +1,51 @@
+/* GitBook-like styles */
+:root {
+  --md-primary-fg-color: #4051b5;
+  --md-primary-fg-color--light: #7880c3;
+  --md-primary-fg-color--dark: #303fa1;
+}
+
+/* Make navigation sidebar more like GitBook */
+.md-sidebar--primary {
+  background-color: #fafafa;
+}
+
+[data-md-color-scheme="slate"] .md-sidebar--primary {
+  background-color: #1e1e1e;
+}
+
+/* Improve readability of main content */
+.md-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+}
+
+/* Enhance code blocks */
+.highlight pre {
+  border-radius: 4px;
+}
+
+/* Make headings more prominent */
+.md-content h1 {
+  font-weight: 600;
+  margin-bottom: 2rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+[data-md-color-scheme="slate"] .md-content h1 {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Nice link styling */
+.md-content a:not(.md-button) {
+  color: var(--md-primary-fg-color);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.2s ease;
+}
+
+.md-content a:not(.md-button):hover {
+  border-bottom-color: var(--md-primary-fg-color);
+}

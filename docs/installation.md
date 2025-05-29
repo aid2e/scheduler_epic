@@ -13,7 +13,7 @@ You can install the Scheduler library from source:
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/scheduler.git
+git clone https://github.com/aid2e/scheduler_epic
 cd scheduler
 
 # Install the basic package
