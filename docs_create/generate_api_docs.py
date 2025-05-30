@@ -519,14 +519,18 @@ def generate_combined_doc(filename, title, description, classes):
         f.write("## Class Hierarchy\n\n")
         f.write("```\n")
         
-        # Find the base class
-        base_classes = [c for c in classes if not any(c.__bases__[0] in classes)]
+        # Find base classes (classes that don't inherit from other classes in our list)
+        base_classes = []
+        for c in classes:
+            # Check if the first base class is in our classes list
+            if len(c.__bases__) > 0 and c.__bases__[0] not in classes:
+                base_classes.append(c)
         
         for base_class in base_classes:
             f.write(f"{base_class.__name__}\n")
             
             # Find direct subclasses
-            subclasses = [c for c in classes if c.__bases__[0] == base_class]
+            subclasses = [c for c in classes if len(c.__bases__) > 0 and c.__bases__[0] == base_class]
             for i, subclass in enumerate(subclasses):
                 prefix = "└── " if i == len(subclasses) - 1 else "├── "
                 f.write(f"{prefix}{subclass.__name__}\n")

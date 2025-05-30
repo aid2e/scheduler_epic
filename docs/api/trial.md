@@ -1,143 +1,74 @@
 # Trial
 
-The `Trial` class represents an optimization trial that contains one or more jobs. It extends the functionality of Ax trials with additional features for state tracking and job management.
+*Defined in [`scheduler.trial.trial`](https://github.com/aid2e/scheduler_epic/blob/main/scheduler/trial/trial.py)*
+
+A trial class that extends Ax trial functionality.
+A trial can contain multiple jobs and has a state that is tracked.
 
 ## Class Definition
 
 ```python
-class Trial:
-    def __init__(self, trial_id: str, parameters: Dict[str, Any]):
-        """
-        Initialize a new trial.
-        
-        Args:
-            trial_id: Unique identifier for the trial
-            parameters: Dictionary of parameters for this trial
-        """
+class Trial(self, trial_id: <class 'str'>, parameters: Dict[str, Any]):
+    """
+    Initialize a new trial.
+    **Args:**
+    * **trial_id**: Unique identifier for the trial
+    * **parameters**: Dictionary of parameters for this trial
+    """
 ```
 
-## Trial States
+## Methods
 
-The `TrialState` enum defines the possible states of a trial:
+| Method | Description |
+|--------|-------------|
+| [`add_job`](#add_job) | Add a job to this trial. |
+| [`check_status`](#check_status) | Check the status of all jobs and update the trial state. |
+| [`get_results`](#get_results) | Gather results from all jobs. |
+| [`run`](#run) | Run all jobs in this trial. |
+
+## Method Details
+
+### add_job
 
 ```python
-class TrialState(Enum):
-    """Possible states for a trial."""
-    CREATED = "created"      # Trial has been created
-    QUEUED = "queued"        # Trial is in the queue
-    RUNNING = "running"      # Trial is currently running
-    COMPLETED = "completed"  # Trial has completed successfully
-    FAILED = "failed"        # Trial has failed
-    CANCELLED = "cancelled"  # Trial was cancelled
+def add_job(self, job: <class 'Job'>) -> None
 ```
 
-## Key Methods
+Add a job to this trial.
+**Args:**
+* **job**: The job to add
 
-### Job Management
+---
+
+### check_status
 
 ```python
-def add_job(self, job: Job) -> None:
-    """
-    Add a job to this trial.
-    
-    Args:
-        job: The job to add
-    """
+def check_status(self) -> <enum 'TrialState'>
 ```
 
-### Trial Execution
+Check the status of all jobs and update the trial state.
+**Returns:**
+  The current state of the trial
+
+---
+
+### get_results
 
 ```python
-def run(self) -> None:
-    """
-    Run all jobs in this trial.
-    """
+def get_results(self) -> Dict[str, Any]
 ```
 
-### Result Handling
+Gather results from all jobs.
+**Returns:**
+  Dictionary of results
+
+---
+
+### run
 
 ```python
-def set_results(self, results: Dict[str, Any]) -> None:
-    """
-    Set the results of this trial.
-    
-    Args:
-        results: Dictionary of metric results
-    """
+def run(self) -> None
 ```
 
-```python
-def get_results(self) -> Dict[str, Any]:
-    """
-    Get the results of this trial.
-    
-    Returns:
-        Dictionary of metric results
-    """
-```
+Run all jobs in this trial.
 
-### State Management
-
-```python
-def update_state(self, state: TrialState) -> None:
-    """
-    Update the state of this trial.
-    
-    Args:
-        state: The new state
-    """
-```
-
-```python
-def check_status(self) -> TrialState:
-    """
-    Check the status of this trial by checking all jobs.
-    
-    Returns:
-        The current state of the trial
-    """
-```
-
-## Trial Timing
-
-Trials track timing information:
-
-- `creation_time`: When the trial was created
-- `start_time`: When the trial started running
-- `end_time`: When the trial completed (successfully or not)
-
-```python
-def get_duration(self) -> Optional[float]:
-    """
-    Get the duration of this trial in seconds.
-    
-    Returns:
-        Duration in seconds, or None if the trial hasn't completed
-    """
-```
-
-## Example Usage
-
-```python
-from scheduler import Trial, Job, JobType, TrialState
-
-# Create a trial
-trial = Trial(trial_id="trial1", parameters={"x": 0.5, "y": 0.7})
-
-# Add a job to the trial
-job = Job(
-    job_id="job1",
-    job_type=JobType.FUNCTION,
-    function=my_objective_function,
-    params=trial.parameters
-)
-trial.add_job(job)
-
-# Run the trial
-trial.run()
-
-# Check if the trial is completed
-if trial.state == TrialState.COMPLETED:
-    results = trial.get_results()
-    print(f"Trial completed with results: {results}")
-```

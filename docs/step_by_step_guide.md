@@ -47,14 +47,15 @@ EOF
 
 3. Create a basic mkdocs.yml configuration in your project root:
 
+You can also use `generate_docs.sh` to generate the mkdocs.yml file which is located in `docs_create` folder.
 ```bash
 cat > mkdocs.yml << EOF
-site_name: Your Project Name
-site_description: Your project description
-site_author: Your Name
-site_url: https://username.github.io/repository/
-repo_url: https://github.com/username/repository
-repo_name: username/repository
+site_name: Project NAME
+site_description: Project description
+site_author: AID2E Team
+site_url: SITE URL
+repo_url: https://github.com/aid2e/scheduler_epic
+repo_name: aid2e/scheduler_epic
 
 # Theme configuration
 theme:
@@ -79,6 +80,7 @@ theme:
         icon: material/weather-sunny
         name: Switch to light mode
   features:
+    # Your existing features
     - navigation.top
     - toc.follow
     - content.code.copy
@@ -87,6 +89,17 @@ theme:
     - search.highlight
     - search.suggest
     - navigation.tabs
+    # Add these features to enable the left sidebar
+    - navigation.sections
+    - navigation.indexes
+    - navigation.expand
+    # Keep these existing features
+    - navigation.tabs.sticky
+    - navigation.tabs.sticky_header
+    - navigation.tabs.instant
+    - navigation.tabs.autohide
+    - navigation.instant
+    - header.autohide
   icon:
     repo: fontawesome/brands/github
 
@@ -94,16 +107,12 @@ theme:
 extra:
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/username/repository
-      name: Project on GitHub
+      link: https://github.com/aid2e/scheduler_epic
+      name: AID2E Scheduler on GitHub
   
   # Add GitHub edit capabilities
   repo_icon: github
   edit_uri: edit/main/docs/
-
-# Add custom CSS to make it more GitBook-like
-extra_css:
-  - stylesheets/gitbook.css
 
 # Markdown extensions for richer content
 markdown_extensions:
@@ -123,20 +132,6 @@ markdown_extensions:
       alternate_style: true 
   - pymdownx.tasklist:
       custom_checkbox: true
-
-# Navigation structure
-nav:
-  - Home: index.md
-  - Installation: installation.md
-  - Quick Start: quickstart.md
-  - Tutorials:
-    - Overview: tutorials/index.md
-  - API Reference:
-    - Overview: api/index.md
-  
-# Plugins for additional functionality
-plugins:
-  - search
 EOF
 ```
 
@@ -220,79 +215,7 @@ This automatically:
 - Starts a preview server so you can review the changes
 - Optionally deploys to GitHub Pages when you're satisfied
 
-## Step 5: Create a GitBook-like CSS (Optional)
-
-For a GitBook-like appearance:
-
-```bash
-cat > docs/stylesheets/gitbook.css << EOF
-/* GitBook-like styles */
-:root {
-  --md-primary-fg-color: #4051b5;
-  --md-primary-fg-color--light: #7880c3;
-  --md-primary-fg-color--dark: #303fa1;
-}
-
-/* Make navigation sidebar more like GitBook */
-.md-sidebar--primary {
-  background-color: #fafafa;
-}
-
-[data-md-color-scheme="slate"] .md-sidebar--primary {
-  background-color: #1e1e1e;
-}
-
-/* Improve readability of main content */
-.md-content {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 1rem 2rem;
-}
-
-/* Enhance code blocks */
-.highlight pre {
-  border-radius: 4px;
-}
-
-/* Make headings more prominent */
-.md-content h1 {
-  font-weight: 600;
-  margin-bottom: 2rem;
-  padding-bottom: 0.5rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-[data-md-color-scheme="slate"] .md-content h1 {
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-/* Nice link styling */
-.md-content a:not(.md-button) {
-  color: var(--md-primary-fg-color);
-  text-decoration: none;
-  border-bottom: 1px solid transparent;
-  transition: border-color 0.2s ease;
-}
-
-.md-content a:not(.md-button):hover {
-  border-bottom-color: var(--md-primary-fg-color);
-}
-
-/* Hide the left sidebar completely (optional) */
-/* Uncomment to remove the left sidebar
-.md-sidebar--primary {
-  display: none !important;
-}
-
-.md-content {
-  max-width: 1000px;
-  margin: 0 auto;
-}
-*/
-EOF
-```
-
-## Step 6: Preview Your Documentation Locally
+## Step 5: Preview Your Documentation Locally
 
 Preview your documentation to check how it looks:
 
@@ -303,7 +226,7 @@ mkdocs serve
 
 This will start a local server at http://127.0.0.1:8000/ where you can preview your documentation.
 
-## Step 7: Build Your Documentation
+## Step 6: Build Your Documentation
 
 Once you're satisfied with your documentation, build it:
 
@@ -314,7 +237,7 @@ mkdocs build
 
 This will create a `site` directory containing the static HTML files.
 
-## Step 8: Deploy to GitHub Pages
+## Step 7: Deploy to GitHub Pages
 
 There are multiple options for deploying your documentation to GitHub Pages:
 
@@ -470,24 +393,24 @@ cd /mnt/d/AID2E/scheduler_epic
 ./docs_create/fix_deploy.sh "Fix and deploy documentation"
 ```
 
-## Step 9: Verify Your Documentation
+## Step 8: Verify Your Documentation
 
 After deployment, your documentation should be available at:
 
 ```
-https://[username].github.io/[repository]/
+https://aid2e.github.io/[repository]/
 ```
 
 Visit this URL to ensure your documentation is correctly deployed.
 
-## Step 10: Add a Link to Your Documentation in README
+## Step 9: Add a Link to Your Documentation in README
 
 Update your README.md to include a link to your documentation:
 
 ```markdown
 ## Documentation
 
-Comprehensive documentation is available at: https://[username].github.io/[repository]/
+Comprehensive documentation is available at: https://aid2e.github.io/[repository]/
 ```
 
 ## Maintenance and Updates

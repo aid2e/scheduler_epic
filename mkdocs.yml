@@ -28,6 +28,7 @@ theme:
         icon: material/weather-sunny
         name: Switch to light mode
   features:
+    # Your existing features
     - navigation.top
     - toc.follow
     - content.code.copy
@@ -36,7 +37,11 @@ theme:
     - search.highlight
     - search.suggest
     - navigation.tabs
-    # add navigation sidebar features
+    # Add these features to enable the left sidebar
+    - navigation.sections
+    - navigation.indexes
+    - navigation.expand
+    # Keep these existing features
     - navigation.tabs.sticky
     - navigation.tabs.sticky_header
     - navigation.tabs.instant
@@ -56,10 +61,6 @@ extra:
   # Add GitHub edit capabilities
   repo_icon: github
   edit_uri: edit/main/docs/
-
-# Add custom CSS to make it more GitBook-like
-extra_css:
-  - stylesheets/gitbook.css
 
 # Markdown extensions for richer content
 markdown_extensions:
