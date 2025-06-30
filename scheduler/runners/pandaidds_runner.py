@@ -2,13 +2,14 @@
 PanDARunner - Runner that submits jobs to the PanDA system.
 """
 
+import datetime
 import logging
 import os
 from itertools import product
 from typing import Dict, Any
 from ..job.job import Job
 from ..job.job_state import JobState
-from ..job.mul_job import MulJob
+from ..job.multi_steps_job import MultiStepsJob
 from .base_runner import BaseRunner
 
 
@@ -82,7 +83,12 @@ class PanDAiDDSRunner(BaseRunner):
         self.running_funcs = {}
         self.ordered_funcs = self.order_funcs(self.funcs, self.deps)
 
+        self.return_func_results = return_func_results
         self.logger = logging.getLogger("PanDAiDDSRunner")
+
+        self.num_checks = 0
+        self.workflow = None
+        self.workflow_id = None
 
     def order_funcs(self, funcs, deps):
         ordered_funcs = []
@@ -99,15 +105,15 @@ class PanDAiDDSRunner(BaseRunner):
 
     def submit_workflow(self, job) -> object:
         # import iDDS workflow
-        from idds.iworkflow.workflow import (workflow as workflow_def)  # workflow    # noqa F401
+        from idds.iworkflow.workflow import workflow as workflow_def  # workflow    # noqa F401
 
-        workflow = self.running_funcs.get(job.job_id, {}).get("workflow", None)
-        if not workflow:
-            self.logger.info(f"Defining workflow for job {job.job_id}")
+        if self.workflow is None:
+            workflow_name = f'{self.name}.{datetime.datetime.now().strftime("%Y%m%d_%H_%S")}'
+            self.logger.info(f"Defining workflow for experiment {workflow_name}")
             # define the workflow
             workflow = workflow_def(
                 func=empty_workflow_func,
-                name=self.name,
+                name=workflow_name,
                 service="panda",
                 cloud=self.cloud,
                 queue=self.queue,
@@ -126,16 +132,13 @@ class PanDAiDDSRunner(BaseRunner):
             workflow.pre_run()
             workflow.prepare()
             req_id = workflow.submit()
-            self.logger.info(f"Workflow id for job {job.job_id}: {req_id}")
+            self.logger.info(f"Workflow id for experiment {workflow_name}: {req_id}")
             if not req_id:
-                raise Exception(f"Failed to submit job {job.job_id} to PanDA")
+                raise Exception(f"Failed to submit workflow for experiment {workflow_name} to PanDA")
 
-            self.running_funcs[job.job_id] = {
-                "req_id": req_id,
-                "workflow": workflow,
-                "funcs": {},
-            }
-        return workflow
+            self.workflow = workflow
+            self.workflow_id = req_id
+        return self.workflow
 
     def submit_job(self, job) -> None:
         from idds.iworkflow.work import work as work_def
@@ -148,6 +151,12 @@ class PanDAiDDSRunner(BaseRunner):
         work_name = f"{self.name}.{job.job_id}.{func_name}"
         g_param_str = "None"
         self.logger.info(f"Defining work {work_name}")
+
+        self.running_funcs[job.job_id] = {"funcs": {}}
+
+        if func_name not in g_param_str not in self.running_funcs[job.job_id]["funcs"]:
+            self.running_funcs[job.job_id]["funcs"][func_name] = {}
+
         if g_param_str not in self.running_funcs[job.job_id]["funcs"][func_name]:
             work = work_def(
                 func=func,
@@ -156,6 +165,7 @@ class PanDAiDDSRunner(BaseRunner):
                 map_results=True,
                 name=work_name,
                 job_key=work_name,
+                log_dataset_name=f"{work_name}.log/"
             )(**job.params)
 
             tf_id = work.submit()
@@ -178,7 +188,7 @@ class PanDAiDDSRunner(BaseRunner):
             if self.return_func_results:
                 self.running_funcs[job.job_id]["funcs"][func_name][g_param_str]["work"].init_async_result()
 
-    def submit_mul_job(self, job) -> None:
+    def submit_multi_steps_job(self, job) -> None:
         from idds.iworkflow.work import work as work_def
 
         workflow = self.submit_workflow(job)
@@ -295,7 +305,7 @@ class PanDAiDDSRunner(BaseRunner):
             self.submit_job(job)
         else:
             # type(job) in [MulJob]:
-            self.submit_mul_job(job)
+            self.submit_multi_steps_job(job)
 
     def check_single_job_status(self, job) -> None:
         """
@@ -311,32 +321,39 @@ class PanDAiDDSRunner(BaseRunner):
         # work_name = f"{self.name}.{job.job_id}.{func_name}"
         g_param_str = "None"
         # return_func_results = self.funcs[job.job_id]["funcs"][func_name].get("return_func_results", False)
-        work = self.running_funcs[job.job_id]["funcs"][func_name][g_param_str]["work"]
-        tf_id = self.running_funcs[job.job_id]["funcs"][func_name][g_param_str]["tf_id"]
+        work = self.running_funcs[job.job_id]["funcs"].get(func_name, {}).get(g_param_str, {}).get("work", None)
+        tf_id = self.running_funcs[job.job_id]["funcs"].get(func_name, {}).get(g_param_str, {}).get("tf_id", None)
+
+        if not work or not tf_id:
+            err = f"Job {job.job_id} has no work {work} or no tf_id {tf_id}"
+            self.logger.error(err)
+            # return
+            raise Exception(err)
 
         work.init_async_result()
-        if work.is_finished():
+        status = work.get_status()
+        if work.is_finished(status):
             self.logger.info(f"Job {job.job_id} with transform_id {tf_id} finished")
 
             ret = work.get_results()
             job_key = self.running_funcs[job.job_id]["funcs"][func_name][g_param_str]["job_key"]
-            results = ret.get_result(nam=work.name, key=job_key, verbose=True)
+            results = ret.get_result(name=work.name, key=job_key, verbose=True)
             self.running_funcs[job.job_id]["funcs"][func_name][g_param_str]["results"] = results
             self.running_funcs[job.job_id]["funcs"][func_name][g_param_str]["status"] = "finished"
             if job.state != JobState.COMPLETED:
                 self.logger.info(f"Job {job.job_id} with transform_id {tf_id} complete with results: {results}")
                 job.complete(results)
             self.running_funcs.pop(job.job_id, None)
-        elif work.is_failed():
+        elif work.is_failed(status):
             self.logger.info(f"Job {job.job_id} with transform_id {tf_id} failed")
 
             self.running_funcs[job.job_id]["funcs"][func_name][g_param_str]["status"] = "failed"
             job.fail(f"Failed to execute {func_name} with transform_id {tf_id}")
             self.running_funcs.pop(job.job_id, None)
 
-    def check_mul_job_status(self, job) -> None:
+    def check_multi_steps_job_status(self, job) -> None:
         """
-        Check the status of a mul_job and update its state.
+        Check the status of a multi_steps_job and update its state.
 
         Args:
             job: The job to check
@@ -365,10 +382,11 @@ class PanDAiDDSRunner(BaseRunner):
         Args:
             job: The job to check
         """
-        self.logger.info(f"Check job {job.job_id} status")
+        if self.num_checks % 60 == 0:
+            self.logger.info(f"Check job {job.job_id} status")
 
         # submit jobs which are not submitted
-        if type(job) in [MulJob]:
+        if type(job) in [MultiStepsJob]:
             self.submit_job(job)
 
         if type(job) in [Job]:
@@ -376,9 +394,11 @@ class PanDAiDDSRunner(BaseRunner):
         else:
             # if type(job) in [MulJob]:
             # submit jobs which are not submitted
-            self.submit_mul_job(job)
+            self.submit_multi_steps_job(job)
 
-            self.check_mul_job(job)
+            self.check_multi_steps_job(job)
+
+        self.num_checks += 1
 
     def cancel_job(self, job) -> None:
         """

@@ -2,6 +2,7 @@
 Job - Defines a job that can be run by a runner.
 """
 
+import copy
 import logging
 from typing import Dict, Any, Optional, Callable, List
 from enum import Enum
@@ -16,7 +17,7 @@ class JobType(Enum):
     FUNCTION = "function"  # Python function
     SCRIPT = "script"  # Shell script or Python script
     CONTAINER = "container"  # Docker/Singularity container
-    MULFUNCTION = "mulfunction"  # Multiple python function
+    MULTISTEPSFUNCTION = "multistepsfunction"  # Multiple python function
 
 
 class Job:
@@ -41,6 +42,7 @@ class Job:
         env_vars: Dict[str, str] = None,
         working_dir: Optional[str] = None,
         output_files: Optional[List[str]] = None,
+        parent_result_parameter_name: Optional[str] = "parent_result_parameter",
     ):
         """
         Initialize a new job.
@@ -78,6 +80,9 @@ class Job:
         # Validate job configuration
         self._validate()
 
+        self.parent_results = None
+        self.parent_result_parameter_name = parent_result_parameter_name
+
         self.logger = logging.getLogger("Job")
 
     def _validate(self):
@@ -90,6 +95,14 @@ class Job:
 
         if self.job_type == JobType.CONTAINER and self.container_image is None:
             raise ValueError("Container image must be provided for CONTAINER job type")
+
+    def set_parent_results(self, results) -> None:
+        self.logger.inf(f"Set parent results for job {self.job_id}: {results}")
+        self.parent_results = results
+        if self.parent_result_parameter_name and results:
+            old_params = copy.deepcopy(self.params)
+            self.params[self.parent_result_parameter_name] = results
+            self.logger.info(f"Change parameters for job {self.job_id} from {old_params} to {self.params}")
 
     def set_runner(self, runner) -> None:
         """
@@ -116,7 +129,8 @@ class Job:
         self.runner.run_job(self)
 
     def check_status(self) -> None:
-        self.runner.check_job_status(self)
+        if self.state not in [JobState.COMPLETED, JobState.FAILED]:
+            self.runner.check_job_status(self)
 
     def is_running(self) -> bool:
         """

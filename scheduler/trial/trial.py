@@ -35,6 +35,7 @@ class Trial:
         self.results: Dict[str, Any] = {}
 
         self.logger = logging.getLogger("Trial")
+        self.num_checks = 0
 
     def add_job(self, job: Job) -> None:
         """
@@ -63,10 +64,8 @@ class Trial:
         Returns:
             The current state of the trial
         """
-        self.logger.info(f"Checking trial {self.trial_id} status")
         for job in self.jobs:
             job.check_status()
-            pass
 
         # If any job is still running, the trial is running
         if any(job.is_running() for job in self.jobs):
@@ -81,6 +80,10 @@ class Trial:
             self.state = TrialState.FAILED
             if not self.end_time:
                 self.end_time = datetime.now()
+
+        if self.num_checks % 60 == 0:
+            self.logger.info(f"Checking trial {self.trial_id} status: {self.state}")
+        self.num_checks += 1
 
         return self.state
 
