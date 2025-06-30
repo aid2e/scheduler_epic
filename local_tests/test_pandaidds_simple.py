@@ -9,6 +9,7 @@ from scheduler.utils.common import setup_logging
 def objective_function(x, y):
     return {"objective": (x - 0.5) ** 2 + (y - 0.5) ** 2}
 
+
 # This file will be imported to load the objective function at remote sites in PanDA
 # to avoid excuting the whole file, __name__ == "__main__" must be used.
 # There is another way to only ship the codes of the objective function to remote sites.

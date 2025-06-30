@@ -10,6 +10,8 @@ class JobState(Enum):
     Enum representing the possible states of a job.
     """
 
+    NEW = auto()
+    READY = auto()
     CREATED = auto()
     QUEUED = auto()
     RUNNING = auto()
