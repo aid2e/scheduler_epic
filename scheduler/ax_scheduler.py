@@ -30,7 +30,7 @@ except ImportError:
 from .trial.trial import Trial
 from .trial.trial_state import TrialState
 from .job.job import Job, JobType
-from .job.mul_job import MulJob
+from .job.multi_steps_job import MultiStepsFunction, MultiStepsJob
 from .runners.base_runner import BaseRunner
 
 # from .utils.common import setup_logging
@@ -113,7 +113,10 @@ class AxScheduler:
             objective_fn: The objective function to optimize
         """
         self.objective_fn = objective_fn
-        self.job_type = JobType.FUNCTION
+        if type(self.objective_fn) in [MultiStepsFunction]:
+            self.job_type = JobType.MULTISTEPSFUNCTION
+        else:
+            self.job_type = JobType.FUNCTION
 
     def set_script_objective(self, script_path: str):
         """
@@ -205,16 +208,17 @@ class AxScheduler:
                 output_files=["result.json"],
             )
 
-        elif self.job_type == JobType.MULFUNCTION:
+        elif self.job_type == JobType.MULTISTEPSFUNCTION:
             if self.objective_fn is None:
                 raise ValueError("Objective function not set")
 
-            job = MulJob(
+            job = MultiStepsJob(
                 job_id=job_id,
-                job_type=JobType.MulFUNCTION,
+                job_type=JobType.MULTISTEPSFUNCTION,
                 function=self.objective_fn,
                 params=parameters,
                 working_dir=working_dir,
+                trial_id=trial_id,
             )
 
         else:

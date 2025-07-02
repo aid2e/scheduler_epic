@@ -96,13 +96,13 @@ class Job:
         if self.job_type == JobType.CONTAINER and self.container_image is None:
             raise ValueError("Container image must be provided for CONTAINER job type")
 
-    def set_parent_results(self, results) -> None:
-        self.logger.inf(f"Set parent results for job {self.job_id}: {results}")
+    def set_parent_results(self, step, job_key, results) -> None:
+        self.logger.info(f"Set parent results for job {self.job_id} step {step} job_key {job_key}: {results}")
         self.parent_results = results
         if self.parent_result_parameter_name and results:
             old_params = copy.deepcopy(self.params)
-            self.params[self.parent_result_parameter_name] = results
-            self.logger.info(f"Change parameters for job {self.job_id} from {old_params} to {self.params}")
+            self.params[self.parent_result_parameter_name] = results.get(self.parent_result_parameter_name, None)
+            self.logger.info(f"Change parameters for job {self.job_id} step {step} job_key {job_key} from {old_params} to {self.params}")
 
     def set_runner(self, runner) -> None:
         """
@@ -129,7 +129,7 @@ class Job:
         self.runner.run_job(self)
 
     def check_status(self) -> None:
-        if self.state not in [JobState.COMPLETED, JobState.FAILED]:
+        if self.state not in [JobState.NEW, JobState.READY, JobState.CREATED, JobState.COMPLETED, JobState.FAILED]:
             self.runner.check_job_status(self)
 
     def is_running(self) -> bool:

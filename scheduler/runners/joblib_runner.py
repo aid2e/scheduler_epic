@@ -9,6 +9,7 @@ import subprocess
 import tempfile
 import json
 import shutil
+import traceback
 from typing import Dict, Any
 from concurrent.futures import ThreadPoolExecutor
 from ..job.job import JobType
@@ -51,6 +52,7 @@ class JobLibRunner(BaseRunner):
         # Ensure temp directory exists
         os.makedirs(self.tmp_dir, exist_ok=True)
 
+        self.num_checks = 0
         self.logger = logging.getLogger("JoblibRunner")
 
     def _execute_function(self, job):
@@ -78,6 +80,7 @@ class JobLibRunner(BaseRunner):
                 # if the function itself is parallelizable
                 # parallel = joblib.Parallel(n_jobs=self.n_jobs, backend=self.backend)
                 # results = parallel(joblib.delayed(job.function)(**job.params))
+                self.logger.info(f"To run job {job.job_id} function {job.function} with parameters: {job.params}")
                 results = joblib.Parallel(n_jobs=self.n_jobs, backend=self.backend)([joblib.delayed(job.function)(**job.params)])
                 # Process results and mark job as completed
                 if len(results) == 1:
@@ -101,6 +104,7 @@ class JobLibRunner(BaseRunner):
         except Exception as e:
             self.logger.error(f"Caught exception during execution job {job.job_id} function: {e}")
             # job.fail(str(e))
+            self.logger.error(traceback.format_exc())
             return {"error": str(e)}
 
     def _execute_script(self, job):
@@ -331,7 +335,9 @@ class JobLibRunner(BaseRunner):
         Args:
             job: The job to check
         """
-        self.logger.info(f"Check job {job.job_id} status")
+        if self.num_checks % 60 == 0:
+            self.logger.info(f"Check job {job.job_id} status")
+
         future = self.running_jobs.get(job.job_id)
         if future is None:
             return
@@ -347,6 +353,8 @@ class JobLibRunner(BaseRunner):
 
             # Remove from running jobs
             self.running_jobs.pop(job.job_id, None)
+
+        self.num_checks += 1
 
     def cancel_job(self, job) -> None:
         """

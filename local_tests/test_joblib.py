@@ -16,7 +16,7 @@ def objective_function(x, y):
     return {"objective": (x - 0.5) ** 2 + (y - 0.5) ** 2}
 
 
-if __name__ == "main":
+if __name__ == "__main__":
     setup_logging(log_level="debug")
 
     logging.debug("setup ax client")
