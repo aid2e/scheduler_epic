@@ -5,11 +5,8 @@ PanDARunner - Runner that submits jobs to the PanDA system.
 import datetime
 import logging
 import os
-from itertools import product
 from typing import Dict, Any
-from ..job.job import Job
 from ..job.job_state import JobState
-from ..job.multi_steps_job import MultiStepsJob
 from .base_runner import BaseRunner
 
 
@@ -77,29 +74,13 @@ class PanDAiDDSRunner(BaseRunner):
         self.job_dir = job_dir or os.path.expanduser("~/panda_jobs")
         os.makedirs(self.job_dir, exist_ok=True)
 
-        self.funcs = funcs
-        self.deps = deps
         self.running_funcs = {}
-        self.ordered_funcs = self.order_funcs(self.funcs, self.deps)
 
         self.logger = logging.getLogger("PanDAiDDSRunner")
 
         self.num_checks = 0
         self.workflow = None
         self.workflow_id = None
-
-    def order_funcs(self, funcs, deps):
-        ordered_funcs = []
-        funcs_keys = funcs.keys()
-        while funcs_keys:
-            for name in funcs_keys:
-                if name not in deps:
-                    ordered_funcs.append(name)
-                if deps[name] in ordered_funcs:
-                    ordered_funcs.append(name)
-            for name in ordered_funcs:
-                funcs_keys.pop(name)
-        return ordered_funcs
 
     def submit_workflow(self, job) -> object:
         # import iDDS workflow
@@ -220,112 +201,6 @@ class PanDAiDDSRunner(BaseRunner):
             if job.return_func_results:
                 self.running_funcs[job.job_id]["funcs"][func_name][g_param_str]["work"].init_async_result()
 
-    def submit_multi_steps_job(self, job) -> None:
-        from idds.iworkflow.work import work as work_def
-
-        workflow = self.submit_workflow(job)
-
-        # different tasks based on the global parameters
-        g_params = [dict(zip(self.global_parameters.keys(), values)) for values in product(*self.global_parameters.values())]
-        self.logger.info(f"global parameters: {g_params}")
-
-        # define works
-        self.logger.info(f"defining works for ordered funcs: {self.ordered_funcs}")
-        for func_name in self.ordered_funcs:
-            func = self.funcs[func_name].get("func")
-            output_file = self.funcs[func_name].get("output_file", None)
-            input_files = self.funcs[func_name].get("input_files", None)
-            output_dataset = self.funcs[func_name].get("output_dataset", None)
-            input_datasets = self.funcs[func_name].get("input_datasets", None)
-            return_func_results = self.funcs[func_name].get("return_func_results", False)
-            num_events = self.funcs[func_name].get("num_events")
-            num_events_per_job = self.funcs[func_name].get("num_events_per_job")
-            parent_func_name = self.deps.get(func_name)
-
-            self.running_funcs[job.job_id]["funcs"][func_name] = {}
-
-            if g_params:
-                my_funcs = self.running_funcs[job.job_id]["funcs"]
-
-                for g_param in g_params:
-                    g_param_str = "+".join(f"{k}_{v}" for k, v in g_param.items())
-                    if g_param_str not in my_funcs[func_name]:
-                        work_name = f"{self.name}.{job.job_id}.{func_name}.{g_param_str}"
-                        work = work_def(
-                            func=func,
-                            workflow=workflow,
-                            return_work=True,
-                            map_results=True,
-                            name=work_name,
-                            output_file_name=output_file,
-                            output_dataset_name=(f"{output_dataset}.{job.job_id}" if output_dataset else None),
-                            num_events=num_events,
-                            num_events_per_job=num_events_per_job,
-                            input_datasets=dict(zip(input_files, input_datasets)),
-                            log_dataset_name=(f"{output_dataset}.{job.job_id}.log" if output_dataset else f"{work_name}.log"),
-                            parent_transform_id=(self.running_funcs[parent_func_name].get("tf_id", None) if parent_func_name else None),
-                            parent_internal_id=(self.running_funcs[parent_func_name].get("work").internal_id if parent_func_name else None),
-                            job_key=work_name,
-                        )
-
-                        tf_id = work.submit()
-                        if not tf_id:
-                            raise Exception(f"failed to submit {work_name} to PanDA")
-
-                        if return_func_results:
-                            work.init_async_result()
-
-                        self.running_funcs[job.job_id]["funcs"][func_name][g_param_str] = {
-                            "work": work(**job.parameters, **g_params),
-                            "tf_id": tf_id,
-                            "status": "New",
-                            "return_func_results": return_func_results,
-                            "results": None,
-                            "job_key": work_name,
-                        }
-                    else:
-                        if return_func_results:
-                            self.running_funcs[job.job_id]["funcs"][func_name][g_param_str]["work"].init_async_result()
-            else:
-                work_name = f"{self.name}.{job.job_id}.{func_name}"
-                g_param_str = "None"
-                if g_param_str not in self.running_funcs[job.job_id]["funcs"][func_name]:
-                    work = work_def(
-                        func=func,
-                        workflow=self.workflow,
-                        return_work=True,
-                        map_results=True,
-                        name=work_name,
-                        output_file_name=output_file,
-                        output_dataset_name=(f"{output_dataset}.{job.job_id}" if output_dataset else None),
-                        num_events=num_events,
-                        num_events_per_job=num_events_per_job,
-                        input_dataset=dict(zip(input_files, input_datasets)),
-                        log_dataset_name=(f"{output_dataset}.{job.job_id}.log" if output_dataset else f"{work_name}.log"),
-                        parent_transform_id=(self.running_funcs[parent_func_name].get("tf_id", None) if parent_func_name else None),
-                        parent_internal_id=(self.running_funcs[parent_func_name].get("work").internal_id if parent_func_name else None),
-                        job_key=work_name,
-                    )
-
-                    tf_id = work.submit()
-                    if not tf_id:
-                        raise Exception(f"failed to submit {work_name} to PanDA")
-
-                    if return_func_results:
-                        work.init_async_result()
-
-                    self.running_funcs[job.job_id]["funcs"][func_name][g_param_str] = {
-                        "work": work(*job.parameters, **g_params),
-                        "tf_id": tf_id,
-                        "status": "New",
-                        "return_func_results": return_func_results,
-                        "results": None,
-                        "job_key": work_name,
-                    }
-                else:
-                    if return_func_results:
-                        self.running_funcs[job.job_id]["funcs"][func_name][g_param_str]["work"].init_async_result()
-
     def run_job(self, job) -> None:
         """
         Run a job using the appropriate execution method.
@@ -333,11 +208,7 @@ class PanDAiDDSRunner(BaseRunner):
         Args:
             job: The job to run
         """
-        if type(job) in [Job]:
-            self.submit_job(job)
-        else:
-            # type(job) in [MulJob]:
-            self.submit_multi_steps_job(job)
+        self.submit_job(job)
 
     def check_single_job_status(self, job) -> None:
         """
@@ -383,30 +254,6 @@ class PanDAiDDSRunner(BaseRunner):
             job.fail(f"Failed to execute {func_name} with transform_id {tf_id}")
             self.running_funcs.pop(job.job_id, None)
 
-    def check_multi_steps_job_status(self, job) -> None:
-        """
-        Check the status of a multi_steps_job and update its state.
-
-        Args:
-            job: The job to check
-        """
-        # check job status
-        for func_name in self.running_funcs[job.job_id]["funcs"]:
-            return_func_results = self.funcs[job.job_id]["funcs"][func_name].get("return_func_results", False)
-            if return_func_results:
-                for g_param_str in self.running_funcs[job.job_id]["funcs"][func_name]:
-                    work = self.running_funcs[job.job_id]["funcs"][func_name][g_param_str]["work"]
-
-                    work.init_async_result()
-                    if work.is_finished():
-                        ret = work.get_results()
-                        job_key = self.running_funcs[job.job_id]["funcs"][func_name][g_param_str]["job_key"]
-                        results = ret.get_result(nam=work.name, key=job_key, verbose=True)
-                        self.running_funcs[job.job_id]["funcs"][func_name][g_param_str]["results"] = results
-                        self.running_funcs[job.job_id]["funcs"][func_name][g_param_str]["status"] = "finished"
-                    elif work.is_failed():
-                        self.running_funcs[job.job_id]["funcs"][func_name][g_param_str]["status"] = "failed"
-
     def check_job_status(self, job) -> None:
         """
         Check the status of a job and update its state.
@@ -417,18 +264,7 @@ class PanDAiDDSRunner(BaseRunner):
         if self.num_checks % 60 == 0:
             self.logger.info(f"Check job {job.job_id} status")
 
-        # submit jobs which are not submitted
-        if type(job) in [MultiStepsJob]:
-            self.submit_job(job)
-
-        if type(job) in [Job]:
-            self.check_single_job_status(job)
-        else:
-            # if type(job) in [MulJob]:
-            # submit jobs which are not submitted
-            self.submit_multi_steps_job(job)
-
-            self.check_multi_steps_job(job)
+        self.check_single_job_status(job)
 
         self.num_checks += 1
 

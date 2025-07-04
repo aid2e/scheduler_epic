@@ -265,13 +265,13 @@ class MultiStepsJob(Job):
                 output_dataset = orig_output_dataset
                 input_datasets = copy.deepcopy(orig_input_datasets)
                 if orig_output_dataset:
-                    output_dataset = orig_output_dataset.replace("#global_parameter_key", "None").replace("#trial_id", self.trial_id)
+                    output_dataset = orig_output_dataset.replace("#global_parameter_key", "None").replace("#trial_id", self.trial_id).replace("#job_id", self.job_id)
                 else:
                     output_dataset = orig_output_dataset
                 if orig_input_datasets:
                     input_datasets = copy.deepcopy(orig_input_datasets)
                     for k in input_datasets.keys():
-                        input_datasets[k] = input_datasets[k].replace("#global_parameter_key", "None").replace("#trial_id", self.trial_id)
+                        input_datasets[k] = input_datasets[k].replace("#global_parameter_key", "None").replace("#trial_id", self.trial_id).replace("#job_id", self.job_id)
                 else:
                     input_datasets = orig_input_datasets
 
@@ -302,13 +302,13 @@ class MultiStepsJob(Job):
                     g_param_str = g_param_str.replace("+", "plus")
                     g_param_str = g_param_str.replace("-", "minus")
                     if orig_output_dataset:
-                        output_dataset = orig_output_dataset.replace("#global_parameter_key", g_param_str).replace("#trial_id", self.trial_id)
+                        output_dataset = orig_output_dataset.replace("#global_parameter_key", g_param_str).replace("#trial_id", self.trial_id).replace("#job_id", self.job_id)
                     else:
                         output_dataset = orig_output_dataset
                     if orig_input_datasets:
                         input_datasets = copy.deepcopy(orig_input_datasets)
                         for k in input_datasets.keys():
-                            input_datasets[k] = input_datasets[k].replace("#global_parameter_key", g_param_str).replace("#trial_id", self.trial_id)
+                            input_datasets[k] = input_datasets[k].replace("#global_parameter_key", g_param_str).replace("#trial_id", self.trial_id).replace("#job_id", self.job_id)
                     else:
                         input_datasets = orig_input_datasets
 
