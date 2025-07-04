@@ -40,7 +40,6 @@ class PanDAiDDSRunner(BaseRunner):
         enable_separate_log: bool = True,
         global_parameters: dict = {},
         job_dir: str = None,
-        return_func_results: bool = True,
         funcs: dict = {},
         deps: dict = {},
         config: Dict[str, Any] = None,
@@ -83,7 +82,6 @@ class PanDAiDDSRunner(BaseRunner):
         self.running_funcs = {}
         self.ordered_funcs = self.order_funcs(self.funcs, self.deps)
 
-        self.return_func_results = return_func_results
         self.logger = logging.getLogger("PanDAiDDSRunner")
 
         self.num_checks = 0
@@ -158,34 +156,68 @@ class PanDAiDDSRunner(BaseRunner):
             self.running_funcs[job.job_id]["funcs"][func_name] = {}
 
         if g_param_str not in self.running_funcs[job.job_id]["funcs"][func_name]:
-            work = work_def(
-                func=func,
-                workflow=workflow,
-                return_work=True,
-                map_results=True,
-                name=work_name,
-                job_key=work_name,
-                log_dataset_name=f"{work_name}.log/"
-            )(**job.params)
+            if job.with_output_dataset:
+                output_dataset_name = job.output_dataset
+                if not output_dataset_name.endswith("/"):
+                    output_dataset_name = output_dataset_name + "/"
+                work = work_def(
+                    func=func,
+                    workflow=workflow,
+                    return_work=True,
+                    map_results=True,
+                    name=work_name,
+                    job_key=work_name,
+                    log_dataset_name=f"{work_name}.log/",
+                    output_file_name=job.output_file,
+                    output_dataset_name=output_dataset_name,
+                    num_events=job.num_events,
+                    num_events_per_job=job.num_events_per_job,
+                    parent_internal_id=job.parent_internal_id,
+                )(**job.params)
+            elif job.with_input_datasets:
+                work = work_def(
+                    func=func,
+                    workflow=workflow,
+                    return_work=True,
+                    map_results=True,
+                    name=work_name,
+                    job_key=work_name,
+                    log_dataset_name=f"{work_name}.log/",
+                    input_datasets=job.input_datasets,
+                    parent_internal_id=job.parent_internal_id,
+                )(**job.params)
+            else:
+                work = work_def(
+                    func=func,
+                    workflow=workflow,
+                    return_work=True,
+                    map_results=True,
+                    name=work_name,
+                    job_key=work_name,
+                    log_dataset_name=f"{work_name}.log/",
+                    parent_internal_id=job.parent_internal_id,
+                )(**job.params)
+
+            job.set_internal_id(work.internal_id)
 
             tf_id = work.submit()
-            self.logger.info(f"Submit work {work_name} to PanDA/iDDS with transform_id {tf_id}")
+            self.logger.info(f"Submit work {work_name} internal_id {work.internal_id} to PanDA/iDDS with transform_id {tf_id}, parent_internal_id {work.parent_internal_id}")
             if not tf_id:
                 raise Exception(f"Failed to submit {work_name} to PanDA")
 
-            if self.return_func_results:
+            if job.return_func_results:
                 work.init_async_result()
 
             self.running_funcs[job.job_id]["funcs"][func_name][g_param_str] = {
                 "work": work,
                 "tf_id": tf_id,
                 "status": "New",
-                "return_func_results": self.return_func_results,
+                "return_func_results": job.return_func_results,
                 "results": None,
                 "job_key": work_name,
             }
         else:
-            if self.return_func_results:
+            if job.return_func_results:
                 self.running_funcs[job.job_id]["funcs"][func_name][g_param_str]["work"].init_async_result()
 
     def submit_multi_steps_job(self, job) -> None:

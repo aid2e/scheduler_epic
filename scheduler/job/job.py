@@ -43,6 +43,14 @@ class Job:
         working_dir: Optional[str] = None,
         output_files: Optional[List[str]] = None,
         parent_result_parameter_name: Optional[str] = "parent_result_parameter",
+        return_func_results: bool = True,
+        with_output_dataset: bool = False,
+        output_file: str = None,
+        output_dataset: str = None,
+        num_events: int = 1,
+        num_events_per_job: int = 1,
+        with_input_datasets: bool = False,
+        input_datasets: dict = {},
     ):
         """
         Initialize a new job.
@@ -83,6 +91,19 @@ class Job:
         self.parent_results = None
         self.parent_result_parameter_name = parent_result_parameter_name
 
+        self.return_func_results = return_func_results
+
+        self.with_output_dataset = with_output_dataset
+        self.output_file = output_file
+        self.output_dataset = output_dataset
+        self.num_events = num_events
+        self.num_events_per_job = num_events_per_job
+        self.with_input_datasets = with_input_datasets
+        self.input_datasets = input_datasets
+
+        self.internal_id = None
+        self.parent_internal_id = None
+
         self.logger = logging.getLogger("Job")
 
     def _validate(self):
@@ -95,6 +116,9 @@ class Job:
 
         if self.job_type == JobType.CONTAINER and self.container_image is None:
             raise ValueError("Container image must be provided for CONTAINER job type")
+
+    def set_internal_id(self, internal_id) -> None:
+        self.internal_id = internal_id
 
     def set_parent_results(self, step, job_key, results) -> None:
         self.logger.info(f"Set parent results for job {self.job_id} step {step} job_key {job_key}: {results}")
@@ -130,7 +154,8 @@ class Job:
 
     def check_status(self) -> None:
         if self.state not in [JobState.NEW, JobState.READY, JobState.CREATED, JobState.COMPLETED, JobState.FAILED]:
-            self.runner.check_job_status(self)
+            if self.return_func_results:
+                self.runner.check_job_status(self)
 
     def is_running(self) -> bool:
         """

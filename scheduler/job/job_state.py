@@ -19,6 +19,7 @@ class JobState(Enum):
     FAILED = auto()
     PAUSED = auto()
     CANCELLED = auto()
+    RUNNINGNOMONITOR = auto()
 
     def __str__(self):
         return self.name

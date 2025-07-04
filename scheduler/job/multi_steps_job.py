@@ -71,6 +71,14 @@ class MultiStepsJob(Job):
         output_files: Optional[List[str]] = None,
         parent_result_parameter_name="parent_result_parameter",
         trial_id=None,
+        return_func_results: bool = True,
+        with_output_dataset: bool = False,
+        output_file: str = None,
+        output_dataset: str = None,
+        num_events: int = 1,
+        num_events_per_job: int = 1,
+        with_input_datasets: bool = False,
+        input_datasets: dict = {},
     ):
         """
         Initialize a new job.
@@ -117,6 +125,19 @@ class MultiStepsJob(Job):
         self.parent_results = None
         self.parent_result_parameter_name = parent_result_parameter_name
 
+        self.return_func_results = return_func_results
+
+        self.with_output_dataset = with_output_dataset
+        self.output_file = output_file
+        self.output_dataset = output_dataset
+        self.num_events = num_events
+        self.num_events_per_job = num_events_per_job
+        self.with_input_datasets = with_input_datasets
+        self.input_datasets = input_datasets
+
+        self.internal_id = None
+        self.parent_internal_id = None
+
         self.logger = logging.getLogger("MultiStepsJob")
 
         self._initialize()
@@ -140,6 +161,14 @@ class MultiStepsJob(Job):
         container_command=None,
         additional_parameters=None,
         parent_result_parameter_name=None,
+        return_func_results=True,
+        with_output_dataset=False,
+        output_file=None,
+        output_dataset=None,
+        num_events=1,
+        num_events_per_job=1,
+        with_input_datasets=False,
+        input_datasets={},
     ) -> Job:
         new_params = copy.deepcopy(self.params)
         if additional_parameters:
@@ -156,6 +185,14 @@ class MultiStepsJob(Job):
                 params=new_params,
                 working_dir=self.working_dir,
                 parent_result_parameter_name=parent_result_parameter_name,
+                return_func_results=return_func_results,
+                with_output_dataset=with_output_dataset,
+                output_file=output_file,
+                output_dataset=output_dataset,
+                num_events=num_events,
+                num_events_per_job=num_events_per_job,
+                with_input_datasets=with_input_datasets,
+                input_datasets=input_datasets,
             )
         elif self.job_type == JobType.SCRIPT:
             job = Job(
@@ -208,12 +245,36 @@ class MultiStepsJob(Job):
             container_command = objective_funcs[step_name].get("container_command", None)
             job_type = objective_funcs[step_name].get("job_type", JobType.FUNCTION)
             parent_result_parameter_name = objective_funcs[step_name].get("parent_result_parameter_name", None)
+
+            return_func_results = objective_funcs[step_name].get("return_func_results", True)
+            with_output_dataset = objective_funcs[step_name].get("with_output_dataset", False)
+            output_file = objective_funcs[step_name].get("output_file", None)
+            orig_output_dataset = objective_funcs[step_name].get("output_dataset", None)
+            num_events = objective_funcs[step_name].get("num_events", 1)
+            num_events_per_job = objective_funcs[step_name].get("num_events_per_job", 1)
+
+            with_input_datasets = objective_funcs[step_name].get("with_input_datasets", False)
+            orig_input_datasets = objective_funcs[step_name].get("input_datasets", None)
+
             runner = objective_funcs[step_name]["runner"]
             if not runner:
                 runner = self.runner
 
-            self.step_states[step_name] = JobState.NEW
+            self.step_states[step_name] = {"state": JobState.NEW, "return_func_results": return_func_results}
             if not self.global_parameters or step_name not in self.global_parameters_steps:
+                output_dataset = orig_output_dataset
+                input_datasets = copy.deepcopy(orig_input_datasets)
+                if orig_output_dataset:
+                    output_dataset = orig_output_dataset.replace("#global_parameter_key", "None").replace("#trial_id", self.trial_id)
+                else:
+                    output_dataset = orig_output_dataset
+                if orig_input_datasets:
+                    input_datasets = copy.deepcopy(orig_input_datasets)
+                    for k in input_datasets.keys():
+                        input_datasets[k] = input_datasets[k].replace("#global_parameter_key", "None").replace("#trial_id", self.trial_id)
+                else:
+                    input_datasets = orig_input_datasets
+
                 step_job = self.get_step_job(
                     job_type,
                     runner,
@@ -223,12 +284,34 @@ class MultiStepsJob(Job):
                     container_image=container_image,
                     container_command=container_command,
                     parent_result_parameter_name=parent_result_parameter_name,
+                    return_func_results=return_func_results,
+                    with_output_dataset=with_output_dataset,
+                    output_file=output_file,
+                    output_dataset=output_dataset,
+                    num_events=num_events,
+                    num_events_per_job=num_events_per_job,
+                    with_input_datasets=with_input_datasets,
+                    input_datasets=input_datasets,
                 )
                 g_params = self.get_key_from_dict(None)
                 self.step_jobs[step_name] = {g_params: step_job}
             else:
                 self.step_jobs[step_name] = {}
                 for g_params in self.global_parameters:
+                    g_param_str = "+".join(f"{k}_{v}" for k, v in sorted(g_params.items()))
+                    g_param_str = g_param_str.replace("+", "plus")
+                    g_param_str = g_param_str.replace("-", "minus")
+                    if orig_output_dataset:
+                        output_dataset = orig_output_dataset.replace("#global_parameter_key", g_param_str).replace("#trial_id", self.trial_id)
+                    else:
+                        output_dataset = orig_output_dataset
+                    if orig_input_datasets:
+                        input_datasets = copy.deepcopy(orig_input_datasets)
+                        for k in input_datasets.keys():
+                            input_datasets[k] = input_datasets[k].replace("#global_parameter_key", g_param_str).replace("#trial_id", self.trial_id)
+                    else:
+                        input_datasets = orig_input_datasets
+
                     step_job = self.get_step_job(
                         job_type,
                         runner,
@@ -238,6 +321,14 @@ class MultiStepsJob(Job):
                         container_image=container_image,
                         container_command=container_command,
                         parent_result_parameter_name=parent_result_parameter_name,
+                        return_func_results=return_func_results,
+                        with_output_dataset=with_output_dataset,
+                        output_file=output_file,
+                        output_dataset=output_dataset,
+                        num_events=num_events,
+                        num_events_per_job=num_events_per_job,
+                        with_input_datasets=with_input_datasets,
+                        input_datasets=input_datasets,
                     )
                     g_params_key = self.get_key_from_dict(g_params)
                     self.step_jobs[step_name][g_params_key] = step_job
@@ -273,7 +364,7 @@ class MultiStepsJob(Job):
 
         readys = []
         for step_name in self.step_jobs:
-            if (step_name not in self.deps or self.deps[step_name].get("state", JobState.NEW) == JobState.READY) and (self.step_states[step_name] in [JobState.NEW]):
+            if (step_name not in self.deps or self.deps[step_name].get("state", JobState.NEW) == JobState.READY) and (self.step_states[step_name]["state"] in [JobState.NEW]):
                 # self.step_jobs[step_name].state not in [JobState.COMPLETED, JobState.FAILED, JobState.RUNNING, JobState.PAUSED, JobState.CANCELLED]:
                 readys.append(step_name)
         return readys
@@ -287,6 +378,9 @@ class MultiStepsJob(Job):
         """
         self.runner = runner
 
+    def set_internal_id(self, internal_id) -> None:
+        self.internal_id = internal_id
+
     def set_parent_results(self, step, job_key, results) -> None:
         self.logger.info(f"Set parent results for job {self.job_id} step {step} job_key {job_key}: {results}")
         self.parent_results = results
@@ -295,7 +389,7 @@ class MultiStepsJob(Job):
             self.params[self.parent_result_parameter_name] = results.get(self.parent_result_parameter_name, None)
             self.logger.info(f"Change parameters for job {self.job_id} step {step} job_key {job_key} from {old_params} to {self.params}")
 
-    def get_parent_results(self, step_name, g_param_key) -> (bool, object):
+    def get_parent_results(self, step_job, step_name, g_param_key) -> (bool, object):
         self.logger.info(f"Get parent results for step {step_name} job key {g_param_key}")
         if step_name not in self.deps:
             self.logger.info(f"No parent dependency for step {step_name} job key {g_param_key}")
@@ -309,6 +403,17 @@ class MultiStepsJob(Job):
 
         if dep_type in ["datasets"]:
             # depend on the rucio dataset name
+            if dep_map != "one2one":
+                dep_map == "one2one"
+                self.logger.info(f"For step {step_name} job key {g_param_key}, dep_type is datasets. the dep_map forced to one2one")
+
+            parent_job = parent_jobs.get(g_param_key, None)
+            if not parent_job:
+                err = f"For step {step_name} job key {g_param_key} with dep map {dep_map}, no parent jobs are found for job key {g_param_key}"
+                self.logger.error(err)
+                raise Exception(err)
+
+            step_job.parent_internal_id = parent_job.internal_id
             return False, None
         if not parent_jobs:
             # not parent jobs
@@ -343,12 +448,15 @@ class MultiStepsJob(Job):
         for step in ready_steps:
             for g_param_key in self.step_jobs[step]:
                 step_job = self.step_jobs[step][g_param_key]
-                has_parent, parent_results = self.get_parent_results(step, g_param_key)
+                has_parent, parent_results = self.get_parent_results(step_job, step, g_param_key)
                 if has_parent:
                     step_job.set_parent_results(step, g_param_key, parent_results)
                 self.logger.info(f"Ready to run job {step_job.job_id} step {step} job_key {g_param_key}")
                 step_job.run()
-            self.step_states[step] = JobState.RUNNING
+            if self.step_states[step]["return_func_results"]:
+                self.step_states[step]["state"] = JobState.RUNNING
+            else:
+                self.step_states[step]["state"] = JobState.RUNNINGNOMONITOR
 
     def run(self) -> None:
         """
@@ -360,7 +468,7 @@ class MultiStepsJob(Job):
 
     def get_final_results(self) -> None:
         self.logger.info(f"Getting final results for Job {self.job_id}")
-        if self.step_states[self.final] not in [JobState.COMPLETED, JobState.FAILED]:
+        if self.step_states[self.final]["state"] not in [JobState.COMPLETED, JobState.FAILED]:
             return
         g_param_keys = list(self.step_jobs[self.final].keys())
         if len(g_param_keys) != 1:
@@ -379,6 +487,8 @@ class MultiStepsJob(Job):
         has_failures = False
         for step_name in self.step_jobs:
             for g_param_key in self.step_jobs[step_name]:
+                if not self.step_jobs[step_name][g_param_key].return_func_results:
+                    continue
                 self.step_jobs[step_name][g_param_key].check_status()
                 if self.step_jobs[step_name][g_param_key].has_failed():
                     self.logger.error(f"Job {self.job_id} failed at step {step_name} with global_parameters {g_param_key}")
@@ -395,17 +505,17 @@ class MultiStepsJob(Job):
         for step_name in self.step_jobs:
             if all(self.step_jobs[step_name][g_param_key].is_completed()for g_param_key in self.step_jobs[step_name]):
                 self.logger.info(f"Job {self.job_id} step {step_name} completed")
-                self.step_states[step_name] = JobState.COMPLETED
+                self.step_states[step_name]["state"] = JobState.COMPLETED
             elif any(self.step_jobs[step_name][g_param_key].has_failed()for g_param_key in self.step_jobs[step_name]):
                 self.logger.info(f"Job {self.job_id} step {step_name} has failed")
-                self.step_states[step_name] = JobState.FAILED
+                self.step_states[step_name]["state"] = JobState.FAILED
 
         # if the final step terminates, terminate the job
-        if self.step_states[self.final] in [JobState.COMPLETED]:
+        if self.step_states[self.final]["state"] in [JobState.COMPLETED]:
             self.get_final_results()
             self.complete(self.results)
             return
-        elif self.step_states[self.final] in [JobState.FAILED]:
+        elif self.step_states[self.final]["state"] in [JobState.FAILED]:
             self.get_final_results()
             self.fail(self.results)
             return
@@ -414,7 +524,7 @@ class MultiStepsJob(Job):
         for dep in self.deps:
             if self.deps[dep]["state"] not in [JobState.READY]:
                 parent = self.deps[dep]["parent"]
-                if self.step_states[parent] in [JobState.COMPLETED, JobState.FAILED]:
+                if self.step_states[parent]["state"] in [JobState.COMPLETED, JobState.FAILED, JobState.RUNNINGNOMONITOR]:
                     self.deps[dep]["state"] = JobState.READY
 
         # run ready steps

@@ -8,7 +8,13 @@ from scheduler.job.job import JobType
 from scheduler.job.multi_steps_job import MultiStepsFunction
 
 
-# define global parameters
+# define global parameters. It will generate a list of parameters working together with hyperparameters.
+# For a group of hyperparameters, we may need to evaluate different types of events, then in the final
+# step to merge the results.
+# [{'eta_points': 0.1, 'particles': 'pi+'},
+#  {'eta_points': 0.1, 'particles': 'kaon+'},
+#  {'eta_points': 0.2, 'particles': 'pi+'},
+#  {'eta_points': 0.2, 'particles': 'kaon+'}]
 global_parameters = {
     "particles": ["pi+", "kaon+"],
     "eta_points": [0.1, 0.2]
