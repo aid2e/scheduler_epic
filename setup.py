@@ -14,12 +14,12 @@ setup(
         "slurm": ["drmaa"],  # Optional dependency for Slurm support
         "panda": ["panda-client"],  # Optional dependency for PanDA support
     },
-    author="Your Name",
-    author_email="your.email@example.com",
+    author="AID2E Team",
+    author_email="ksuresh@wm.edu",
     description="A scheduler library for AID2E extending Ax functionality for ePIC EIC detector optimization",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/scheduler",
+    url="https://github.com/aid2e/scheduler_epic",
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
