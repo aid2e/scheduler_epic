@@ -1,0 +1,4 @@
+# Formatting and linting tools (pinned versions)
+black==23.12.1
+ruff==0.1.9
+isort==5.13.2

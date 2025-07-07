@@ -1,0 +1,13 @@
+# Development dependencies
+pytest>=4.6
+pytest-cov
+pytest-mock
+pytest-xdist
+black
+ruff
+isort
+mypy
+pre-commit
+types-setuptools
+coverage
+factory-boy
