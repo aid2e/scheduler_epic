@@ -51,7 +51,7 @@ jobs:
     
     - name: Upload API documentation report
       if: steps.git-check.outputs.docs_changed == 'true'
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: api-documentation
         path: docs/api/
