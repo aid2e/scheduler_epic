@@ -32,7 +32,7 @@ class Job(self, job_id: <class 'str'>, job_type: <enum 'JobType'> = JobType.FUNC
 
 | Method | Description |
 |--------|-------------|
-| [`check_status`](#check_status) |  |
+| [`check_status`](#check_status) | Run to check the status of the job. |
 | [`complete`](#complete) | Mark the job as completed and store its results. |
 | [`fail`](#fail) | Mark the job as failed and store the error. |
 | [`get_results`](#get_results) | Get the results of this job. |
@@ -40,8 +40,8 @@ class Job(self, job_id: <class 'str'>, job_type: <enum 'JobType'> = JobType.FUNC
 | [`is_completed`](#is_completed) | Check if the job is completed. |
 | [`is_running`](#is_running) | Check if the job is running. |
 | [`run`](#run) | Run this job using its assigned runner. |
-| [`set_internal_id`](#set_internal_id) |  |
-| [`set_parent_results`](#set_parent_results) |  |
+| [`set_internal_id`](#set_internal_id) | Set internal id for the job. |
+| [`set_parent_results`](#set_parent_results) | Set results for the parent job. |
 | [`set_runner`](#set_runner) | Set the runner for this job. |
 
 ## Method Details
@@ -52,7 +52,7 @@ class Job(self, job_id: <class 'str'>, job_type: <enum 'JobType'> = JobType.FUNC
 def check_status(self) -> None
 ```
 
-*No documentation available.*
+Run to check the status of the job.
 
 ---
 
@@ -146,7 +146,9 @@ Run this job using its assigned runner.
 def set_internal_id(self, internal_id: Any) -> None
 ```
 
-*No documentation available.*
+Set internal id for the job.
+**Args:**
+* **internal_id**: The internal id for the job.
 
 ---
 
@@ -156,7 +158,11 @@ def set_internal_id(self, internal_id: Any) -> None
 def set_parent_results(self, step: Any, job_key: Any, results: Any) -> None
 ```
 
-*No documentation available.*
+Set results for the parent job.
+**Args:**
+* **step**: The step name of the curret job
+* **job_key**: The job key of the curret job
+* **results**: Results from the parent job
 
 ---
 
