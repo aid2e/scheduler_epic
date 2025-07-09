@@ -22,7 +22,7 @@
       
       
       <link rel="icon" href="../../assets/favicon.png">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.14">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.15">
     
     
       
@@ -78,7 +78,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#panda-execution" class="md-skip">
+        <a href="#tutorial-using-panda-execution" class="md-skip">
           Skip to content
         </a>
       
@@ -791,15 +791,6 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
-    <span class="md-ellipsis">
-      Overview
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#prerequisites" class="md-nav__link">
     <span class="md-ellipsis">
       Prerequisites
@@ -809,18 +800,27 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#implementation" class="md-nav__link">
+  <a href="#initialize-the-environment" class="md-nav__link">
     <span class="md-ellipsis">
-      Implementation
+      Initialize the environment
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#examples" class="md-nav__link">
+  <a href="#setup-the-environment" class="md-nav__link">
     <span class="md-ellipsis">
-      Examples
+      Setup the environment
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#simple-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Simple example
     </span>
   </a>
   
@@ -1258,15 +1258,6 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#overview" class="md-nav__link">
-    <span class="md-ellipsis">
-      Overview
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
   <a href="#prerequisites" class="md-nav__link">
     <span class="md-ellipsis">
       Prerequisites
@@ -1276,18 +1267,27 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#implementation" class="md-nav__link">
+  <a href="#initialize-the-environment" class="md-nav__link">
     <span class="md-ellipsis">
-      Implementation
+      Initialize the environment
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#examples" class="md-nav__link">
+  <a href="#setup-the-environment" class="md-nav__link">
     <span class="md-ellipsis">
-      Examples
+      Setup the environment
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#simple-example" class="md-nav__link">
+    <span class="md-ellipsis">
+      Simple example
     </span>
   </a>
   
@@ -1309,7 +1309,7 @@
 
 
   
-    <a href="https://github.com/aid2e/scheduler_epic/edit/master/docs/tutorials/panda_execution.md" title="Edit this page" class="md-content__button md-icon">
+    <a href="https://github.com/aid2e/scheduler_epic/edit/master/docs/tutorials/panda_execution.md" title="Edit this page" class="md-content__button md-icon" rel="edit">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4zm10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1z"/></svg>
     </a>
@@ -1317,23 +1317,352 @@
   
 
 
-<h1 id="panda-execution">PANDA Execution<a class="headerlink" href="#panda-execution" title="Permanent link">&para;</a></h1>
-<div class="admonition note">
-<p class="admonition-title">Work in Progress</p>
-<p>This documentation page is currently under development. Check back soon for complete information.</p>
-</div>
+<h1 id="tutorial-using-panda-execution">Tutorial: Using PanDA Execution<a class="headerlink" href="#tutorial-using-panda-execution" title="Permanent link">&para;</a></h1>
+<p>The PanDA (Production and Distributed Analysis) system is a high-performance workload management system originally developed by the ATLAS experiment at CERN. It is now widely used for managing distributed computing workloads across Grid, Cloud, and HPC environments. The iDDS (intelligent Data Delivery Service) is a powerful and flexible workflow system to orchestrate multi-step, data-aware, and ML-friendly workflows over distributed computing systems.</p>
 <p>This tutorial explains how to use PANDA execution with the Scheduler for AID2E.</p>
-<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
-<p>Write a detailed information about <code>PAnDA</code> framework.</p>
 <h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Basic understanding of PANDA</li>
-<li>A working installation of Scheduler for AID2E</li>
+<li>User registeration based on CILogon https://panda-iam-doma.cern.ch/</li>
+<li>PanDA documents https://panda-wms.readthedocs.io/en/latest/</li>
+<li>iDDS documents https://idds.readthedocs.io/en/latest/</li>
 </ul>
-<h2 id="implementation">Implementation<a class="headerlink" href="#implementation" title="Permanent link">&para;</a></h2>
-<p>More detailed documentation coming soon.</p>
-<h2 id="examples">Examples<a class="headerlink" href="#examples" title="Permanent link">&para;</a></h2>
-<p>Code examples will be provided in future updates.</p>
+<h2 id="initialize-the-environment">Initialize the environment<a class="headerlink" href="#initialize-the-environment" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>python3.12<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="nb">source</span><span class="w"> </span>.venv/bin/activate
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>pip<span class="w"> </span>install<span class="w"> </span>--upgrade<span class="w"> </span>pip<span class="w"> </span>black<span class="w"> </span>ruff
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>pip<span class="w"> </span>install<span class="w"> </span>idds-client<span class="w"> </span>idds-common<span class="w"> </span>idds-workflow<span class="w"> </span>panda-client
+</code></pre></div>
+<h2 id="setup-the-environment">Setup the environment<a class="headerlink" href="#setup-the-environment" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Setup virturl environment</li>
+</ul>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nb">source</span><span class="w"> </span>./setup.sh
+</code></pre></div>
+<p>setup.sh [<code>https://github.com/aid2e/scheduler_epic/blob/pandaidds/setup.sh</code>]</p>
+<ul>
+<li>Setup PanDA(BNL) environment (This PanDA service is maintained by BNL to run jobs at WLCG, OSG, HPC and so on, with Rucio integrated).
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">source</span><span class="w"> </span>setup_panda_bnl.sh
+</code></pre></div>
+<code>setup_panda_bnl.sh</code> [<code>https://github.com/aid2e/scheduler_epic/blob/pandaidds/setup_panda_bnl.sh</code>]</li>
+</ul>
+<h2 id="simple-example">Simple example<a class="headerlink" href="#simple-example" title="Permanent link">&para;</a></h2>
+<h1 id="setup-1-import-python-libraries">Setup 1: import python libraries<a class="headerlink" href="#setup-1-import-python-libraries" title="Permanent link">&para;</a></h1>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">logging</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>
+<a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="kn">from</span><span class="w"> </span><span class="nn">ax.service.ax_client</span><span class="w"> </span><span class="kn">import</span> <span class="n">AxClient</span><span class="p">,</span> <span class="n">ObjectiveProperties</span>
+<a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="kn">from</span><span class="w"> </span><span class="nn">scheduler</span><span class="w"> </span><span class="kn">import</span> <span class="n">AxScheduler</span><span class="p">,</span> <span class="n">PanDAiDDSRunner</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="kn">from</span><span class="w"> </span><span class="nn">scheduler.utils.common</span><span class="w"> </span><span class="kn">import</span> <span class="n">setup_logging</span>
+</code></pre></div>
+<h1 id="setup-2-define-the-objectvie-function">Setup 2: Define the objectvie function<a class="headerlink" href="#setup-2-define-the-objectvie-function" title="Permanent link">&para;</a></h1>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">objective_function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;objective&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">}</span>
+</code></pre></div>
+<h1 id="setup-3-initialize-the-ax-client-and-create-the-experiment">Setup 3: Initialize the Ax client and create the experiment<a class="headerlink" href="#setup-3-initialize-the-ax-client-and-create-the-experiment" title="Permanent link">&para;</a></h1>
+<p>With python libraries like <code>cloudpickle</code> and <code>dill</code>, users can ship the function codes to remote computing resources
+to execute them. However, in complex use cases, one function may need to call a lot of other functions and libraries
+developed. Many of them are locally developed. Instead of only shipping the codes of one function to remote computing
+resources. The idea of PanDA-iDDS is to ship all codes in the current working directory and then try to import them at
+remote computing resources.</p>
+<p>NOTE: The python codes will be imported at remote computing resources. To avoid executing some codes during importing,
+You need to put those codes in <code>if __name__ == "__main__":</code></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="n">setup_logging</span><span class="p">(</span><span class="n">log_level</span><span class="o">=</span><span class="s2">&quot;debug&quot;</span><span class="p">)</span>
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>    <span class="n">logging</span><span class="o">.</span><span class="n">debug</span><span class="p">(</span><span class="s2">&quot;setup ax client&quot;</span><span class="p">)</span>
+<a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>    <span class="c1"># Initialize Ax client</span>
+<a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>    <span class="n">ax_client</span> <span class="o">=</span> <span class="n">AxClient</span><span class="p">()</span>
+<a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>
+<a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;Creating experiment&quot;</span><span class="p">)</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>
+<a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>    <span class="c1"># Define your parameter space</span>
+<a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>    <span class="n">ax_client</span><span class="o">.</span><span class="n">create_experiment</span><span class="p">(</span>
+<a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>        <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my_experiment&quot;</span><span class="p">,</span>
+<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>        <span class="n">parameters</span><span class="o">=</span><span class="p">[</span>
+<a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>            <span class="p">{</span>
+<a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;x&quot;</span><span class="p">,</span>
+<a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a>                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;range&quot;</span><span class="p">,</span>
+<a id="__codelineno-5-17" name="__codelineno-5-17" href="#__codelineno-5-17"></a>                <span class="s2">&quot;bounds&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+<a id="__codelineno-5-18" name="__codelineno-5-18" href="#__codelineno-5-18"></a>                <span class="s2">&quot;value_type&quot;</span><span class="p">:</span> <span class="s2">&quot;float&quot;</span><span class="p">,</span>
+<a id="__codelineno-5-19" name="__codelineno-5-19" href="#__codelineno-5-19"></a>            <span class="p">},</span>
+<a id="__codelineno-5-20" name="__codelineno-5-20" href="#__codelineno-5-20"></a>            <span class="p">{</span>
+<a id="__codelineno-5-21" name="__codelineno-5-21" href="#__codelineno-5-21"></a>                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;y&quot;</span><span class="p">,</span>
+<a id="__codelineno-5-22" name="__codelineno-5-22" href="#__codelineno-5-22"></a>                <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;range&quot;</span><span class="p">,</span>
+<a id="__codelineno-5-23" name="__codelineno-5-23" href="#__codelineno-5-23"></a>                <span class="s2">&quot;bounds&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span>
+<a id="__codelineno-5-24" name="__codelineno-5-24" href="#__codelineno-5-24"></a>                <span class="s2">&quot;value_type&quot;</span><span class="p">:</span> <span class="s2">&quot;float&quot;</span><span class="p">,</span>
+<a id="__codelineno-5-25" name="__codelineno-5-25" href="#__codelineno-5-25"></a>            <span class="p">},</span>
+<a id="__codelineno-5-26" name="__codelineno-5-26" href="#__codelineno-5-26"></a>        <span class="p">],</span>
+<a id="__codelineno-5-27" name="__codelineno-5-27" href="#__codelineno-5-27"></a>        <span class="n">objectives</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;objective&quot;</span><span class="p">:</span> <span class="n">ObjectiveProperties</span><span class="p">(</span><span class="n">minimize</span><span class="o">=</span><span class="kc">True</span><span class="p">)},</span>
+<a id="__codelineno-5-28" name="__codelineno-5-28" href="#__codelineno-5-28"></a>    <span class="p">)</span>
+</code></pre></div>
+<h1 id="step-4-initializa-the-panda-runner">Step 4: Initializa the PanDA runner<a class="headerlink" href="#step-4-initializa-the-panda-runner" title="Permanent link">&para;</a></h1>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>    # Virtual env deployed on cvmfs
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>    # Libaries like Ax are required during importing at remote computing resources.
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>    init_env = [
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>        &quot;source /cvmfs/unpacked.cern.ch/registry.hub.docker.com/fyingtsai/eic_xl:24.11.1/opt/conda/setup_mamba.sh;&quot;
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>        &quot;source /cvmfs/unpacked.cern.ch/registry.hub.docker.com/fyingtsai/eic_xl:24.11.1/opt/conda/dRICH-MOBO//MOBO-tools/setup_new.sh;&quot;
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>        &quot;command -v singularity &amp;&gt; /dev/null || export SINGULARITY=/cvmfs/oasis.opensciencegrid.org/mis/singularity/current/bin/singularity;&quot;
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>        &quot;export AIDE_HOME=$(pwd);&quot;
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>        &quot;export PWD_PATH=$(pwd);&quot;
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>        &#39;export SINGULARITY_OPTIONS=&quot;--bind /cvmfs:/cvmfs,$(pwd):$(pwd)&quot;; &#39;
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>        &quot;export SIF=/cvmfs/singularity.opensciencegrid.org/eicweb/eic_xl:24.11.1-stable; export SINGULARITY_BINDPATH=/cvmfs,/afs; &quot;
+<a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>        &quot;env; &quot;
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>    ]
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>    init_env = &quot; &quot;.join(init_env)
+<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>
+<a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>    panda_attrs = {
+<a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a>        &quot;name&quot;: &quot;user.wguan.my_experiment&quot;,
+<a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a>        &quot;init_env&quot;: init_env,
+<a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a>        &quot;cloud&quot;: &quot;US&quot;,
+<a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a>        &quot;queue&quot;: &quot;BNL_PanDA_1&quot;,  # BNL_OSG_PanDA_1, BNL_PanDA_1
+<a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a>        &quot;source_dir&quot;: None,  # used to upload files in the source directory to PanDA, which will be used for the remote jobs.
+<a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a>                             # None is the current directory.
+<a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a>        &quot;source_dir_parent_level&quot;: 1,
+<a id="__codelineno-6-23" name="__codelineno-6-23" href="#__codelineno-6-23"></a>        &quot;exclude_source_files&quot;: [
+<a id="__codelineno-6-24" name="__codelineno-6-24" href="#__codelineno-6-24"></a>            r&quot;(^|/)\.[^/]+&quot;,    # file starts with &quot;.&quot;
+<a id="__codelineno-6-25" name="__codelineno-6-25" href="#__codelineno-6-25"></a>            &quot;doc*&quot;, &quot;DTLZ2*&quot;, &quot;.*json&quot;, &quot;.*log&quot;, &quot;work&quot;, &quot;log&quot;, &quot;OUTDIR&quot;,
+<a id="__codelineno-6-26" name="__codelineno-6-26" href="#__codelineno-6-26"></a>            &quot;calibrations&quot;, &quot;fieldmaps&quot;, &quot;gdml&quot;, &quot;EICrecon-drich-mobo&quot;,
+<a id="__codelineno-6-27" name="__codelineno-6-27" href="#__codelineno-6-27"></a>            &quot;eic-software&quot;, &quot;epic-geom-drich-mobo&quot;, &quot;irt&quot;, &quot;share&quot;, &quot;back*&quot;,
+<a id="__codelineno-6-28" name="__codelineno-6-28" href="#__codelineno-6-28"></a>            &quot;__pycache__&quot;
+<a id="__codelineno-6-29" name="__codelineno-6-29" href="#__codelineno-6-29"></a>        ],
+<a id="__codelineno-6-30" name="__codelineno-6-30" href="#__codelineno-6-30"></a>        &quot;max_walltime&quot;: 3600,
+<a id="__codelineno-6-31" name="__codelineno-6-31" href="#__codelineno-6-31"></a>        &quot;core_count&quot;: 1,
+<a id="__codelineno-6-32" name="__codelineno-6-32" href="#__codelineno-6-32"></a>        &quot;total_memory&quot;: 4000,
+<a id="__codelineno-6-33" name="__codelineno-6-33" href="#__codelineno-6-33"></a>        &quot;enable_separate_log&quot;: True,
+<a id="__codelineno-6-34" name="__codelineno-6-34" href="#__codelineno-6-34"></a>        &quot;job_dir&quot;: None,
+<a id="__codelineno-6-35" name="__codelineno-6-35" href="#__codelineno-6-35"></a>    }
+<a id="__codelineno-6-36" name="__codelineno-6-36" href="#__codelineno-6-36"></a>
+<a id="__codelineno-6-37" name="__codelineno-6-37" href="#__codelineno-6-37"></a>    # Create a runner
+<a id="__codelineno-6-38" name="__codelineno-6-38" href="#__codelineno-6-38"></a>    runner = PanDAiDDSRunner(**panda_attrs)
+<a id="__codelineno-6-39" name="__codelineno-6-39" href="#__codelineno-6-39"></a>    logging.info(f&quot;created runner: {runner}&quot;)
+</code></pre></div>
+<h1 id="step-5-create-a-scheduler-to-run-optimization">Step 5: Create a scheduler to run optimization<a class="headerlink" href="#step-5-create-a-scheduler-to-run-optimization" title="Permanent link">&para;</a></h1>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>    <span class="c1"># Create the scheduler</span>
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>    <span class="n">scheduler</span> <span class="o">=</span> <span class="n">AxScheduler</span><span class="p">(</span><span class="n">ax_client</span><span class="p">,</span> <span class="n">runner</span><span class="p">)</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;created scheduler: </span><span class="si">{</span><span class="n">scheduler</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>    <span class="c1"># Set the objective function</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>    <span class="n">scheduler</span><span class="o">.</span><span class="n">set_objective_function</span><span class="p">(</span><span class="n">objective_function</span><span class="p">)</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s2">&quot;running optimization&quot;</span><span class="p">)</span>
+<a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>    <span class="c1"># Run the optimization</span>
+<a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>    <span class="n">best_params</span> <span class="o">=</span> <span class="n">scheduler</span><span class="o">.</span><span class="n">run_optimization</span><span class="p">(</span><span class="n">max_trials</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Best parameters:&quot;</span><span class="p">,</span> <span class="n">best_params</span><span class="p">)</span>
+</code></pre></div>
+<h1 id="step-6-complete-example">Step 6: Complete Example<a class="headerlink" href="#step-6-complete-example" title="Permanent link">&para;</a></h1>
+<p>The full example can be found in <code>test_pandaidds_simple.py</code> [<code>https://github.com/aid2e/scheduler_epic/blob/pandaidds/tests/pandaidds/test_pandaidds_simple.py</code>]</p>
+<h2 id="multiple-step-example">Multiple Step example<a class="headerlink" href="#multiple-step-example" title="Permanent link">&para;</a></h2>
+<p>This example is similar to the example above. Here we only show the differences.</p>
+<h1 id="define-multiple-step-functions">Define multiple step functions<a class="headerlink" href="#define-multiple-step-functions" title="Permanent link">&para;</a></h1>
+<p>In this example, <code>x</code> and <code>y</code> and hyperparameters which will be filled by Ax. <code>xyz</code> is the results from the first function. The system will automatically
+collect the results from the first function and fill it to the second function for every set of hyperparameter <code>x</code> and <code>y</code>.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="c1"># Define your objective function</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="k">def</span><span class="w"> </span><span class="nf">objective_function_step</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;xyz&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">}</span>
+<a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
+<a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="k">def</span><span class="w"> </span><span class="nf">objective_function_ana</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">xyz</span><span class="p">):</span>
+<a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;objective&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">xyz</span> <span class="o">*</span> <span class="mf">0.1</span><span class="p">}</span>
+</code></pre></div>
+<h1 id="define-the-objective-function-with-a-multistepfunction">Define the objective function with a MultiStepFunction<a class="headerlink" href="#define-the-objective-function-with-a-multistepfunction" title="Permanent link">&para;</a></h1>
+<p>In the MultiStepFunction, the first step runs with PanDAiDDSRunner and the second step runs at local JobLibRunner.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>    <span class="n">objective_function</span> <span class="o">=</span> <span class="n">MultiStepsFunction</span><span class="p">(</span>
+<a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>        <span class="n">objective_funcs</span><span class="o">=</span><span class="p">{</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>            <span class="s2">&quot;simrecoana&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>                <span class="s2">&quot;func&quot;</span><span class="p">:</span> <span class="n">objective_function_step</span><span class="p">,</span>
+<a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>                <span class="s2">&quot;job_type&quot;</span><span class="p">:</span> <span class="n">JobType</span><span class="o">.</span><span class="n">FUNCTION</span><span class="p">,</span>
+<a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>                <span class="s2">&quot;runner&quot;</span><span class="p">:</span> <span class="n">PanDAiDDSRunner</span><span class="p">(</span><span class="o">**</span><span class="n">panda_attrs</span><span class="p">)</span>
+<a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>            <span class="p">},</span>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>            <span class="s2">&quot;final&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>                <span class="s2">&quot;func&quot;</span><span class="p">:</span> <span class="n">objective_function_ana</span><span class="p">,</span>
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>                <span class="s2">&quot;job_type&quot;</span><span class="p">:</span> <span class="n">JobType</span><span class="o">.</span><span class="n">FUNCTION</span><span class="p">,</span>
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>                <span class="s2">&quot;runner&quot;</span><span class="p">:</span> <span class="n">JobLibRunner</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span>
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>                <span class="s2">&quot;parent_result_parameter_name&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+<a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>            <span class="p">},</span>
+<a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a>        <span class="p">},</span>
+<a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a>        <span class="n">deps</span><span class="o">=</span><span class="p">{</span>
+<a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a>            <span class="s2">&quot;final&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;parent&quot;</span><span class="p">:</span> <span class="s2">&quot;simrecoana&quot;</span><span class="p">,</span> <span class="s2">&quot;dep_type&quot;</span><span class="p">:</span> <span class="s2">&quot;results&quot;</span><span class="p">,</span> <span class="s2">&quot;dep_map&quot;</span><span class="p">:</span> <span class="s2">&quot;one2one&quot;</span><span class="p">},</span>
+<a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a>        <span class="p">},</span>
+<a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a>        <span class="n">final</span><span class="o">=</span><span class="s2">&quot;final&quot;</span><span class="p">,</span>    <span class="c1"># if final is not set, it will use the last step in objective_funcs.</span>
+<a id="__codelineno-9-19" name="__codelineno-9-19" href="#__codelineno-9-19"></a>                          <span class="c1"># The final step will set its result as the job&#39;s result</span>
+<a id="__codelineno-9-20" name="__codelineno-9-20" href="#__codelineno-9-20"></a>    <span class="p">)</span>
+</code></pre></div>
+<h1 id="full-multistepfunction-example">Full MultiStepFunction example<a class="headerlink" href="#full-multistepfunction-example" title="Permanent link">&para;</a></h1>
+<p>The full example can be found in <code>test_pandaidds_multi_steps_2.py</code> [<code>https://github.com/aid2e/scheduler_epic/blob/pandaidds/tests/pandaidds/test_pandaidds_multi_steps_2.py</code>]</p>
+<h2 id="multiple-step-with-global-parameters">Multiple Step with global parameters<a class="headerlink" href="#multiple-step-with-global-parameters" title="Permanent link">&para;</a></h2>
+<p>For a set of hyperparameters, one may need to evaluate it with different conditions. For example, for detector design,
+with on detecotr setting, we may need to evaluate the detector performance against different types of particles. Global
+parameters are designed for it.</p>
+<h1 id="global-parameters">Global parameters<a class="headerlink" href="#global-parameters" title="Permanent link">&para;</a></h1>
+<p><div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="n">global_parameters</span> <span class="o">=</span> <span class="p">{</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>    <span class="s2">&quot;particles&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;pi+&quot;</span><span class="p">,</span> <span class="s2">&quot;kaon+&quot;</span><span class="p">],</span>
+<a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>    <span class="s2">&quot;eta_points&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">]</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="p">}</span>
+</code></pre></div>
+In this example, it will generate a lit of parameters. For every set of hyperparameters, it will execute the objective
+function 4 times with one column in the list of the parameters below.
+<div class="highlight"><pre><span></span><code><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a> <span class="p">[{</span><span class="s1">&#39;eta_points&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s1">&#39;particles&#39;</span><span class="p">:</span> <span class="s1">&#39;pi+&#39;</span><span class="p">},</span>
+<a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>  <span class="p">{</span><span class="s1">&#39;eta_points&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">,</span> <span class="s1">&#39;particles&#39;</span><span class="p">:</span> <span class="s1">&#39;kaon+&#39;</span><span class="p">},</span>
+<a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>  <span class="p">{</span><span class="s1">&#39;eta_points&#39;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span> <span class="s1">&#39;particles&#39;</span><span class="p">:</span> <span class="s1">&#39;pi+&#39;</span><span class="p">},</span>
+<a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>  <span class="p">{</span><span class="s1">&#39;eta_points&#39;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span> <span class="s1">&#39;particles&#39;</span><span class="p">:</span> <span class="s1">&#39;kaon+&#39;</span><span class="p">}]</span>
+</code></pre></div></p>
+<h1 id="define-objective-function">Define objective function<a class="headerlink" href="#define-objective-function" title="Permanent link">&para;</a></h1>
+<p>In the objective function, <code>x</code> and <code>y</code> are hyperparameters. <code>particles</code> and <code>eta_points</code> are global parameters.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">objective_function_step</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">particles</span><span class="p">,</span> <span class="n">eta_points</span><span class="p">):</span>
+<a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>    <span class="k">if</span> <span class="n">particles</span> <span class="o">==</span> <span class="s2">&quot;pi+&quot;</span><span class="p">:</span>
+<a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;xyz&quot;</span><span class="p">:</span> <span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">eta_points</span><span class="p">}</span>
+<a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>    <span class="k">elif</span> <span class="n">particles</span> <span class="o">==</span> <span class="s2">&quot;kaon+&quot;</span><span class="p">:</span>
+<a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a>        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;xyz&quot;</span><span class="p">:</span> <span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">eta_points</span><span class="p">}</span>
+<a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>    <span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a>        <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;xyz&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">}</span>
+</code></pre></div>
+<h1 id="merge-objectives">Merge objectives<a class="headerlink" href="#merge-objectives" title="Permanent link">&para;</a></h1>
+<p>In this example, the fist step will return <code>xyz</code>. However, with different global parameters, it will return a different result.
+If we define the dependency map previous step and the merge step is <code>all2one</code>. The return value {<code>xzz</code>: <value>} will be mapped
+to:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="p">{</span>
+<a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>    <span class="err">`</span><span class="n">xyz</span><span class="err">`</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>        <span class="p">((</span><span class="s1">&#39;eta_points&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;particles&#39;</span><span class="p">:</span> <span class="s1">&#39;pi+&#39;</span><span class="p">)):</span> <span class="o">&lt;</span><span class="n">value1</span><span class="o">&gt;</span><span class="p">,</span>
+<a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>        <span class="p">((</span><span class="s1">&#39;eta_points&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;particles&#39;</span><span class="p">:</span> <span class="s1">&#39;kaon+&#39;</span><span class="p">)):</span> <span class="o">&lt;</span><span class="n">value2</span><span class="o">&gt;</span><span class="p">,</span>
+<a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>        <span class="p">((</span><span class="s1">&#39;eta_points&#39;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;particles&#39;</span><span class="p">:</span> <span class="s1">&#39;pi+&#39;</span><span class="p">)):</span> <span class="o">&lt;</span><span class="n">value3</span><span class="o">&gt;</span><span class="p">,</span>
+<a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>        <span class="p">((</span><span class="s1">&#39;eta_points&#39;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">),</span> <span class="p">(</span><span class="s1">&#39;particles&#39;</span><span class="p">:</span> <span class="s1">&#39;kaon+&#39;</span><span class="p">)):</span> <span class="o">&lt;</span><span class="n">value4</span><span class="o">&gt;</span>
+<a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>    <span class="p">}</span>
+<a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a><span class="p">}</span>
+</code></pre></div></p>
+<p>Here is an example of the merge function.
+<div class="highlight"><pre><span></span><code><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>def objective_function_ana(x, y, xyz):
+<a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>    # print(f&quot;global_parameters: {global_parameters}&quot;)
+<a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>    sorted_keys = sorted(global_parameters.keys())
+<a id="__codelineno-14-4" name="__codelineno-14-4" href="#__codelineno-14-4"></a>    combinations = [dict(zip(sorted_keys, values)) for values in product(*[global_parameters[k] for k in sorted_keys])]
+<a id="__codelineno-14-5" name="__codelineno-14-5" href="#__codelineno-14-5"></a>    job_keys = combinations
+<a id="__codelineno-14-6" name="__codelineno-14-6" href="#__codelineno-14-6"></a>    # print(f&quot;job_keys: {job_keys}&quot;)
+<a id="__codelineno-14-7" name="__codelineno-14-7" href="#__codelineno-14-7"></a>    # print(f&quot;xyz: {xyz}&quot;)
+<a id="__codelineno-14-8" name="__codelineno-14-8" href="#__codelineno-14-8"></a>    xyz_sum = sum([xyz[tuple(k.items())] for k in job_keys])
+<a id="__codelineno-14-9" name="__codelineno-14-9" href="#__codelineno-14-9"></a>    return {&quot;objective&quot;: (x - 0.5) ** 2 + (y - 0.5) ** 2 + xyz_sum * 0.1}
+</code></pre></div></p>
+<h1 id="define-the-objective-function-of-multistepfunction-with-global-parameters">Define the objective function of MultiStepFunction with global parameters<a class="headerlink" href="#define-the-objective-function-of-multistepfunction-with-global-parameters" title="Permanent link">&para;</a></h1>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>    <span class="n">objective_function</span> <span class="o">=</span> <span class="n">MultiStepsFunction</span><span class="p">(</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>        <span class="n">objective_funcs</span><span class="o">=</span><span class="p">{</span>
+<a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>            <span class="s2">&quot;simrecoana&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>                <span class="s2">&quot;func&quot;</span><span class="p">:</span> <span class="n">objective_function_step</span><span class="p">,</span>
+<a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>                <span class="s2">&quot;job_type&quot;</span><span class="p">:</span> <span class="n">JobType</span><span class="o">.</span><span class="n">FUNCTION</span><span class="p">,</span>
+<a id="__codelineno-15-6" name="__codelineno-15-6" href="#__codelineno-15-6"></a>                <span class="s2">&quot;runner&quot;</span><span class="p">:</span> <span class="n">PanDAiDDSRunner</span><span class="p">(</span><span class="o">**</span><span class="n">panda_attrs</span><span class="p">)</span>
+<a id="__codelineno-15-7" name="__codelineno-15-7" href="#__codelineno-15-7"></a>            <span class="p">},</span>
+<a id="__codelineno-15-8" name="__codelineno-15-8" href="#__codelineno-15-8"></a>            <span class="s2">&quot;final&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>                <span class="s2">&quot;func&quot;</span><span class="p">:</span> <span class="n">objective_function_ana</span><span class="p">,</span>
+<a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a>                <span class="s2">&quot;job_type&quot;</span><span class="p">:</span> <span class="n">JobType</span><span class="o">.</span><span class="n">FUNCTION</span><span class="p">,</span>
+<a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a>                <span class="s2">&quot;runner&quot;</span><span class="p">:</span> <span class="n">JobLibRunner</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span>
+<a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a>                <span class="s2">&quot;parent_result_parameter_name&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>
+<a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a>            <span class="p">},</span>
+<a id="__codelineno-15-14" name="__codelineno-15-14" href="#__codelineno-15-14"></a>        <span class="p">},</span>
+<a id="__codelineno-15-15" name="__codelineno-15-15" href="#__codelineno-15-15"></a>        <span class="n">deps</span><span class="o">=</span><span class="p">{</span>
+<a id="__codelineno-15-16" name="__codelineno-15-16" href="#__codelineno-15-16"></a>            <span class="s2">&quot;final&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;parent&quot;</span><span class="p">:</span> <span class="s2">&quot;simrecoana&quot;</span><span class="p">,</span> <span class="s2">&quot;dep_type&quot;</span><span class="p">:</span> <span class="s2">&quot;results&quot;</span><span class="p">,</span> <span class="s2">&quot;dep_map&quot;</span><span class="p">:</span> <span class="s2">&quot;all2one&quot;</span><span class="p">},</span>
+<a id="__codelineno-15-17" name="__codelineno-15-17" href="#__codelineno-15-17"></a>        <span class="p">},</span>
+<a id="__codelineno-15-18" name="__codelineno-15-18" href="#__codelineno-15-18"></a>        <span class="n">global_parameters</span><span class="o">=</span><span class="n">global_parameters</span><span class="p">,</span>
+<a id="__codelineno-15-19" name="__codelineno-15-19" href="#__codelineno-15-19"></a>        <span class="n">global_parameters_steps</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;simrecoana&quot;</span><span class="p">],</span>
+<a id="__codelineno-15-20" name="__codelineno-15-20" href="#__codelineno-15-20"></a>        <span class="n">final</span><span class="o">=</span><span class="s2">&quot;final&quot;</span><span class="p">,</span>                <span class="c1"># if final is not set, it will use the last step in objective_funcs.</span>
+<a id="__codelineno-15-21" name="__codelineno-15-21" href="#__codelineno-15-21"></a>                                      <span class="c1"># The final step will set its result as the job&#39;s result</span>
+<a id="__codelineno-15-22" name="__codelineno-15-22" href="#__codelineno-15-22"></a>    <span class="p">)</span>
+</code></pre></div>
+<h1 id="full-multistepfunction-example_1">Full MultiStepFunction example<a class="headerlink" href="#full-multistepfunction-example_1" title="Permanent link">&para;</a></h1>
+<p>The full example can be found in <code>test_pandaidds_multi_steps_3.py</code> [<code>https://github.com/aid2e/scheduler_epic/blob/pandaidds/tests/pandaidds/test_pandaidds_multi_steps_3.py</code>]</p>
+<h2 id="multiple-step-with-rucio-supports">Multiple Step with Rucio supports<a class="headerlink" href="#multiple-step-with-rucio-supports" title="Permanent link">&para;</a></h2>
+<p>Rucio is a large-scale, distributed data management system. Here we will use Rucio to manage input/output datasets.</p>
+<h1 id="define-the-objective-functions">Define the objective functions<a class="headerlink" href="#define-the-objective-functions" title="Permanent link">&para;</a></h1>
+<p>In the <code>objective_function_step_simreco</code> function, we write the results to a file. We will upload this file to Rucio.
+(In real use cases, this step should generate root files which are big and the content of the root files are difficult
+to be transferred through function return values. So we need to store the root files in some storages with Rucio.)</p>
+<p>In the <code>objective_function_step_ana</code> function, we have a new parameter <code>input_file_names</code> as a placeholder for the list
+of file names from a dataset (we will describe how to tell PanDA to fill this parameter later).</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="k">def</span><span class="w"> </span><span class="nf">objective_function_step_simreco</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">particles</span><span class="p">,</span> <span class="n">eta_points</span><span class="p">):</span>
+<a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>    <span class="k">if</span> <span class="n">particles</span> <span class="o">==</span> <span class="s2">&quot;pi+&quot;</span><span class="p">:</span>
+<a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>        <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;xyz&quot;</span><span class="p">:</span> <span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">**</span> <span class="mi">3</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">**</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">eta_points</span><span class="p">}</span>
+<a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>    <span class="k">elif</span> <span class="n">particles</span> <span class="o">==</span> <span class="s2">&quot;kaon+&quot;</span><span class="p">:</span>
+<a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>        <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;xyz&quot;</span><span class="p">:</span> <span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">eta_points</span><span class="p">}</span>
+<a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a>    <span class="k">else</span><span class="p">:</span>
+<a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a>        <span class="n">ret</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;xyz&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">}</span>
+<a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>
+<a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a>    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s2">&quot;my_test.txt&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a>        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">ret</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+<a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a>
+<a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a>
+<a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a><span class="k">def</span><span class="w"> </span><span class="nf">objective_function_step_ana</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">particles</span><span class="p">,</span> <span class="n">eta_points</span><span class="p">,</span> <span class="n">input_file_names</span><span class="p">):</span>
+<a id="__codelineno-16-14" name="__codelineno-16-14" href="#__codelineno-16-14"></a>    <span class="n">ret</span> <span class="o">=</span> <span class="p">{}</span>
+<a id="__codelineno-16-15" name="__codelineno-16-15" href="#__codelineno-16-15"></a>
+<a id="__codelineno-16-16" name="__codelineno-16-16" href="#__codelineno-16-16"></a>    <span class="k">for</span> <span class="n">input_file_name</span> <span class="ow">in</span> <span class="n">input_file_names</span><span class="p">:</span>
+<a id="__codelineno-16-17" name="__codelineno-16-17" href="#__codelineno-16-17"></a>        <span class="k">try</span><span class="p">:</span>
+<a id="__codelineno-16-18" name="__codelineno-16-18" href="#__codelineno-16-18"></a>            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">input_file_name</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+<a id="__codelineno-16-19" name="__codelineno-16-19" href="#__codelineno-16-19"></a>                <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+<a id="__codelineno-16-20" name="__codelineno-16-20" href="#__codelineno-16-20"></a>                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+<a id="__codelineno-16-21" name="__codelineno-16-21" href="#__codelineno-16-21"></a>                    <span class="c1"># Assumes v is numeric; otherwise raises an error</span>
+<a id="__codelineno-16-22" name="__codelineno-16-22" href="#__codelineno-16-22"></a>                    <span class="n">ret</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">ret</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="n">v</span>
+<a id="__codelineno-16-23" name="__codelineno-16-23" href="#__codelineno-16-23"></a>        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+<a id="__codelineno-16-24" name="__codelineno-16-24" href="#__codelineno-16-24"></a>            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error reading file </span><span class="si">{</span><span class="n">input_file_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-16-25" name="__codelineno-16-25" href="#__codelineno-16-25"></a>
+<a id="__codelineno-16-26" name="__codelineno-16-26" href="#__codelineno-16-26"></a>    <span class="k">return</span> <span class="n">ret</span>
+</code></pre></div>
+<h1 id="define-the-objective-function-of-multistepfunction-with-datasets">Define the objective function of MultiStepFunction with datasets<a class="headerlink" href="#define-the-objective-function-of-multistepfunction-with-datasets" title="Permanent link">&para;</a></h1>
+<p>In this example, for the <code>simreco</code> step, we set <code>with_output_dataset</code> and define the <code>output_file</code> and <code>output_dataset</code>.
+The output file must be produced by <code>objective_function_step_simreco</code>. Otherwise PanDA will report errors that
+<code>output_file</code> cannot be found. Here we defined total events <code>num_events</code>=200 and <code>num_events_per_job</code>=100. So PanDA will
+generate two jobs. Every job will produce one <code>output_file</code> with name <code>my_test.txt</code>. To avoid overwriting each other,
+before uploading the <code>output_file</code> to Rucio, PanDA will rename the output with
+<code>dataset_name</code>+<code>additional sequence name</code>+<code>output_file name</code>.</p>
+<p>In the <code>ana</code> (analysis) step, we set <code>with_input_datasets</code> and define
+<code>"input_datasets": {"input_file_names": f"{dataset_name_prefix}.simreco.#global_parameter_key.#job_id"}</code>. Here the dataset
+name should be the same dataset name of the previous step. PanDA-iDDS will get the list of files in the input dataset and
+create an additional argument <code>"input_file_names=&lt;file_list_in_dataset&gt;"</code>. So the function <code>objective_function_step_ana</code>
+must have a placeholder argument for <code>'input_file_names'</code>. You can use any other names instead of <code>'input_file_names'</code>.</p>
+<p>In this example, we set <code>dep_type</code> to <code>datasets</code> and <code>return_func_results</code> to False. The scheduler will not wait for
+function results. PanDA will automatically trigger the next step when the datasets in <code>simreco</code> are done.</p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>    <span class="n">objective_function</span> <span class="o">=</span> <span class="n">MultiStepsFunction</span><span class="p">(</span>
+<a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>        <span class="n">objective_funcs</span><span class="o">=</span><span class="p">{</span>
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a>            <span class="s2">&quot;simreco&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>                <span class="s2">&quot;func&quot;</span><span class="p">:</span> <span class="n">objective_function_step_simreco</span><span class="p">,</span>
+<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>                <span class="s2">&quot;job_type&quot;</span><span class="p">:</span> <span class="n">JobType</span><span class="o">.</span><span class="n">FUNCTION</span><span class="p">,</span>
+<a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>                <span class="s2">&quot;runner&quot;</span><span class="p">:</span> <span class="n">panda_idds_runner</span><span class="p">,</span>
+<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>                <span class="s2">&quot;return_func_results&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>    <span class="c1"># here the outputs are in dataset, so no need to wait for function outputs</span>
+<a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>                <span class="s2">&quot;with_output_dataset&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a>                <span class="s2">&quot;output_file&quot;</span><span class="p">:</span> <span class="s2">&quot;my_test.txt&quot;</span><span class="p">,</span>
+<a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a>                <span class="c1"># if global parameters are used, please add &#39;#global_parameter_key&#39; to</span>
+<a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a>                <span class="c1"># the dataset name. PanDA-iDDS will automatically replace it to different</span>
+<a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a>                <span class="c1"># keys based on the global parameters. Otherwise, all files with different</span>
+<a id="__codelineno-17-13" name="__codelineno-17-13" href="#__codelineno-17-13"></a>                <span class="c1"># global parameters will be in the same dataset.</span>
+<a id="__codelineno-17-14" name="__codelineno-17-14" href="#__codelineno-17-14"></a>                <span class="s2">&quot;output_dataset&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dataset_name_prefix</span><span class="si">}</span><span class="s2">.simreco.#global_parameter_key.#job_id&quot;</span><span class="p">,</span>
+<a id="__codelineno-17-15" name="__codelineno-17-15" href="#__codelineno-17-15"></a>                <span class="s2">&quot;num_events&quot;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+<a id="__codelineno-17-16" name="__codelineno-17-16" href="#__codelineno-17-16"></a>                <span class="s2">&quot;num_events_per_job&quot;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+<a id="__codelineno-17-17" name="__codelineno-17-17" href="#__codelineno-17-17"></a>            <span class="p">},</span>
+<a id="__codelineno-17-18" name="__codelineno-17-18" href="#__codelineno-17-18"></a>            <span class="s2">&quot;ana&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-17-19" name="__codelineno-17-19" href="#__codelineno-17-19"></a>                <span class="s2">&quot;func&quot;</span><span class="p">:</span> <span class="n">objective_function_step_ana</span><span class="p">,</span>
+<a id="__codelineno-17-20" name="__codelineno-17-20" href="#__codelineno-17-20"></a>                <span class="s2">&quot;job_type&quot;</span><span class="p">:</span> <span class="n">JobType</span><span class="o">.</span><span class="n">FUNCTION</span><span class="p">,</span>
+<a id="__codelineno-17-21" name="__codelineno-17-21" href="#__codelineno-17-21"></a>                <span class="s2">&quot;runner&quot;</span><span class="p">:</span> <span class="n">panda_idds_runner</span><span class="p">,</span>
+<a id="__codelineno-17-22" name="__codelineno-17-22" href="#__codelineno-17-22"></a>                <span class="s2">&quot;with_input_datasets&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-17-23" name="__codelineno-17-23" href="#__codelineno-17-23"></a>                <span class="c1"># Here the dataset name should be the same dataset name of the previous step.</span>
+<a id="__codelineno-17-24" name="__codelineno-17-24" href="#__codelineno-17-24"></a>                <span class="c1"># PanDA-iDDS will get the list of files in the input dataset and create an</span>
+<a id="__codelineno-17-25" name="__codelineno-17-25" href="#__codelineno-17-25"></a>                <span class="c1"># additional argument &quot;input_file_names=&lt;file_list_in_dataset&gt;&quot;.</span>
+<a id="__codelineno-17-26" name="__codelineno-17-26" href="#__codelineno-17-26"></a>                <span class="c1"># So the function objective_function_step_ana must have a placeholder argument</span>
+<a id="__codelineno-17-27" name="__codelineno-17-27" href="#__codelineno-17-27"></a>                <span class="c1"># for &#39;input_file_names&#39;. You can use any other names instead of &#39;input_file_names&#39;.</span>
+<a id="__codelineno-17-28" name="__codelineno-17-28" href="#__codelineno-17-28"></a>                <span class="s2">&quot;input_datasets&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;input_file_names&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">dataset_name_prefix</span><span class="si">}</span><span class="s2">.simreco.#global_parameter_key.#job_id&quot;</span><span class="p">},</span>
+<a id="__codelineno-17-29" name="__codelineno-17-29" href="#__codelineno-17-29"></a>            <span class="p">},</span>
+<a id="__codelineno-17-30" name="__codelineno-17-30" href="#__codelineno-17-30"></a>            <span class="s2">&quot;final&quot;</span><span class="p">:</span> <span class="p">{</span>
+<a id="__codelineno-17-31" name="__codelineno-17-31" href="#__codelineno-17-31"></a>                <span class="s2">&quot;func&quot;</span><span class="p">:</span> <span class="n">objective_function_step_final</span><span class="p">,</span>
+<a id="__codelineno-17-32" name="__codelineno-17-32" href="#__codelineno-17-32"></a>                <span class="s2">&quot;job_type&quot;</span><span class="p">:</span> <span class="n">JobType</span><span class="o">.</span><span class="n">FUNCTION</span><span class="p">,</span>
+<a id="__codelineno-17-33" name="__codelineno-17-33" href="#__codelineno-17-33"></a>                <span class="s2">&quot;runner&quot;</span><span class="p">:</span> <span class="n">JobLibRunner</span><span class="p">(</span><span class="n">n_jobs</span><span class="o">=-</span><span class="mi">1</span><span class="p">),</span>
+<a id="__codelineno-17-34" name="__codelineno-17-34" href="#__codelineno-17-34"></a>                <span class="s2">&quot;parent_result_parameter_name&quot;</span><span class="p">:</span> <span class="s2">&quot;xyz&quot;</span><span class="p">,</span>      <span class="c1"># will add a parameter xyz=&lt;get_parent_results&gt; to the func</span>
+<a id="__codelineno-17-35" name="__codelineno-17-35" href="#__codelineno-17-35"></a>            <span class="p">},</span>
+<a id="__codelineno-17-36" name="__codelineno-17-36" href="#__codelineno-17-36"></a>        <span class="p">},</span>
+<a id="__codelineno-17-37" name="__codelineno-17-37" href="#__codelineno-17-37"></a>        <span class="n">deps</span><span class="o">=</span><span class="p">{</span>
+<a id="__codelineno-17-38" name="__codelineno-17-38" href="#__codelineno-17-38"></a>            <span class="s2">&quot;final&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;parent&quot;</span><span class="p">:</span> <span class="s2">&quot;ana&quot;</span><span class="p">,</span> <span class="s2">&quot;dep_type&quot;</span><span class="p">:</span> <span class="s2">&quot;results&quot;</span><span class="p">,</span> <span class="s2">&quot;dep_map&quot;</span><span class="p">:</span> <span class="s2">&quot;all2one&quot;</span><span class="p">},</span>
+<a id="__codelineno-17-39" name="__codelineno-17-39" href="#__codelineno-17-39"></a>            <span class="s2">&quot;ana&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;parent&quot;</span><span class="p">:</span> <span class="s2">&quot;simreco&quot;</span><span class="p">,</span> <span class="s2">&quot;dep_type&quot;</span><span class="p">:</span> <span class="s2">&quot;datasets&quot;</span><span class="p">,</span> <span class="s2">&quot;dep_map&quot;</span><span class="p">:</span> <span class="s2">&quot;one2one&quot;</span><span class="p">},</span>    <span class="c1"># depends on the dataset. It will use rucio to manage the datasets.</span>
+<a id="__codelineno-17-40" name="__codelineno-17-40" href="#__codelineno-17-40"></a>        <span class="p">},</span>
+<a id="__codelineno-17-41" name="__codelineno-17-41" href="#__codelineno-17-41"></a>        <span class="n">global_parameters</span><span class="o">=</span><span class="n">global_parameters</span><span class="p">,</span>
+<a id="__codelineno-17-42" name="__codelineno-17-42" href="#__codelineno-17-42"></a>        <span class="n">global_parameters_steps</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;simreco&quot;</span><span class="p">,</span> <span class="s2">&quot;ana&quot;</span><span class="p">],</span>
+<a id="__codelineno-17-43" name="__codelineno-17-43" href="#__codelineno-17-43"></a>        <span class="n">final</span><span class="o">=</span><span class="s2">&quot;final&quot;</span><span class="p">,</span>    <span class="c1"># if final is not set, it will use the last step in objective_funcs.</span>
+<a id="__codelineno-17-44" name="__codelineno-17-44" href="#__codelineno-17-44"></a>                          <span class="c1"># The final step will set its result as the job&#39;s result</span>
+<a id="__codelineno-17-45" name="__codelineno-17-45" href="#__codelineno-17-45"></a>    <span class="p">)</span>
+</code></pre></div>
+<h1 id="full-multistepfunction-with-rucio-example">Full MultiStepFunction with Rucio example<a class="headerlink" href="#full-multistepfunction-with-rucio-example" title="Permanent link">&para;</a></h1>
+<p>The full example can be found in <code>test_pandaidds_multi_steps_4.py</code> [<code>https://github.com/aid2e/scheduler_epic/blob/pandaidds/tests/pandaidds/test_pandaidds_multi_steps_4.py</code>] and
+<code>test_pandaidds_multi_steps_5.py</code> [<code>https://github.com/aid2e/scheduler_epic/blob/pandaidds/tests/pandaidds/test_pandaidds_multi_steps_5.py</code>]. The difference between <code>test_pandaidds_multi_steps_4.py</code> and <code>test_pandaidds_multi_steps_5.py</code> is the <code>return_func_results</code>.</p>
 
 
 
@@ -1403,7 +1732,7 @@
       <script id="__config" type="application/json">{"base": "../..", "features": ["navigation.top", "toc.follow", "content.code.copy", "content.code.annotate", "content.action.edit", "search.highlight", "search.suggest", "navigation.tabs", "navigation.sections", "navigation.indexes", "navigation.expand", "navigation.tabs.sticky", "navigation.tabs.sticky_header", "navigation.tabs.instant", "navigation.tabs.autohide", "navigation.instant", "header.autohide"], "search": "../../assets/javascripts/workers/search.d50fe291.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
     
     
-      <script src="../../assets/javascripts/bundle.13a4f30d.min.js"></script>
+      <script src="../../assets/javascripts/bundle.56ea9cef.min.js"></script>
       
     
   </body>
