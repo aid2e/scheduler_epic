@@ -4,15 +4,15 @@ Runners are responsible for executing jobs on different computing backends.
 
 ## Classes
 
-### [BaseRunner](baserunner.md)
+### [BaseRunner](base_runner.md)
 
 Abstract base class for job runners.
 
-### [JobLibRunner](joblibrunner.md)
+### [JobLibRunner](joblib_runner.md)
 
 A runner that uses joblib for parallel execution.
 
-### [SlurmRunner](slurmrunner.md)
+### [SlurmRunner](slurm_runner.md)
 
 A runner that submits jobs to a Slurm cluster.
 
