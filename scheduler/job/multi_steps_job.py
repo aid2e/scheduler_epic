@@ -8,7 +8,7 @@ import uuid
 from collections import defaultdict
 from datetime import datetime
 from itertools import product
-from typing import Dict, Any, Optional, List
+from typing import Dict, Any, Optional, List, Union
 from .job import Job, JobType
 from .job_state import JobState
 
@@ -26,6 +26,16 @@ class MultiStepsFunction(object):
         global_parameters=None,
         global_parameters_steps=[],
     ):
+        """
+        Initialize MultiStepsFunction.
+
+        Args:
+            objective_funcs: Objective functions as a dict.
+            deps: The dependency map between different objective functions.
+            final: The last objective functions.
+            global_parameters: Global parameters.
+            global_parameters_steps: Steps that need to apply global parameters.
+        """
         self.objective_funcs = objective_funcs
         self.__name__ = f"mul_func.{'_'.join([k for k in self.objective_funcs])}"
         self.deps = deps
@@ -52,12 +62,9 @@ class MultiStepsFunction(object):
 
 class MultiStepsJob(Job):
     """
-    A job that can be run by a runner.
+    A job that supports multiple steps (multiple sub-jobs).
 
-    Each job has a state that is tracked. Jobs can be one of several types:
-    - Function: A Python function to run
-    - Script: A shell or Python script to execute
-    - Container: A container to run
+    Each step is a job with different runners.
     """
 
     def __init__(
@@ -170,6 +177,9 @@ class MultiStepsJob(Job):
         with_input_datasets=False,
         input_datasets={},
     ) -> Job:
+        """
+        Generate a job from a step configuration.
+        """
         new_params = copy.deepcopy(self.params)
         if additional_parameters:
             new_params.update(additional_parameters)
@@ -221,12 +231,21 @@ class MultiStepsJob(Job):
         job.set_runner(runner)
         return job
 
-    def get_key_from_dict(self, key):
+    def get_key_from_dict(self, key: Any) -> Union[str, tuple]:
+        """
+        Get key from a dict.
+
+        Args:
+            key: dictionary key.
+        """
         if not key:
             return "None"
         return tuple(sorted(key.items()))
 
-    def _initialize(self):
+    def _initialize(self) -> None:
+        """
+        Initialize MultiStepsJobs from MultiStepsFunction.
+        """
         objective_funcs = self.function.objective_funcs
         deps = self.function.deps
         if self.function.global_parameters:
@@ -358,7 +377,10 @@ class MultiStepsJob(Job):
         self.logger.info(f"Job {self.job_id} is initialized: step_jobs: {self.step_jobs}, deps: {self.deps}, final: {self.final}")
         self.logger.info(f"Job {self.job_id} is initialized: global parameters: {self.global_parameters}, global parameter steps: {self.global_parameters_steps}")
 
-    def get_ready_steps(self):
+    def get_ready_steps(self) -> list:
+        """
+        Get steps that are ready to run.
+        """
         if self.state in [JobState.COMPLETED, JobState.FAILED]:
             return {}
 
@@ -379,9 +401,23 @@ class MultiStepsJob(Job):
         self.runner = runner
 
     def set_internal_id(self, internal_id) -> None:
+        """
+        Set internal id for the job.
+
+        Args:
+            internal_id: The internal id for the job.
+        """
         self.internal_id = internal_id
 
     def set_parent_results(self, step, job_key, results) -> None:
+        """
+        Set results for the parent job.
+
+        Args:
+            step: The step name of the curret job
+            job_key: The job key of the curret job
+            results: Results from the parent job
+        """
         self.logger.info(f"Set parent results for job {self.job_id} step {step} job_key {job_key}: {results}")
         self.parent_results = results
         if self.parent_result_parameter_name and results:
@@ -390,6 +426,14 @@ class MultiStepsJob(Job):
             self.logger.info(f"Change parameters for job {self.job_id} step {step} job_key {job_key} from {old_params} to {self.params}")
 
     def get_parent_results(self, step_job, step_name, g_param_key) -> (bool, object):
+        """
+        Get parent results for a step job.
+
+        Args:
+            step_job: The current job
+            step_name: The current step name.
+            g_param_key: The current step key.
+        """
         self.logger.info(f"Get parent results for step {step_name} job key {g_param_key}")
         if step_name not in self.deps:
             self.logger.info(f"No parent dependency for step {step_name} job key {g_param_key}")
@@ -467,6 +511,9 @@ class MultiStepsJob(Job):
         self.run_ready_steps()
 
     def get_final_results(self) -> None:
+        """
+        Get the final step's results and assign it to the MultiStepJob.
+        """
         self.logger.info(f"Getting final results for Job {self.job_id}")
         if self.step_states[self.final]["state"] not in [JobState.COMPLETED, JobState.FAILED]:
             return
@@ -480,6 +527,9 @@ class MultiStepsJob(Job):
         self.logger.info(f"Job {self.job_id} set results from step {self.final} g_param_key {g_param_key} job {self.step_jobs[self.final][g_param_key].job_id}")
 
     def check_status(self) -> None:
+        """
+        Run to check the status of the job.
+        """
         if self.state in [JobState.NEW, JobState.READY, JobState.CREATED, JobState.COMPLETED, JobState.FAILED]:
             return
 

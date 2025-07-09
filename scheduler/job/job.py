@@ -118,9 +118,23 @@ class Job:
             raise ValueError("Container image must be provided for CONTAINER job type")
 
     def set_internal_id(self, internal_id) -> None:
+        """
+        Set internal id for the job.
+
+        Args:
+            internal_id: The internal id for the job.
+        """
         self.internal_id = internal_id
 
     def set_parent_results(self, step, job_key, results) -> None:
+        """
+        Set results for the parent job.
+
+        Args:
+            step: The step name of the curret job
+            job_key: The job key of the curret job
+            results: Results from the parent job
+        """
         self.logger.info(f"Set parent results for job {self.job_id} step {step} job_key {job_key}: {results}")
         self.parent_results = results
         if self.parent_result_parameter_name and results:
@@ -153,6 +167,9 @@ class Job:
         self.runner.run_job(self)
 
     def check_status(self) -> None:
+        """
+        Run to check the status of the job.
+        """
         if self.state not in [JobState.NEW, JobState.READY, JobState.CREATED, JobState.COMPLETED, JobState.FAILED]:
             if self.return_func_results:
                 self.runner.check_job_status(self)
