@@ -11,7 +11,7 @@ This tutorial explains how to use PANDA execution with the Scheduler for AID2E.
 
 ## Initialize the environment
 
-```bash
+```python
 python3.12 -m venv .venv
 source .venv/bin/activate
 pip install --upgrade pip black ruff
@@ -22,14 +22,14 @@ pip install idds-client idds-common idds-workflow panda-client
 
 - Setup virturl environment
 
-```bash
+```python
 source ./setup.sh
 ```
 
 setup.sh [`https://github.com/aid2e/scheduler_epic/blob/pandaidds/setup.sh`]
 
 - Setup PanDA(BNL) environment (This PanDA service is maintained by BNL to run jobs at WLCG, OSG, HPC and so on, with Rucio integrated).
-```bash
+```python
 source setup_panda_bnl.sh
 ```
 `setup_panda_bnl.sh` [`https://github.com/aid2e/scheduler_epic/blob/pandaidds/setup_panda_bnl.sh`]
