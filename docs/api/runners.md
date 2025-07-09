@@ -16,12 +16,17 @@ A runner that uses joblib for parallel execution.
 
 A runner that submits jobs to a Slurm cluster.
 
+### [PanDAiDDSRunner](pandaidds_runner.md)
+
+A runner that submits jobs to the PanDA system.
+
 ## Class Hierarchy
 
 ```
 BaseRunner
 ├── JobLibRunner
-└── SlurmRunner
+├── SlurmRunner
+└── PanDAiDDSRunner
 ```
 
 ## Usage Examples
