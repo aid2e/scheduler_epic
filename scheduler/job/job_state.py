@@ -9,6 +9,9 @@ class JobState(Enum):
     """
     Enum representing the possible states of a job.
     """
+
+    NEW = auto()
+    READY = auto()
     CREATED = auto()
     QUEUED = auto()
     RUNNING = auto()
@@ -16,6 +19,7 @@ class JobState(Enum):
     FAILED = auto()
     PAUSED = auto()
     CANCELLED = auto()
-    
+    RUNNINGNOMONITOR = auto()
+
     def __str__(self):
         return self.name

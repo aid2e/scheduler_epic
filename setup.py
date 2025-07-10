@@ -17,7 +17,7 @@ setup(
     author="Your Name",
     author_email="your.email@example.com",
     description="A scheduler library for AID2E extending Ax functionality for ePIC EIC detector optimization",
-    long_description=open("README.md").read(),
+    long_description=open("readme.md").read(),
     long_description_content_type="text/markdown",
     url="https://github.com/yourusername/scheduler",
     classifiers=[

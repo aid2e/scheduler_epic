@@ -5,3 +5,4 @@ cairosvg>=2.5.0
 pillow>=9.0.0
 pygments>=2.14.0
 pydoc-markdown>=4.8.2
+ax-platform

@@ -48,12 +48,17 @@ Runner for local parallel execution using JobLib.
 
 Runner for execution on Slurm clusters.
 
+### [PanDAiDDSRunner](pandaidds_runner.md)
+
+Runner for execution using PanDA distributed computing.
+
 ## Class Hierarchy
 
 ```
 BaseRunner
 ├── JobLibRunner
 ├── SlurmRunner
+└── PanDAiDDSRunner
 ```
 
 ## How to Use This Documentation

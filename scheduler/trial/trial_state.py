@@ -9,6 +9,7 @@ class TrialState(Enum):
     """
     Enum representing the possible states of a trial.
     """
+
     CREATED = auto()
     QUEUED = auto()
     RUNNING = auto()
@@ -16,6 +17,6 @@ class TrialState(Enum):
     FAILED = auto()
     PAUSED = auto()
     CANCELLED = auto()
-    
+
     def __str__(self):
         return self.name
