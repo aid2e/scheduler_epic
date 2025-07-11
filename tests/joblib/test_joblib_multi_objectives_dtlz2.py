@@ -14,6 +14,7 @@ def dtlz2_torch(X, m=2):
     X: torch.Tensor of shape (batch_size, d)
     Returns: torch.Tensor of shape (batch_size, m)
     """
+    import math
     import torch
 
     X = torch.tensor(X, dtype=torch.float32)
@@ -67,13 +68,13 @@ def dtlz2(X, m=2):
     return f
 
 
-def objective_function_torch((num_objs=2, **params):
+def objective_function_torch(num_objs=2, **params):
     import torch
 
     x = [params[f"x{i}"] for i in range(len(params))]
     x_tensor = torch.tensor([x], dtype=torch.float32)
     f = dtlz2(x_tensor, m=num_objs)[0]
-    return {f"f{i+1}": (f[i].item(), 0.0) for i in range(num_objs)}
+    return {f"f{i + 1}": (f[i].item(), 0.0) for i in range(num_objs)}
 
 
 def objective_function(num_objs=2, **params):
@@ -82,7 +83,7 @@ def objective_function(num_objs=2, **params):
     x = [params[f"x{i}"] for i in range(len(params))]
     x_array = np.array([x])  # shape: (1, d)
     f = dtlz2(x_array, m=num_objs)[0]
-    return {f"f{i+1}": (float(f[i]), 0.0) for i in range(num_objs)}
+    return {f"f{i + 1}": (float(f[i]), 0.0) for i in range(num_objs)}
 
 
 if __name__ == "__main__":
@@ -94,7 +95,7 @@ if __name__ == "__main__":
 
     num_obj = args.objectives
     num_trials = args.trials
-    num_parameters =  args.parameters
+    num_parameters = args.parameters
 
     setup_logging(log_level="debug")
     logging.info(f"num objectives: {num_obj}, num trials: {num_trials}, num parameters: {num_parameters}")
@@ -102,11 +103,12 @@ if __name__ == "__main__":
     logging.debug("setup ax client")
 
     generation_strategy = GenerationStrategy(
-    steps=[
-        GenerationStep(model=Generators.SOBOL, num_trials=5),
-        GenerationStep(model=Generators.BOTORCH_MODULAR, num_trials=-1),
-    ]
-)
+        steps=[
+            GenerationStep(model=Generators.SOBOL, num_trials=5),
+            GenerationStep(model=Generators.BOTORCH_MODULAR, num_trials=-1),
+        ]
+    )
+
     # Initialize Ax client
     ax_client = AxClient(generation_strategy=generation_strategy)
 
@@ -116,8 +118,8 @@ if __name__ == "__main__":
     parameters = [{"name": f"x{i}", "type": "range", "bounds": [0.0, 1.0], "value_type": "float"} for i in range(num_parameters)]
 
     # Define objectives and thresholds
-    objectives = {f"f{i+1}": ObjectiveProperties(minimize=True) for i in range(num_obj)}
-    thresholds = [{"metric_name": f"f{i+1}", "bound": "1.0", "op": "<="} for i in range(num_obj)]
+    objectives = {f"f{i + 1}": ObjectiveProperties(minimize=True) for i in range(num_obj)}
+    thresholds = [{"metric_name": f"f{i + 1}", "bound": "1.0", "op": "<="} for i in range(num_obj)]
 
     global_parameters = [{"num_objs": num_obj}]
 
@@ -126,7 +128,7 @@ if __name__ == "__main__":
         name="my_experiment",
         parameters=parameters,
         objectives=objectives,
-        objective_thresholds=thresholds,
+        # objective_thresholds=thresholds,
     )
 
     logging.info("defining objectives")
