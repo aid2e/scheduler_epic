@@ -6,6 +6,8 @@ from ax.modelbridge.registry import Generators
 from ax.modelbridge.generation_strategy import GenerationStrategy, GenerationStep
 from scheduler import AxScheduler, JobLibRunner
 from scheduler.utils.common import setup_logging
+from scheduler.job.job import JobType
+from scheduler.job.multi_steps_job import MultiStepsFunction
 
 
 # DTLZ2: m objectives, d-dimensional input
@@ -137,12 +139,26 @@ if __name__ == "__main__":
     runner = JobLibRunner(n_jobs=-1)  # Use all available cores
     logging.info(f"created runner: {runner}")
 
+    objective_function_multi = MultiStepsFunction(
+        objective_funcs={
+            "one_step": {
+                "func": objective_function,
+                "job_type": JobType.FUNCTION,
+                "runner": runner
+            },
+        },
+        deps=None,
+        global_parameters=global_parameters,
+        global_parameters_steps=["one_step"],
+    )
+
     # Create the scheduler
     scheduler = AxScheduler(ax_client, runner)
     logging.info(f"created scheduler: {scheduler}")
 
     # Set the objective function
-    scheduler.set_objective_function(objective_function)
+    # scheduler.set_objective_function(objective_function)
+    scheduler.set_objective_function(objective_function_multi)
 
     logging.info("running optimization")
     # Run the optimization

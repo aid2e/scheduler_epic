@@ -126,12 +126,13 @@ class Job:
         """
         self.internal_id = internal_id
 
-    def set_parent_results(self, step, job_key, results) -> None:
+    def set_parent_results(self, step, objective, job_key, results) -> None:
         """
         Set results for the parent job.
 
         Args:
             step: The step name of the curret job
+            objective: The objective of the current job
             job_key: The job key of the curret job
             results: Results from the parent job
         """

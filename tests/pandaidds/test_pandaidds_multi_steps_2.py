@@ -69,7 +69,7 @@ if __name__ == "__main__":
         "name": "user.wguan.my_experiment",
         "init_env": init_env,
         "cloud": "US",
-        "queue": "BNL_PanDA_1",  # BNL_OSG_PanDA_1, BNL_PanDA_1
+        "queue": "BNL_OSG_PanDA_1",  # BNL_OSG_PanDA_1, BNL_PanDA_1
         "source_dir": None,  # used to upload files in the source directory to PanDA, which will be used for the remote jobs.
                              # None is the current directory.
         "source_dir_parent_level": 1,
