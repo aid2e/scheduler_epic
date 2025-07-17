@@ -75,8 +75,8 @@ if __name__ == "__main__":
             "__pycache__"
         ],
         "max_walltime": 3600,
-        "core_count": 1,
-        "total_memory": 4000,
+        "core_count": 2,
+        "total_memory": 8000,
         "enable_separate_log": True,
         "job_dir": None,
     }
