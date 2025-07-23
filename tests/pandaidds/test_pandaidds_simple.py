@@ -1,9 +1,5 @@
 import logging
 
-from ax.service.ax_client import AxClient, ObjectiveProperties
-from scheduler import AxScheduler, PanDAiDDSRunner
-from scheduler.utils.common import setup_logging
-
 
 # Define your objective function
 def objective_function(x, y):
@@ -16,6 +12,12 @@ def objective_function(x, y):
 # However, if this objective function calls some other functions, this way of only shipping
 # the function codes will not work.
 if __name__ == "__main__":
+    # move imports here
+    # so the remote execution will not import these libraries
+    from ax.service.ax_client import AxClient, ObjectiveProperties
+    from scheduler import AxScheduler, PanDAiDDSRunner
+    from scheduler.utils.common import setup_logging
+
     setup_logging(log_level="debug")
 
     logging.debug("setup ax client")
@@ -75,8 +77,8 @@ if __name__ == "__main__":
             "__pycache__"
         ],
         "max_walltime": 3600,
-        "core_count": 1,
-        "total_memory": 4000,
+        "core_count": 2,
+        "total_memory": 8000,
         "enable_separate_log": True,
         "job_dir": None,
     }

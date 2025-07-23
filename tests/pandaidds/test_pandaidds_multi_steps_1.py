@@ -1,11 +1,5 @@
 import logging
 
-from ax.service.ax_client import AxClient, ObjectiveProperties
-from scheduler import AxScheduler, PanDAiDDSRunner
-from scheduler.utils.common import setup_logging
-from scheduler.job.job import JobType
-from scheduler.job.multi_steps_job import MultiStepsFunction
-
 
 # Define your objective function
 def objective_function_step(x, y):
@@ -18,6 +12,15 @@ def objective_function_step(x, y):
 # However, if this objective function calls some other functions, this way of only shipping
 # the function codes will not work.
 if __name__ == "__main__":
+    # move imports here
+    # so the remote execution will not import these libraries
+
+    from ax.service.ax_client import AxClient, ObjectiveProperties
+    from scheduler import AxScheduler, PanDAiDDSRunner
+    from scheduler.utils.common import setup_logging
+    from scheduler.job.job import JobType
+    from scheduler.job.multi_steps_job import MultiStepsFunction
+
     setup_logging(log_level="debug")
 
     logging.debug("setup ax client")

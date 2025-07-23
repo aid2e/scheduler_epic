@@ -155,12 +155,13 @@ Set internal id for the job.
 ### set_parent_results
 
 ```python
-def set_parent_results(self, step: Any, job_key: Any, results: Any) -> None
+def set_parent_results(self, step: Any, objective: Any, job_key: Any, results: Any) -> None
 ```
 
 Set results for the parent job.
 **Args:**
 * **step**: The step name of the curret job
+* **objective**: The objective of the current job
 * **job_key**: The job key of the curret job
 * **results**: Results from the parent job
 
