@@ -1,7 +1,0 @@
-# Core runtime dependencies
-ax-platform
-numpy
-pandas
-joblib
-scipy
-scikit-learn
