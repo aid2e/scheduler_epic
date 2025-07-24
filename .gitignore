@@ -2,6 +2,8 @@
 *fieldmaps
 *.qodo
 
+*env_*
+
 # MkDocs documentation
 /site/
 
