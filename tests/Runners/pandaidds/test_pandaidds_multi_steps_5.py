@@ -2,11 +2,6 @@ import logging
 import json
 
 from itertools import product
-from ax.service.ax_client import AxClient, ObjectiveProperties
-from scheduler import AxScheduler, PanDAiDDSRunner, JobLibRunner
-from scheduler.utils.common import setup_logging
-from scheduler.job.job import JobType
-from scheduler.job.multi_steps_job import MultiStepsFunction
 
 
 # define global parameters. It will generate a list of parameters working together with hyperparameters.
@@ -84,6 +79,15 @@ def objective_function_step_final(x, y, xyz):
 # However, if this objective function calls some other functions, this way of only shipping
 # the function codes will not work.
 if __name__ == "__main__":
+    # move imports here
+    # so the remote execution will not import these libraries
+
+    from ax.service.ax_client import AxClient, ObjectiveProperties
+    from scheduler import AxScheduler, PanDAiDDSRunner, JobLibRunner
+    from scheduler.utils.common import setup_logging
+    from scheduler.job.job import JobType
+    from scheduler.job.multi_steps_job import MultiStepsFunction
+
     setup_logging(log_level="debug")
 
     logging.debug("setup ax client")
@@ -187,7 +191,7 @@ if __name__ == "__main__":
                 # PanDA-iDDS will get the list of files in the input dataset and create an
                 # additional argument "input_file_names=<file_list_in_dataset>".
                 # So the function objective_function_step_ana must have a placeholder argument
-                # for 'input_file_names'. You can use any other names instead of 'input_file_name'.
+                # for 'input_file_names'. You can use any other names instead of 'input_file_names`.
                 "input_datasets": {"input_file_names": f"{dataset_name_prefix}.simreco.#global_parameter_key.#job_id"},
             },
             "final": {

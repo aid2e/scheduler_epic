@@ -181,6 +181,7 @@ class PanDAiDDSRunner(BaseRunner):
 
             job.set_internal_id(work.internal_id)
 
+            work.core_count = self.core_count
             tf_id = work.submit()
             self.logger.info(f"Submit work {work_name} internal_id {work.internal_id} to PanDA/iDDS with transform_id {tf_id}, parent_internal_id {work.parent_internal_id}")
             if not tf_id:

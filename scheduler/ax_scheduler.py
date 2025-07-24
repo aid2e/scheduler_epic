@@ -361,6 +361,17 @@ class AxScheduler:
                 except Exception as e:
                     self.logger.warning(f"Error cleaning up trial directory: {str(e)}")
 
+    def is_multi_objective(self) -> bool:
+        """
+        Check whether it's multiple objectives
+
+        Returns:
+            Bool value
+        """
+        if hasattr(self.ax_client.experiment.optimization_config.objective, "objectives") and len(self.ax_client.experiment.optimization_config.objective.objectives) > 1:
+            return True
+        return False
+
     def run_optimization(self, max_trials: int = 10) -> Dict[str, Any]:
         """
         Run the optimization process.
@@ -405,8 +416,12 @@ class AxScheduler:
                 self.complete_trial(trial_index)
 
         # Get the best parameters
-        best_parameters, _ = self.ax_client.get_best_parameters()
-        return best_parameters
+        if self.is_multi_objective():
+            pareto_params = self.ax_client.get_pareto_optimal_parameters()
+            return pareto_params
+        else:
+            best_parameters, _ = self.ax_client.get_best_parameters()
+            return best_parameters
 
     def monitor_trials(self) -> None:
         """

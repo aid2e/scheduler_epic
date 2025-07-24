@@ -1,11 +1,5 @@
 import logging
 
-from ax.service.ax_client import AxClient, ObjectiveProperties
-from scheduler import AxScheduler, PanDAiDDSRunner, JobLibRunner
-from scheduler.utils.common import setup_logging
-from scheduler.job.job import JobType
-from scheduler.job.multi_steps_job import MultiStepsFunction
-
 
 # Define your objective function
 def objective_function_step(x, y):
@@ -22,6 +16,15 @@ def objective_function_ana(x, y, xyz):
 # However, if this objective function calls some other functions, this way of only shipping
 # the function codes will not work.
 if __name__ == "__main__":
+    # move imports here
+    # so the remote execution will not import these libraries
+
+    from ax.service.ax_client import AxClient, ObjectiveProperties
+    from scheduler import AxScheduler, PanDAiDDSRunner, JobLibRunner
+    from scheduler.utils.common import setup_logging
+    from scheduler.job.job import JobType
+    from scheduler.job.multi_steps_job import MultiStepsFunction
+
     setup_logging(log_level="debug")
 
     logging.debug("setup ax client")
@@ -69,7 +72,7 @@ if __name__ == "__main__":
         "name": "user.wguan.my_experiment",
         "init_env": init_env,
         "cloud": "US",
-        "queue": "BNL_PanDA_1",  # BNL_OSG_PanDA_1, BNL_PanDA_1
+        "queue": "BNL_OSG_PanDA_1",  # BNL_OSG_PanDA_1, BNL_PanDA_1
         "source_dir": None,  # used to upload files in the source directory to PanDA, which will be used for the remote jobs.
                              # None is the current directory.
         "source_dir_parent_level": 1,

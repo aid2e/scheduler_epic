@@ -9,7 +9,7 @@ It can handle different job types:
 - Script: Executes scripts directly
 - Container: Runs containers using Singularity
 
-**Inherits from:** [BaseRunner](baserunner.md)
+**Inherits from:** [BaseRunner](base_runner.md)
 
 ## Class Definition
 

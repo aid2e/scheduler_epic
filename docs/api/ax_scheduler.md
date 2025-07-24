@@ -30,6 +30,7 @@ class AxScheduler(self, ax_client_or_experiment: Union[ax.service.ax_client.AxCl
 | [`batch_trial_context`](#batch_trial_context) | Context manager for creating and running a batch of trials. |
 | [`complete_trial`](#complete_trial) | Mark a trial as completed in Ax. |
 | [`get_next_trial`](#get_next_trial) | Generate a new trial using Ax and return its index. |
+| [`is_multi_objective`](#is_multi_objective) | Check whether it's multiple objectives |
 | [`load_experiment`](#load_experiment) | Load an experiment from a file. |
 | [`monitor_trials`](#monitor_trials) | Monitor all running trials. |
 | [`run_optimization`](#run_optimization) | Run the optimization process. |
@@ -82,6 +83,18 @@ def get_next_trial(self) -> Optional[int]
 Generate a new trial using Ax and return its index.
 **Returns:**
   The index of the new trial, or None if no more trials can be generated
+
+---
+
+### is_multi_objective
+
+```python
+def is_multi_objective(self) -> <class 'bool'>
+```
+
+Check whether it's multiple objectives
+**Returns:**
+  Bool value
 
 ---
 

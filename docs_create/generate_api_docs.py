@@ -40,11 +40,11 @@ try:
     from scheduler.runners.joblib_runner import JobLibRunner
     from scheduler.runners.slurm_runner import SlurmRunner
     try:
-        from scheduler.runners.panda_runner import PandaRunner
+        from scheduler.runners.pandaidds_runner import PanDAiDDSRunner
         has_panda = True
     except ImportError:
         has_panda = False
-        logger.warning("PandaRunner module not found, skipping documentation for this component")
+        logger.warning("PanDAiDDSRunner module not found, skipping documentation for this component")
 except ImportError as e:
     logger.error(f"Error importing scheduler modules: {e}")
     logger.error("Make sure the package is installed or in your PYTHONPATH")
@@ -270,7 +270,8 @@ def generate_class_doc(cls, filename: str) -> None:
             base_names = []
             for base in base_classes:
                 if base.__module__.startswith('scheduler'):
-                    base_names.append(f"[{base.__name__}]({base.__name__.lower()}.md)")
+                    # base_names.append(f"[{base.__name__}]({base.__name__.lower()}.md)")
+                    base_names.append(f"[{base.__name__}]({base.__module__.split(".")[-1].lower()}.md)")
                 else:
                     base_names.append(base.__name__)
             
@@ -426,7 +427,7 @@ def generate_index_page():
         f.write("Runner for execution on Slurm clusters.\n\n")
         
         if has_panda:
-            f.write("### [PandaRunner](panda_runner.md)\n\n")
+            f.write("### [PanDAiDDSRunner](pandaidds_runner.md)\n\n")
             f.write("Runner for execution using PanDA distributed computing.\n\n")
         
         # Class Hierarchy section
@@ -436,7 +437,7 @@ def generate_index_page():
         f.write("├── JobLibRunner\n")
         f.write("├── SlurmRunner\n")
         if has_panda:
-            f.write("└── PandaRunner\n")
+            f.write("└── PanDAiDDSRunner\n")
         f.write("```\n\n")
         
         # Add a "How to Use This Documentation" section
@@ -469,7 +470,7 @@ def main():
         generated_files.append(generate_class_doc(JobLibRunner, "joblib_runner.md"))
         generated_files.append(generate_class_doc(SlurmRunner, "slurm_runner.md"))
         if has_panda:
-            generated_files.append(generate_class_doc(PandaRunner, "panda_runner.md"))
+            generated_files.append(generate_class_doc(PanDAiDDSRunner, "pandaidds_runner.md"))
         
         # Generate index page
         generate_index_page()
@@ -479,7 +480,7 @@ def main():
             "runners.md",
             "Runners",
             "Runners are responsible for executing jobs on different computing backends.",
-            [BaseRunner, JobLibRunner, SlurmRunner] + ([PandaRunner] if has_panda else [])
+            [BaseRunner, JobLibRunner, SlurmRunner] + ([PanDAiDDSRunner] if has_panda else [])
         )
         
         logger.info(f"API documentation generation complete")
@@ -512,7 +513,8 @@ def generate_combined_doc(filename, title, description, classes):
             class_doc = inspect.getdoc(cls) or "*No documentation available.*"
             first_line = class_doc.split('\n')[0]
             
-            f.write(f"### [{class_name}]({class_name.lower()}.md)\n\n")
+            # f.write(f"### [{class_name}]({class_name.lower()}.md)\n\n")
+            f.write(f"### [{class_name}]({cls.__module__.split(".")[-1].lower()}.md)\n\n")
             f.write(f"{first_line}\n\n")
         
         # Add class inheritance diagram
