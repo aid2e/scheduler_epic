@@ -23,6 +23,9 @@ try:
     from ax.storage.json_store.encoder import object_to_json
     from ax.storage.json_store.decoder import object_from_json
 
+    # from botorch.utils.multi_objective.hypervolume import Hypervolume
+    # import torch
+
     AX_AVAILABLE = True
 except ImportError:
     AX_AVAILABLE = False
@@ -32,6 +35,7 @@ from .trial.trial_state import TrialState
 from .job.job import Job, JobType
 from .job.multi_steps_job import MultiStepsFunction, MultiStepsJob
 from .runners.base_runner import BaseRunner
+from .utils.convergence import cal_hv_convergence, cal_single_objective_convergence
 
 # from .utils.common import setup_logging
 
@@ -80,11 +84,37 @@ class AxScheduler:
 
         self.runner = runner
         self.trials = {}  # trial_index -> Trial
+        self.running_trials = []   # trial_index
+        self.trials_metrics = {}   # trial_index -> {"start_time": <>, "end_time": <>, "time_used": <>}
         self.monitoring_interval = self.config.get("monitoring_interval", 10)  # seconds
         self.max_trial_monitoring_time = self.config.get("max_trial_monitoring_time", 86400)  # 24 hours
         self.job_output_dir = self.config.get("job_output_dir", os.path.expanduser("~/ax_scheduler_output"))
         self.cleanup_after_completion = self.config.get("cleanup_after_completion", False)
         self.synchronous = self.config.get("synchronous", False)
+        self.max_concurrent_trials = self.config.get("max_concurrent_trials", 1)
+
+        self.early_stopping_threshold = self.config.get("early_stopping_threshold", None)
+        self.best_objective_previous = None
+        # don't start the early_stopping at the random generation stage
+        self.early_stopping_begin_at = self.config.get("early_stopping_begin_at", 0)
+
+        # ref point for hypervolume
+        self.ref_point = self.config.get("ref_point", None)
+
+        # checkpoint
+        self.restart_from_checkpoint = self.config.get("restart_from_checkpoint", False)
+        self.enable_checkpoint = self.config.get("enable_checkpoint", True)
+        self.work_dir = self.config.get("work_dir", None)
+        self.checkpoint_name = self.config.get("checkpoint_name", None)
+        if not self.checkpoint_name:
+            self.checkpoint_name = f"{self.experiment.name}.json"
+            if self.work_dir:
+                if not os.path.exists(self.work_dir):
+                    os.makedirs(self.work_dir)
+                self.checkpoint_name = os.path.join(self.work_dir, self.checkpoint_name)
+
+        # performance like hv
+        self.enable_hv = self.config.get("enable_hv", True)
 
         # Set up logging
         self.logger = logging.getLogger("AxScheduler")
@@ -232,6 +262,38 @@ class AxScheduler:
 
         return trial
 
+    def add_running_trial(self, trial_index: int):
+        """
+        Remove a trial_index from the running trials
+
+        Args:
+            trial_index: The index of the trial to run
+        """
+        if trial_index not in self.running_trials:
+            self.running_trials.append(trial_index)
+
+    def remove_running_trial(self, trial_index: int):
+        """
+        Remove a trial_index from the running trials
+
+        Args:
+            trial_index: The index of the trial to run
+        """
+        if trial_index in self.running_trials:
+            self.running_trials.remove(trial_index)
+
+    def get_num_of_running_trials(self) -> int:
+        """
+        Get number of running trials
+        """
+        return len(self.running_trials)
+
+    def get_num_of_trials(self) -> int:
+        """
+        Get number of trials
+        """
+        return len(self.experiment.trials)
+
     def run_trial(self, trial_index: int) -> Trial:
         """
         Run a specific trial.
@@ -254,11 +316,13 @@ class AxScheduler:
         # Run the trial
         self.logger.info(f"Running trial {trial_index} with parameters: {ax_trial.arm.parameters}")
         trial.run()
+        self.add_running_trial(trial_index)
 
         # If synchronous, wait for the trial to complete
         if self.synchronous:
             self.logger.info(f"Waiting trail {trial_index} to finish")
             self._wait_for_trial_completion(trial)
+            self.remove_running_trial(trial_index)
 
         return trial
 
@@ -344,6 +408,8 @@ class AxScheduler:
         if self.cleanup_after_completion:
             self._cleanup_trial(trial)
 
+        self.remove_running_trial(trial_index)
+
     def _cleanup_trial(self, trial: Trial) -> None:
         """
         Clean up files for a completed trial.
@@ -386,34 +452,89 @@ class AxScheduler:
         if self.ax_client is None:
             raise ValueError("An AxClient is required to run optimization")
 
-        for _ in range(max_trials):
-            # Get the next trial
-            trial_index = self.get_next_trial()
-            self.logger.info(f"Got new trial {trial_index}")
-            if trial_index is None:
+        if self.restart_from_checkpoint:
+            self.logger.info("restart from checkpoint: {self.restart_from_checkpoint}")
+            self.load_experiment()
+
+        stop_new_trials = False
+        converged = 0.0
+        continuous_unconverged_trials = 0
+
+        while True:
+            num_trials = self.get_num_of_trials()
+            num_running = self.get_num_of_running_trials()
+
+            if num_trials >= max_trials and num_running == 0:
+                self.logger.info("Reached max trials and all running trials completed.")
                 break
 
-            # Run the trial
-            self.logger.info(f"Running new trial {trial_index}")
-            trial = self.run_trial(trial_index)
+            if not stop_new_trials and num_trials < max_trials and num_running < self.max_concurrent_trials:
+                if self.early_stopping_threshold is not None and num_trials >= self.early_stopping_begin_at and converged < self.early_stopping_threshold:
+                    continuous_unconverged_trials += 1
+                else:
+                    continuous_unconverged_trials = 0
 
-            # If not synchronous, we need to monitor the trial
-            if not self.synchronous:
-                self.logger.info(f"Waiting trial {trial_index} to finish")
-                # Monitor the trial until it's done
-                while trial.check_status() not in [
-                    TrialState.COMPLETED,
-                    TrialState.FAILED,
-                    TrialState.CANCELLED,
-                ]:
-                    time.sleep(self.monitoring_interval)
-                self.logger.debug(f"trial {trial_index} status: {trial.check_status()}")
+                if continuous_unconverged_trials > 5:
+                    self.logger.info(
+                        f"Early stopping: convergence {converged:.6f} "
+                        f"below threshold {self.early_stopping_threshold}"
+                    )
+                    # break  # <-- Important: exit loop on early stopping
+                    stop_new_trials = True
 
-            # Complete the trial
-            self.logger.info(f"checking to complete trial {trial_index}")
-            if trial.state == TrialState.COMPLETED:
-                self.logger.info(f"Completing trial {trial_index}")
-                self.complete_trial(trial_index)
+                if not stop_new_trials:
+                    # Get the next trial
+                    trial_index = self.get_next_trial()
+                    self.logger.info(f"Got new trial {trial_index}")
+                    if trial_index is not None:
+                        self.logger.info(f"Running new trial {trial_index}")
+                        self.run_trial(trial_index)
+
+            terminated_trials = []
+            self.logger.debug(f"Running trials: {self.running_trials}")
+            for trial_index in self.running_trials:
+                trial = self.trials[trial_index]
+                status = trial.check_status()
+                self.logger.debug(f"Trial {trial.trial_id} status: {status}")
+
+                if status in [TrialState.COMPLETED, TrialState.FAILED, TrialState.CANCELLED]:
+                    if status == TrialState.COMPLETED:
+                        self.logger.info(f"Completing trial {trial_index}")
+                        self.complete_trial(trial_index)
+                        early_stop_decision = self.ax_client.should_stop_trials_early([trial_index])
+                        self.logger.debug(f"Trial [{trial_index}] early stop decision: {early_stop_decision}")
+                        if early_stop_decision:
+                            # self.ax_client.stop_trial_early(trial_index)
+                            # break
+                            pass
+                    terminated_trials.append(trial_index)
+                    self.trials_metrics[trial_index] = {
+                        "start_time": trial.start_time,
+                        "end_time": trial.end_time,
+                        "time_used": (trial.end_time - trial.start_time).total_seconds(),
+                    }
+
+            has_terminated_trials = False
+            if terminated_trials:
+                has_terminated_trials = True
+
+            for trial_index in terminated_trials:
+                self.remove_running_trial(trial_index)
+
+            if has_terminated_trials and self.enable_checkpoint:
+                self.save_experiment()
+
+            # Update convergence after trials complete
+            if self.is_multi_objective():
+                volume, converged = cal_hv_convergence(self.ax_client, hv_pareto=self.best_objective_previous)
+                self.best_objective_previous = volume
+                self.logger.info(f"Current hypervolume: {volume:.6f}, convergence: {converged:.6f}")
+            else:
+                best_obj, converged = cal_single_objective_convergence(self.ax_client, best_objective_previous=self.best_objective_previous, logger=self.logger)
+                self.best_objective_previous = best_obj
+                self.logger.info(f"Current best objective: {best_obj:.6f}, convergence: {converged:.6f}")
+
+            time.sleep(self.monitoring_interval)
 
         # Get the best parameters
         if self.is_multi_objective():
@@ -437,38 +558,60 @@ class AxScheduler:
                     self.complete_trial(trial_index)
         self.logger.debug("Finished to monitor trials")
 
-    def save_experiment(self, path: str) -> None:
+    def save_experiment(self, path: str = None) -> None:
         """
         Save the experiment to a file.
 
         Args:
             path: Path to save the experiment to
         """
-        if not path.endswith(".json"):
-            path += ".json"
+        if path:
+            if not path.endswith(".json"):
+                path += ".json"
+        else:
+            path = self.checkpoint_name
+
+        dir_name = os.path.dirname(path)
+        if dir_name:
+            os.makedirs(dir_name, exist_ok=True)
 
         with open(path, "w") as f:
-            json_data = object_to_json(self.experiment)
+            data = {
+                "experiment": self.experiment,
+                "trials_metrics": self.trials_metrics,
+            }
+            json_data = object_to_json(data)
             import json
 
             json.dump(json_data, f, indent=2)
+        self.logger.info(f"save experiment to checkpoint file {path}")
 
-    def load_experiment(self, path: str) -> None:
+    def load_experiment(self, path: str = None) -> None:
         """
         Load an experiment from a file.
 
         Args:
             path: Path to load the experiment from
         """
-        with open(path, "r") as f:
-            import json
+        if not path:
+            path = self.checkpoint_name
 
-            json_data = json.load(f)
-            self.experiment = object_from_json(json_data)
+        if os.path.exists(path):
+            with open(path, "r") as f:
+                import json
 
-        # If we had an AxClient, update its experiment
-        if self.ax_client is not None:
-            self.ax_client._experiment = self.experiment
+                json_data = json.load(f)
+                data = object_from_json(json_data)
+                self.experiment = data["experiment"]
+                self.trials_metrics = data["trials_metrics"]
+
+            # If we had an AxClient, update its experiment
+            if self.ax_client is not None:
+                self.ax_client._experiment = self.experiment
+
+            self.logger.info(f"load from checkpoint file {path}")
+        else:
+            self.logger.info(f"checkpoint file {path} doesn't exist")
 
     @contextmanager
     def batch_trial_context(self):

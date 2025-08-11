@@ -37,8 +37,8 @@ if __name__ == "__main__":
             },
         ],
         objectives={
-            "objective1": ObjectiveProperties(minimize=True),
-            "objective2": ObjectiveProperties(minimize=True),
+            "objective1": ObjectiveProperties(minimize=True, threshold=1),
+            "objective2": ObjectiveProperties(minimize=True, threshold=2),
         },
     )
 
@@ -48,8 +48,17 @@ if __name__ == "__main__":
     runner = JobLibRunner(n_jobs=-1)  # Use all available cores
     logging.info(f"created runner: {runner}")
 
+    config = {
+        "max_concurrent_trials": 1,
+        "early_stopping_threshold": None,
+        "early_stopping_begin_at": 0,
+        "restart_from_checkpoint": True,
+        "work_dir": "./work",
+        "checkpoint_name": None,    # will use experiment name
+    }
+
     # Create the scheduler
-    scheduler = AxScheduler(ax_client, runner)
+    scheduler = AxScheduler(ax_client, runner, config=config)
     logging.info(f"created scheduler: {scheduler}")
 
     # Set the objective function
@@ -57,5 +66,5 @@ if __name__ == "__main__":
 
     logging.info("running optimization")
     # Run the optimization
-    best_params = scheduler.run_optimization(max_trials=10)
+    best_params = scheduler.run_optimization(max_trials=100)
     print("Best parameters:", best_params)

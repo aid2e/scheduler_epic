@@ -38,7 +38,9 @@ def dtlz2_torch(X, m=2):
         f_i = (1 + g) * prod
         f.append(f_i)
 
-    return torch.stack(f, dim=1)
+    f_vals = torch.stack(f, dim=1)
+    f_vals = f_vals / f_vals.norm(p=2, dim=1, keepdim=True)
+    return f_vals
 
 
 def dtlz2(X, m=2):
@@ -67,7 +69,8 @@ def dtlz2(X, m=2):
         if i > 0:
             f[:, i] *= np.sin(0.5 * np.pi * X[:, m - i - 1])
 
-    return f
+    f_vals = f / np.linalg.norm(f, axis=1, keepdims=True)
+    return f_vals
 
 
 def objective_function_torch(num_objs=2, **params):
@@ -106,8 +109,8 @@ if __name__ == "__main__":
 
     generation_strategy = GenerationStrategy(
         steps=[
-            GenerationStep(model=Generators.SOBOL, num_trials=5),
-            GenerationStep(model=Generators.BOTORCH_MODULAR, num_trials=-1),
+            GenerationStep(model=Generators.SOBOL, num_trials=5, min_trials_observed=3, max_parallelism=5),
+            GenerationStep(model=Generators.BOTORCH_MODULAR, num_trials=-1, max_parallelism=5),
         ]
     )
 
@@ -120,14 +123,14 @@ if __name__ == "__main__":
     parameters = [{"name": f"x{i}", "type": "range", "bounds": [0.0, 1.0], "value_type": "float"} for i in range(num_parameters)]
 
     # Define objectives and thresholds
-    objectives = {f"f{i + 1}": ObjectiveProperties(minimize=True) for i in range(num_obj)}
-    thresholds = [{"metric_name": f"f{i + 1}", "bound": "1.0", "op": "<="} for i in range(num_obj)]
+    objectives = {f"f{i + 1}": ObjectiveProperties(minimize=True, threshold=1.1) for i in range(num_obj)}
+    # thresholds = [{"metric_name": f"f{i + 1}", "bound": "1.0", "op": "<="} for i in range(num_obj)]
 
     global_parameters = [{"num_objs": num_obj}]
 
     # Define your parameter space
     ax_client.create_experiment(
-        name="my_experiment",
+        name="dtlz2",
         parameters=parameters,
         objectives=objectives,
         # objective_thresholds=thresholds,
@@ -142,7 +145,7 @@ if __name__ == "__main__":
     objective_function_multi = MultiStepsFunction(
         objective_funcs={
             "one_step": {
-                "func": objective_function,
+                "func": objective_function_torch,
                 "job_type": JobType.FUNCTION,
                 "runner": runner
             },
@@ -152,8 +155,17 @@ if __name__ == "__main__":
         global_parameters_steps=["one_step"],
     )
 
+    config = {
+        "max_concurrent_trials": 3,
+        "early_stopping_threshold": None,
+        "early_stopping_begin_at": 0,
+        "restart_from_checkpoint": True,
+        "work_dir": "./work",
+        "checkpoint_name": None,    # will use experiment name
+    }
+
     # Create the scheduler
-    scheduler = AxScheduler(ax_client, runner)
+    scheduler = AxScheduler(ax_client, runner, config=config)
     logging.info(f"created scheduler: {scheduler}")
 
     # Set the objective function
