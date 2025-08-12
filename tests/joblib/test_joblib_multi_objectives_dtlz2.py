@@ -96,11 +96,14 @@ if __name__ == "__main__":
     parser.add_argument("--objectives", type=int, default=2, help="Number of objectives (e.g., 2)")
     parser.add_argument("--trials", type=int, default=20, help="Number of trials")
     parser.add_argument("--parameters", type=int, default=6, help="Number of parameters")
+    parser.add_argument("--name", type=str, default="dtlz2", help="Name")
+
     args = parser.parse_args()
 
     num_obj = args.objectives
     num_trials = args.trials
     num_parameters = args.parameters
+    name = args.name
 
     setup_logging(log_level="debug")
     logging.info(f"num objectives: {num_obj}, num trials: {num_trials}, num parameters: {num_parameters}")
@@ -130,7 +133,7 @@ if __name__ == "__main__":
 
     # Define your parameter space
     ax_client.create_experiment(
-        name="dtlz2",
+        name=name,
         parameters=parameters,
         objectives=objectives,
         # objective_thresholds=thresholds,
