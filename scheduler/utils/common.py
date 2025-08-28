@@ -29,3 +29,12 @@ def setup_logging(log_file=None, log_level=None):
         )
 
     logging.Formatter.converter = time.gmtime
+
+
+def list_to_tuple(data):
+    if isinstance(data, list):
+        return tuple(list_to_tuple(item) for item in data)
+    elif isinstance(data, dict):
+        return {key: list_to_tuple(value) for key, value in data.items()}
+    else:
+        return data

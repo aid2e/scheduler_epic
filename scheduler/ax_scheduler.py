@@ -35,6 +35,7 @@ from .trial.trial_state import TrialState
 from .job.job import Job, JobType
 from .job.multi_steps_job import MultiStepsFunction, MultiStepsJob
 from .runners.base_runner import BaseRunner
+from .utils.common import list_to_tuple
 from .utils.convergence import cal_hv_convergence, cal_single_objective_convergence
 
 # from .utils.common import setup_logging
@@ -386,6 +387,8 @@ class AxScheduler:
         # Get the results
         if raw_data is None:
             raw_data = trial.get_results()
+        if raw_data:
+            raw_data = list_to_tuple(raw_data)
         self.logger.debug(f"Trial {trial_index} results(raw data): {raw_data}")
 
         # Complete the trial in Ax
@@ -514,16 +517,6 @@ class AxScheduler:
                         "time_used": (trial.end_time - trial.start_time).total_seconds(),
                     }
 
-            has_terminated_trials = False
-            if terminated_trials:
-                has_terminated_trials = True
-
-            for trial_index in terminated_trials:
-                self.remove_running_trial(trial_index)
-
-            if has_terminated_trials and self.enable_checkpoint:
-                self.save_experiment()
-
             # Update convergence after trials complete
             if self.is_multi_objective():
                 volume, converged = cal_hv_convergence(self.ax_client, hv_pareto=self.best_objective_previous)
@@ -533,6 +526,17 @@ class AxScheduler:
                 best_obj, converged = cal_single_objective_convergence(self.ax_client, best_objective_previous=self.best_objective_previous, logger=self.logger)
                 self.best_objective_previous = best_obj
                 self.logger.info(f"Current best objective: {best_obj:.6f}, convergence: {converged:.6f}")
+
+            has_terminated_trials = False
+            if terminated_trials:
+                has_terminated_trials = True
+
+            for trial_index in terminated_trials:
+                self.remove_running_trial(trial_index)
+                self.trials_metrics[trial_index]["best_objective"] = self.best_objective_previous
+
+            if has_terminated_trials and self.enable_checkpoint:
+                self.save_experiment()
 
             time.sleep(self.monitoring_interval)
 

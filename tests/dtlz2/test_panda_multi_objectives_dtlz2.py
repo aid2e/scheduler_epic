@@ -1,14 +1,6 @@
 import argparse
 import logging
 
-from ax.service.ax_client import AxClient, ObjectiveProperties
-from ax.modelbridge.registry import Generators
-from ax.modelbridge.generation_strategy import GenerationStrategy, GenerationStep
-from scheduler import AxScheduler, JobLibRunner
-from scheduler.utils.common import setup_logging
-from scheduler.job.job import JobType
-from scheduler.job.multi_steps_job import MultiStepsFunction
-
 
 # DTLZ2: m objectives, d-dimensional input
 def dtlz2_torch(X, m=2):
@@ -92,11 +84,20 @@ def objective_function(num_objs=2, **params):
 
 
 if __name__ == "__main__":
+    from ax.service.ax_client import AxClient, ObjectiveProperties
+    from ax.modelbridge.registry import Generators
+    from ax.modelbridge.generation_strategy import GenerationStrategy, GenerationStep
+    from scheduler import AxScheduler, PanDAiDDSRunner
+    from scheduler.utils.common import setup_logging
+    from scheduler.job.job import JobType
+    from scheduler.job.multi_steps_job import MultiStepsFunction
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--objectives", type=int, default=2, help="Number of objectives (e.g., 2)")
     parser.add_argument("--trials", type=int, default=20, help="Number of trials")
     parser.add_argument("--parameters", type=int, default=6, help="Number of parameters")
     parser.add_argument("--name", type=str, default="dtlz2", help="Name")
+    parser.add_argument("--queue", type=str, default="BNL_PanDA_1", help="PanDA queue")
 
     args = parser.parse_args()
 
@@ -104,6 +105,7 @@ if __name__ == "__main__":
     num_trials = args.trials
     num_parameters = args.parameters
     name = args.name
+    queue = args.queue
 
     setup_logging(log_level="debug")
     logging.info(f"num objectives: {num_obj}, num trials: {num_trials}, num parameters: {num_parameters}")
@@ -139,11 +141,50 @@ if __name__ == "__main__":
         # objective_thresholds=thresholds,
     )
 
+    # PanDA attributes
+    init_env = [
+        "source /cvmfs/unpacked.cern.ch/registry.hub.docker.com/fyingtsai/eic_xl:24.11.1/opt/conda/setup_mamba.sh;"
+        "source /cvmfs/unpacked.cern.ch/registry.hub.docker.com/fyingtsai/eic_xl:24.11.1/opt/conda/dRICH-MOBO//MOBO-tools/setup_new.sh;"
+        "command -v singularity &> /dev/null || export SINGULARITY=/cvmfs/oasis.opensciencegrid.org/mis/singularity/current/bin/singularity;"
+        "export AIDE_HOME=$(pwd);"
+        "export PWD_PATH=$(pwd);"
+        'export SINGULARITY_OPTIONS="--bind /cvmfs:/cvmfs,$(pwd):$(pwd)"; '
+        "export SIF=/cvmfs/singularity.opensciencegrid.org/eicweb/eic_xl:24.11.1-stable; export SINGULARITY_BINDPATH=/cvmfs,/afs; "
+        "env; "
+    ]
+    init_env = " ".join(init_env)
+
+    panda_attrs = {
+        "name": "user.wguan.my_experiment",
+        "init_env": init_env,
+        "cloud": "US",
+        "queue": queue,  # BNL_OSG_PanDA_1, BNL_PanDA_1
+        "source_dir": None,  # used to upload files in the source directory to PanDA, which will be used for the remote jobs.
+                             # None is the current directory.
+        "source_dir_parent_level": 1,
+        "exclude_source_files": [
+            r"(^|/)\.[^/]+",    # file starts with "."
+            "doc*", "DTLZ2*", ".*json", ".*log", "work", "log", "OUTDIR",
+            "calibrations", "fieldmaps", "gdml", "EICrecon-drich-mobo",
+            "eic-software", "epic-geom-drich-mobo", "irt", "share", "back*",
+            "__pycache__"
+        ],
+        "max_walltime": 3600,
+        "core_count": 1,
+        "total_memory": 4000,
+        "enable_separate_log": True,
+        "job_dir": None,
+    }
+
+    # Create a runner
+    runner = PanDAiDDSRunner(**panda_attrs)
+    logging.info(f"created runner: {runner}")
+
     logging.info("defining objectives")
 
     # Create a runner
-    runner = JobLibRunner(n_jobs=-1)  # Use all available cores
-    logging.info(f"created runner: {runner}")
+    # runner = JobLibRunner(n_jobs=-1)  # Use all available cores
+    # logging.info(f"created runner: {runner}")
 
     objective_function_multi = MultiStepsFunction(
         objective_funcs={
@@ -159,7 +200,7 @@ if __name__ == "__main__":
     )
 
     config = {
-        "max_concurrent_trials": 3,
+        "max_concurrent_trials": 10,
         "early_stopping_threshold": None,
         "early_stopping_begin_at": 0,
         "restart_from_checkpoint": True,
@@ -177,5 +218,5 @@ if __name__ == "__main__":
 
     logging.info("running optimization")
     # Run the optimization
-    best_params = scheduler.run_optimization(max_trials=10)
+    best_params = scheduler.run_optimization(max_trials=num_trials)
     print("Best parameters:", best_params)
