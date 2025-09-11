@@ -642,19 +642,23 @@ class MultiStepsJob(Job):
         Returns:
             results with different metrics
         """
-        self.logger.debug(f"get_objective_results with_global_parameters: {with_global_parameters}, objective_jobs: {objective_jobs}")
-        if with_global_parameters:
-            results = defaultdict(dict)
-            for job_key, job in objective_jobs.items():
-                for metric, value in job.results.items():
-                    results[metric][job_key] = value
-        else:
-            if len(list(objective_jobs.keys())) > 1:
-                error = f"objective_jobs {objective_jobs} has more than one global parameter key. However, with_global_parameters is {with_global_parameters}"
-                self.logger.error(error)
-                self.fail({"error": error})
-            results = list(objective_jobs.values())[0].results
-        return results
+        try:
+            self.logger.debug(f"get_objective_results with_global_parameters: {with_global_parameters}, objective_jobs: {objective_jobs}")
+            if with_global_parameters:
+                results = defaultdict(dict)
+                for job_key, job in objective_jobs.items():
+                    for metric, value in job.results.items():
+                        results[metric][job_key] = value
+            else:
+                if len(list(objective_jobs.keys())) > 1:
+                    error = f"objective_jobs {objective_jobs} has more than one global parameter key. However, with_global_parameters is {with_global_parameters}"
+                    self.logger.error(error)
+                    self.fail({"error": error})
+                results = list(objective_jobs.values())[0].results
+            return results
+        except Exception as ex:
+            self.logger.error(f"get_objective_results raise exceptions: {ex}")
+        return None
 
     def get_step_results(self, objective_results) -> Dict:
         """
@@ -711,6 +715,8 @@ class MultiStepsJob(Job):
                 if completed:
                     self.logger.info(f"Job {self.job_id} step {step_name} objective {objective} completed")
                     obj_results = self.get_objective_results(objective_jobs, with_global_parameters=self.step_states[step_name]["with_global_parameters"])
+                    if not obj_results:
+                        step_failed = True
                     self.step_states[step_name]["results"][objective] = obj_results
                     self.logger.info(f"Job {self.job_id} step {step_name} objective {objective} results {obj_results}")
                 elif failed:

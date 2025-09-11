@@ -118,7 +118,8 @@ if __name__ == "__main__":
             GenerationStep(model=Generators.BOTORCH_MODULAR, num_trials=-1, max_parallelism=5),
         ]
     )
-
+    # LEGACY_BOTORCH
+  
     # Initialize Ax client
     ax_client = AxClient(generation_strategy=generation_strategy)
 
