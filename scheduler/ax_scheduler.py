@@ -8,6 +8,7 @@ import time
 import uuid
 from typing import Dict, Any, Optional, Callable, Union
 from contextlib import contextmanager
+from concurrent.futures import ThreadPoolExecutor
 
 # Try importing Ax
 try:
@@ -15,6 +16,7 @@ try:
     from ax.core.trial import Trial as AxTrial
     from ax.service.ax_client import AxClient
     from ax.core.experiment import Experiment
+    from ax.core.base_trial import TrialStatus
 
     # from ax.core.metric import Metric
     # from ax.core.objective import Objective
@@ -113,6 +115,7 @@ class AxScheduler:
                 if not os.path.exists(self.work_dir):
                     os.makedirs(self.work_dir)
                 self.checkpoint_name = os.path.join(self.work_dir, self.checkpoint_name)
+        self.incomplete_trials_from_restart = []
 
         # performance like hv
         self.enable_hv = self.config.get("enable_hv", True)
@@ -135,6 +138,9 @@ class AxScheduler:
         self.container_image = None
         self.container_command = None
         self.job_type = JobType.FUNCTION
+
+        self.executor = None
+        self.waiting_futures = []
 
     def set_objective_function(self, objective_fn: Callable[[Dict[str, Any]], Dict[str, Any]]):
         """
@@ -283,6 +289,12 @@ class AxScheduler:
         if trial_index in self.running_trials:
             self.running_trials.remove(trial_index)
 
+    def get_num_of_generating_trials(self) -> int:
+        """
+        Get number of generating trials
+        """
+        return len(self.waiting_futures)
+
     def get_num_of_running_trials(self) -> int:
         """
         Get number of running trials
@@ -364,11 +376,58 @@ class AxScheduler:
             raise ValueError("An AxClient is required to generate new trials")
 
         try:
+            if self.incomplete_trials_from_restart:
+                return self.incomplete_trials_from_restart.pop(0)
+
             _, trial_index = self.ax_client.get_next_trial()
             return trial_index
         except Exception as e:
             self.logger.error(f"Error generating next trial: {str(e)}")
             return None
+
+    def get_next_trial_async(self, to_generate=False) -> Optional[int]:
+        """
+        Generate a new trial using Ax and return its index.
+
+        Returns:
+            The index of the new trial, or None if no more trials can be generated
+        """
+        if self.ax_client is None:
+            raise ValueError("An AxClient is required to generate new trials")
+
+        if self.incomplete_trials_from_restart:
+            return self.incomplete_trials_from_restart.pop(0)
+
+        if self.executor is None:
+            # self.executor = ThreadPoolExecutor(max_workers=self.max_concurrent_trials)
+            # If the trial is generated in parallel, the trial parameters will be close
+            self.executor = ThreadPoolExecutor(max_workers=1)
+
+        for future in list(self.waiting_futures):  # iterate over a copy
+            if future.done():
+                self.waiting_futures.remove(future)
+                try:
+                    return future.result()
+                except Exception as e:
+                    self.logger.error(f"Future raise exception: {e}")
+                    return None
+
+        if self.waiting_futures:
+            # ax_client should generate trials in sequence.
+            # If there are already trials in generating, not to generate new trials
+            return None
+
+        def worker() -> Optional[int]:
+            try:
+                _, trial_index = self.ax_client.get_next_trial()
+                return trial_index
+            except Exception as e:
+                self.logger.error(f"Error generating next trial: {str(e)}")
+                return None
+        if to_generate:
+            future = self.executor.submit(worker)
+            self.waiting_futures.append(future)
+        return None
 
     def complete_trial(self, trial_index: int, raw_data: Optional[Dict[str, Any]] = None) -> None:
         """
@@ -466,12 +525,22 @@ class AxScheduler:
         while True:
             num_trials = self.get_num_of_trials()
             num_running = self.get_num_of_running_trials()
+            num_generating = self.get_num_of_generating_trials()
+            generation_limit = self.ax_client.get_current_trial_generation_limit()
+            incomplete_trials = len(self.incomplete_trials_from_restart)
 
-            if num_trials >= max_trials and num_running == 0:
+            self.logger.debug(
+                f"num_trials: {num_trials}, num_running: {num_running}, "
+                f"num_generating: {num_generating}, max_trials: {max_trials}, "
+                f"stop_new_trials: {stop_new_trials}, generation_limit: {generation_limit}"
+                f"max_concurrent_trials: {self.max_concurrent_trials}, incomplete_trials: {incomplete_trials}"
+            )
+
+            if num_trials >= max_trials and num_running + num_generating + incomplete_trials == 0:
                 self.logger.info("Reached max trials and all running trials completed.")
                 break
 
-            if not stop_new_trials and num_trials < max_trials and num_running < self.max_concurrent_trials:
+            if (not stop_new_trials and num_trials < max_trials and num_running < self.max_concurrent_trials) or num_generating > 0 or incomplete_trials > 0:
                 if self.early_stopping_threshold is not None and num_trials >= self.early_stopping_begin_at and converged < self.early_stopping_threshold:
                     continuous_unconverged_trials += 1
                 else:
@@ -487,7 +556,11 @@ class AxScheduler:
 
                 if not stop_new_trials:
                     # Get the next trial
-                    trial_index = self.get_next_trial()
+                    to_generate = False
+                    if num_generating + num_running < self.max_concurrent_trials and num_generating < generation_limit[0]:
+                        to_generate = True
+                    self.logger.info(f"Getting new trial: to_generate={to_generate}")
+                    trial_index = self.get_next_trial_async(to_generate)
                     self.logger.info(f"Got new trial {trial_index}")
                     if trial_index is not None:
                         self.logger.info(f"Running new trial {trial_index}")
@@ -497,6 +570,7 @@ class AxScheduler:
             self.logger.debug(f"Running trials: {self.running_trials}")
             for trial_index in self.running_trials:
                 trial = self.trials[trial_index]
+                self.logger.debug(f"Checking trial {trial.trial_id} status")
                 status = trial.check_status()
                 self.logger.debug(f"Trial {trial.trial_id} status: {status}")
 
@@ -538,6 +612,7 @@ class AxScheduler:
             if has_terminated_trials and self.enable_checkpoint:
                 self.save_experiment()
 
+            self.logger.debug(f"Sleep {self.monitoring_interval} seconds")
             time.sleep(self.monitoring_interval)
 
         # Get the best parameters
@@ -613,7 +688,13 @@ class AxScheduler:
             if self.ax_client is not None:
                 self.ax_client._experiment = self.experiment
 
+            self.incomplete_trials_from_restart = [
+                idx for idx, trial in self.experiment.trials.items()
+                if trial.status not in {TrialStatus.COMPLETED, TrialStatus.FAILED}
+            ]
+
             self.logger.info(f"load from checkpoint file {path}")
+            self.logger.info(f"incomplete_trials_from_restart: {self.incomplete_trials_from_restart}")
         else:
             self.logger.info(f"checkpoint file {path} doesn't exist")
 
