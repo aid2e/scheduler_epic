@@ -1,0 +1,4 @@
+cd /afs/cern.ch/user/w/wguan/workdisk/eic/scheduler_epic
+source setup.sh
+python tests/dtlz2/test_joblib_multi_objectives_dtlz2.py --name dtlz2_5_100_1 --objectives 5 --parameters 100 --trials 50 >> /afs/cern.ch/user/w/wguan/workdisk/eic/scheduler_epic/work/dtlz2_5_100_1.log 2>&1 & tail -f /afs/cern.ch/user/w/wguan/workdisk/eic/scheduler_epic/work/dtlz2_5_100_1.log &
+
