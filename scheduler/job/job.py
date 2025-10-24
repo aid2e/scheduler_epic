@@ -83,6 +83,7 @@ class Job:
         self.start_time: Optional[datetime] = None
         self.end_time: Optional[datetime] = None
         self.results: Dict[str, Any] = {}
+        self.metrics: Dict[str, Any] = {}
         self.runner = None
 
         # Validate job configuration
@@ -235,6 +236,24 @@ class Job:
             Dictionary of results
         """
         return self.results
+
+    def set_metrics(self, metrics: Optional[Dict[str, Any]] = None) -> None:
+        """
+        Set job's metrics
+
+        Args:
+            metrics: Dictionary of job metrics
+        """
+        self.metrics = metrics
+
+    def get_metrics(self) -> Dict[str, Any]:
+        """
+        Get metrics of this job.
+
+        Returns:
+            Dictionary of metrics
+        """
+        return self.metrics
 
     def cancel(self) -> None:
         """

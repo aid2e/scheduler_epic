@@ -33,6 +33,7 @@ class Trial:
         self.start_time: Optional[datetime] = None
         self.end_time: Optional[datetime] = None
         self.results: Dict[str, Any] = {}
+        self.metrics: Dict[str, Any] = {}
 
         self.logger = logging.getLogger("Trial")
         self.num_checks = 0
@@ -100,3 +101,19 @@ class Trial:
                 self.results.update(job.get_results())
 
         return self.results
+
+    def get_metrics(self) -> Dict[str, Any]:
+        """
+        Gather metrics from all jobs.
+
+        Returns:
+            Dictionary of metrics
+        """
+        for job in self.jobs:
+            if job.is_completed() or job.has_failed():
+                # Merge job results with trial results
+                self.logger.debug(f"Trial {self.trial_id} job {job.job_id} metrics: {job.get_metrics()}")
+                self.metrics.update(job.get_metrics())
+
+        self.logger.debug(f"Trial {self.trial_id} metrics: {self.metrics}")
+        return self.metrics

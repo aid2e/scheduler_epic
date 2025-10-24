@@ -589,6 +589,7 @@ class AxScheduler:
                         "start_time": trial.start_time,
                         "end_time": trial.end_time,
                         "time_used": (trial.end_time - trial.start_time).total_seconds(),
+                        "job_metrics": trial.get_metrics(),
                     }
 
             # Update convergence after trials complete
