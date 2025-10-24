@@ -52,7 +52,7 @@ class Trial:
         """
         self.logger.info(f"Running trial {self.trial_id}")
         self.state = TrialState.RUNNING
-        self.start_time = datetime.now()
+        self.start_time = datetime.utcnow()
 
         for job in self.jobs:
             job.run()
@@ -74,12 +74,12 @@ class Trial:
         elif all(job.is_completed() for job in self.jobs):
             self.state = TrialState.COMPLETED
             if not self.end_time:
-                self.end_time = datetime.now()
+                self.end_time = datetime.utcnow()
         # If any job has failed, the trial has failed
         elif any(job.has_failed() for job in self.jobs):
             self.state = TrialState.FAILED
             if not self.end_time:
-                self.end_time = datetime.now()
+                self.end_time = datetime.utcnow()
 
         if self.num_checks % 60 == 0:
             self.logger.info(f"Checking trial {self.trial_id} status: {self.state}")
