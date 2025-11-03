@@ -5,6 +5,8 @@
 # MkDocs documentation
 /site/
 
+*ignore*
+
 # Python bytecode
 __pycache__/
 *.py[cod]

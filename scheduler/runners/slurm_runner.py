@@ -1,352 +1,233 @@
-"""
-SlurmRunner - Runner that submits jobs to a Slurm cluster.
-"""
+# Copyright (C) 2024 AI&D 
+# SPDX-License-Identifier: Apache-2.0
 
+import datetime
+import logging
 import os
+import stat
 import subprocess
-import pickle
-import json
-from typing import Dict, Any
-from ..job.job import JobType
-from ..job.job_state import JobState
+from typing import Dict, List, Optional, Tuple
+
+from ..job import Job, JobStatus, JobStatusMap, JobStatusTerminal
 from .base_runner import BaseRunner
+
+logging.basicConfig(level=logging.INFO)
+_logger = logging.getLogger(__name__)
+
+
+class SlurmJob:
+    """
+    A class to represent a Slurm job.
+    """
+
+    def __init__(self, job_id: int, job_dir: str):
+        self.job_id = job_id
+        self.job_dir = job_dir
+        self.status = JobStatus.submitted
 
 
 class SlurmRunner(BaseRunner):
     """
-    A runner that submits jobs to a Slurm cluster.
-
-    This runner creates temporary job scripts and submits them to Slurm.
-    It can handle different job types:
-    - Function: Serializes and runs Python functions
-    - Script: Executes scripts directly
-    - Container: Runs containers using Singularity
+    A runner to execute jobs on a Slurm cluster.
+    This runner submits jobs using `sbatch` and monitors them with `squeue`.
     """
 
-    def __init__(
-        self,
-        partition: str = "batch",
-        time_limit: str = "01:00:00",
-        memory: str = "4G",
-        cpus_per_task: int = 1,
-        config: Dict[str, Any] = None,
-    ):
+    def __init__(self, work_dir: str, **kwargs):
         """
-        Initialize a new SlurmRunner.
-
-        Args:
-            partition: Slurm partition to submit jobs to
-            time_limit: Time limit for jobs (HH:MM:SS)
-            memory: Memory to allocate per job
-            cpus_per_task: Number of CPUs to allocate per job
-            config: Additional configuration options:
-                modules: List of modules to load (default: ['python'])
-                singularity_path: Path to singularity executable (default: 'singularity')
-                job_dir: Directory to store job files (default: ~/slurm_jobs)
+        Initialize the Slurm runner.
+        :param work_dir: The working directory for the jobs.
+        :param kwargs: Additional arguments for the runner.
         """
-        super().__init__(config or {})
-        self.partition = partition
-        self.time_limit = time_limit
-        self.memory = memory
-        self.cpus_per_task = cpus_per_task
-        self.jobs = {}  # job_id -> slurm_job_id
+        super().__init__(work_dir, **kwargs)
+        self.jobs: Dict[str, SlurmJob] = {}
+        _logger.info(f"SlurmRunner initialized with work_dir: {self.work_dir}")
+        # Add any other Slurm-specific initializations here
+        # For example, partition, account, etc.
+        self.slurm_partition = kwargs.get("slurm_partition", "shared")
+        self.slurm_account = kwargs.get("slurm_account", None)
 
-        # Additional configuration
-        self.modules = self.config.get("modules", ["python"])
-        self.singularity_path = self.config.get("singularity_path", "singularity")
-
-        # Directory to store job files
-        self.job_dir = self.config.get("job_dir", os.path.expanduser("~/slurm_jobs"))
-        os.makedirs(self.job_dir, exist_ok=True)
-
-    def _create_job_script(self, job) -> str:
+    def _generate_sbatch_script(self, job: Job) -> str:
         """
-        Create a job script for Slurm.
-
-        Args:
-            job: The job to create a script for
-
-        Returns:
-            Path to the job script
+        Generate the sbatch script for a given job.
         """
-        # Create a directory for this job
-        job_path = os.path.join(self.job_dir, job.job_id)
-        os.makedirs(job_path, exist_ok=True)
+        job_dir = os.path.join(self.work_dir, str(job.trial.id))
+        os.makedirs(job_dir, exist_ok=True)
 
-        # Create the job script
-        script_path = os.path.join(job_path, "job.sh")
-        with open(script_path, "w") as f:
+        # This will be the script that `sbatch` executes.
+        # It needs to execute the user's command.
+        run_script_path = os.path.join(job_dir, "run_script.sh")
+        with open(run_script_path, "w") as f:
             f.write("#!/bin/bash\n")
-            f.write(f"#SBATCH --job-name={job.job_id}\n")
-            f.write(f"#SBATCH --output={job_path}/job.out\n")
-            f.write(f"#SBATCH --error={job_path}/job.err\n")
-            f.write(f"#SBATCH --partition={self.partition}\n")
-            f.write(f"#SBATCH --time={self.time_limit}\n")
-            f.write(f"#SBATCH --mem={self.memory}\n")
-            f.write(f"#SBATCH --cpus-per-task={self.cpus_per_task}\n")
-
-            # Add any additional options from config
-            for k, v in self.config.get("sbatch_options", {}).items():
-                f.write(f"#SBATCH --{k}={v}\n")
-
-            f.write("\n")
-            f.write("# Load modules\n")
-            for module in self.modules:
-                f.write(f"module load {module}\n")
-
-            f.write("\n")
-            f.write("# Set environment variables\n")
-            for key, value in job.env_vars.items():
-                f.write(f'export {key}="{value}"\n')
-
-            f.write("\n")
-            f.write("# Run the job\n")
-
-            # Different job types need different handling
-            if job.job_type == JobType.FUNCTION:
-                # Pickle the job function and parameters
-                pickle_path = os.path.join(job_path, "job.pkl")
-                with open(pickle_path, "wb") as pkl_file:
-                    pickle.dump((job.function, job.params), pkl_file)
-
-                # Write Python code to execute the function
-                f.write('python -c "\n')
-                f.write("import pickle\n")
-                f.write("import os\n")
-                f.write("import sys\n")
-                f.write("import json\n")
-                f.write(f"with open('{pickle_path}', 'rb') as f:\n")
-                f.write("    function, params = pickle.load(f)\n")
-                f.write("try:\n")
-                f.write("    result = function(**params)\n")
-                f.write(f"    with open('{job_path}/result.json', 'w') as f:\n")
-                f.write('        json.dump({"result": result}, f)\n')
-                f.write("    sys.exit(0)\n")
-                f.write("except Exception as e:\n")
-                f.write(f"    with open('{job_path}/error.json', 'w') as f:\n")
-                f.write('        json.dump({"error": str(e)}, f)\n')
-                f.write("    sys.exit(1)\n")
-                f.write('"\n')
-
-            elif job.job_type == JobType.SCRIPT:
-                # Create a file with the parameters
-                params_file = os.path.join(job_path, "params.json")
-                with open(params_file, "w") as params_f:
-                    json.dump(job.params, params_f)
-
-                # Set environment variable for the params file
-                f.write(f'export JOB_PARAMS_FILE="{params_file}"\n')
-
-                # Set working directory
-                working_dir = job.working_dir if job.working_dir else job_path
-                f.write(f"cd {working_dir}\n")
-
-                # Execute the script
-                if job.script_path.endswith(".sh"):
-                    f.write(f"bash {job.script_path}\n")
-                else:
-                    f.write(f"python {job.script_path}\n")
-
-                # Capture the exit code
-                f.write("EXIT_CODE=$?\n")
-                f.write("if [ $EXIT_CODE -ne 0 ]; then\n")
-                f.write(f'  echo "{{\\"error\\": \\"Script exited with code $EXIT_CODE\\"}}" > {job_path}/error.json\n')
-                f.write("  exit $EXIT_CODE\n")
-                f.write("fi\n")
-
-                # If no result file was created, create one with the output
-                f.write(f"if [ ! -f {job_path}/result.json ]; then\n")
-                f.write(f'  echo "{{\\"stdout\\": \\"$(cat {job_path}/job.out)\\"}}" > {job_path}/result.json\n')
-                f.write("fi\n")
-
-            elif job.job_type == JobType.CONTAINER:
-                # Create a file with the parameters
-                params_file = os.path.join(job_path, "params.json")
-                with open(params_file, "w") as params_f:
-                    json.dump(job.params, params_f)
-
-                # Set environment variable for the params file
-                f.write(f'export JOB_PARAMS_FILE="{params_file}"\n')
-
-                # Execute the container using Singularity
-                working_dir = job.working_dir if job.working_dir else job_path
-
-                # Build Singularity command
-                cmd = [self.singularity_path, "run"]
-
-                # Add environment variables
-                for key, value in job.env_vars.items():
-                    cmd.extend(["--env", f"{key}={value}"])
-
-                # Add bind mounts
-                cmd.extend(["--bind", f"{job_path}:/job"])
-                if job.working_dir:
-                    cmd.extend(["--bind", f"{job.working_dir}:/workdir"])
-                    cmd.extend(["--pwd", "/workdir"])
-                else:
-                    cmd.extend(["--pwd", "/job"])
-
-                # Add image
-                cmd.append(job.container_image)
-
-                # Add command if specified
-                if job.container_command:
-                    cmd.extend(job.container_command.split())
-
-                # Write the command to the script
-                f.write(f"{' '.join(cmd)}\n")
-
-                # Capture the exit code
-                f.write("EXIT_CODE=$?\n")
-                f.write("if [ $EXIT_CODE -ne 0 ]; then\n")
-                f.write(f'  echo "{{\\"error\\": \\"Container exited with code $EXIT_CODE\\"}}" > {job_path}/error.json\n')
-                f.write("  exit $EXIT_CODE\n")
-                f.write("fi\n")
-
-                # If no result file was created, create one with the output
-                f.write(f"if [ ! -f {job_path}/result.json ]; then\n")
-                f.write(f'  echo "{{\\"stdout\\": \\"$(cat {job_path}/job.out)\\"}}" > {job_path}/result.json\n')
-                f.write("fi\n")
-
-            else:
-                f.write(f'echo "{{\\"error\\": \\"Unsupported job type: {job.job_type}\\"}}" > {job_path}/error.json\n')
-                f.write("exit 1\n")
-
-            # Collect output files if specified
-            if job.output_files:
-                f.write("\n# Collect output files\n")
-                f.write(f"mkdir -p {job_path}/output_files\n")
-                f.write('OUTPUT_FILES_JSON="{\\"output_files\\":{\\n')
-
-                for i, file_path in enumerate(job.output_files):
-                    src_path = os.path.join(working_dir if job.working_dir else job_path, file_path)
-                    dest_path = os.path.join(job_path, "output_files", os.path.basename(file_path))
-
-                    f.write(f'if [ -f "{src_path}" ]; then\n')
-                    f.write(f'  cp "{src_path}" "{dest_path}"\n')
-                    f.write(f"  FILE_CONTENT=$(cat \"{dest_path}\" | sed 's/\"/\\\\\"/g' | tr '\\n' ' ')\n")
-                    f.write(f'  OUTPUT_FILES_JSON+="\\"{file_path}\\": \\"$FILE_CONTENT\\"')
-                    if i < len(job.output_files) - 1:
-                        f.write(",")
-                    f.write('\\n"\n')
-                    f.write("else\n")
-                    f.write(f'  OUTPUT_FILES_JSON+="\\"{file_path}\\": \\"File not found\\"')
-                    if i < len(job.output_files) - 1:
-                        f.write(",")
-                    f.write('\\n"\n')
-                    f.write("fi\n")
-
-                f.write('OUTPUT_FILES_JSON+="}}}"\n')
-
-                # Merge with result.json if it exists
-                f.write(f"if [ -f {job_path}/result.json ]; then\n")
-                f.write("  # Combine the output files with the existing result\n")
-                f.write(f"  RESULT=$(cat {job_path}/result.json)\n")
-                f.write("  # Remove the closing brace\n")
-                f.write("  RESULT=${RESULT%?}\n")
-                f.write("  # Add a comma if the JSON isn't empty\n")
-                f.write('  if [ "$RESULT" != "{" ]; then\n')
-                f.write('    RESULT="$RESULT,"\n')
-                f.write("  fi\n")
-                f.write("  # Add the output files and closing brace\n")
-                f.write("  OUTPUT_FILES_JSON=${OUTPUT_FILES_JSON#*{}\n")
-                f.write('  echo "$RESULT$OUTPUT_FILES_JSON" > {job_path}/result.json\n')
-                f.write("else\n")
-                f.write("  # Just write the output files as the result\n")
-                f.write('  echo "$OUTPUT_FILES_JSON" > {job_path}/result.json\n')
-                f.write("fi\n")
-
+            # You can add environment setup here if needed
+            # e.g., source /path/to/your/env/bin/activate
+            f.write(f"cd {job_dir}\n")
+            f.write(f"{job.trial.command}\n")
+        
         # Make the script executable
-        os.chmod(script_path, 0o755)
-        return script_path
+        st = os.stat(run_script_path)
+        os.chmod(run_script_path, st.st_mode | stat.S_IEXEC)
 
-    def run_job(self, job) -> None:
+        # This is the sbatch script that will be submitted.
+        sbatch_script_path = os.path.join(job_dir, "sbatch_script.sh")
+        output_log = os.path.join(job_dir, "slurm.out")
+        error_log = os.path.join(job_dir, "slurm.err")
+        
+        with open(sbatch_script_path, "w") as f:
+            f.write("#!/bin/bash\n")
+            f.write(f"#SBATCH --job-name={job.trial.id}\n")
+            f.write(f"#SBATCH --output={output_log}\n")
+            f.write(f"#SBATCH --error={error_log}\n")
+            f.write(f"#SBATCH --partition={self.slurm_partition}\n")
+            if self.slurm_account:
+                f.write(f"#SBATCH --account={self.slurm_account}\n")
+            # Add other sbatch options as needed (e.g., nodes, ntasks, gpus)
+            # f.write("#SBATCH --nodes=1\n")
+            # f.write("#SBATCH --ntasks-per-node=1\n")
+            
+            f.write(f"srun {run_script_path}\n")
+
+        return sbatch_script_path
+
+    def schedule(self, jobs: List[Job]) -> None:
         """
-        Submit a job to Slurm.
-
-        Args:
-            job: The job to run
+        Schedule a list of jobs on the Slurm cluster.
         """
-        job_script = self._create_job_script(job)
+        for job in jobs:
+            if job.trial.id in self.jobs:
+                _logger.warning(f"Job {job.trial.id} already scheduled. Skipping.")
+                continue
 
-        # Submit the job to Slurm
-        try:
-            result = subprocess.run(["sbatch", job_script], capture_output=True, text=True, check=True)
+            sbatch_script = self._generate_sbatch_script(job)
+            job_dir = os.path.dirname(sbatch_script)
 
-            # Extract the job ID (format: "Submitted batch job 123456")
-            slurm_job_id = result.stdout.strip().split()[-1]
-            self.jobs[job.job_id] = slurm_job_id
-
-            # Update job state
-            job.state = JobState.RUNNING
-
-        except subprocess.CalledProcessError as e:
-            job.fail(f"Failed to submit job to Slurm: {e.stderr}")
-
-    def check_job_status(self, job) -> None:
-        """
-        Check the status of a job and update its state.
-
-        Args:
-            job: The job to check
-        """
-        slurm_job_id = self.jobs.get(job.job_id)
-        if slurm_job_id is None:
-            return
-
-        # Check if the job is still running
-        try:
-            result = subprocess.run(["squeue", "-j", slurm_job_id, "-h"], capture_output=True, text=True)
-
-            if result.returncode == 0 and result.stdout.strip():
-                # Job is still running or queued
-                job.state = JobState.RUNNING
-                return
-
-            # Job has finished, check if it completed successfully
-            job_path = os.path.join(self.job_dir, job.job_id)
-            result_path = os.path.join(job_path, "result.json")
-            error_path = os.path.join(job_path, "error.json")
-
-            if os.path.exists(result_path):
-                with open(result_path, "r") as f:
-                    results = json.load(f)
-                job.complete(results)
-            elif os.path.exists(error_path):
-                with open(error_path, "r") as f:
-                    error = json.load(f)
-                job.fail(error.get("error", "Unknown error"))
-            else:
-                # Check the exit code
-                sacct_result = subprocess.run(
-                    ["sacct", "-j", slurm_job_id, "-o", "ExitCode", "-n"],
+            try:
+                # Submit the job to Slurm
+                cmd = ["sbatch", sbatch_script]
+                _logger.info(f"Submitting job {job.trial.id} with command: {' '.join(cmd)}")
+                result = subprocess.run(
+                    cmd,
                     capture_output=True,
                     text=True,
+                    check=True,
+                    cwd=job_dir,
                 )
-                exit_code = sacct_result.stdout.strip().split()[0]
+                # Example output: "Submitted batch job 12345"
+                slurm_job_id = int(result.stdout.strip().split()[-1])
+                _logger.info(f"Job {job.trial.id} submitted to Slurm with ID: {slurm_job_id}")
+                self.jobs[job.trial.id] = SlurmJob(job_id=slurm_job_id, job_dir=job_dir)
+                job.status = JobStatus.submitted
+            except (subprocess.CalledProcessError, IndexError, ValueError) as e:
+                _logger.error(f"Failed to submit job {job.trial.id}: {e}")
+                job.status = JobStatus.failed
+                if isinstance(e, subprocess.CalledProcessError):
+                    _logger.error(f"sbatch stderr: {e.stderr}")
 
-                if exit_code == "0:0":
-                    job.complete({"result": "Job completed but no results found"})
-                else:
-                    job.fail(f"Job failed with exit code {exit_code}")
-
-        except subprocess.CalledProcessError as e:
-            job.fail(f"Failed to check job status: {e.stderr}")
-
-    def cancel_job(self, job) -> None:
+    def get_status(self, jobs: List[Job]) -> None:
         """
-        Cancel a job.
-
-        Args:
-            job: The job to cancel
+        Get the status of a list of jobs from the Slurm queue.
         """
-        slurm_job_id = self.jobs.get(job.job_id)
-        if slurm_job_id is None:
+        job_ids_to_check = [
+            str(self.jobs[j.trial.id].job_id)
+            for j in jobs
+            if j.trial.id in self.jobs and j.status not in JobStatusTerminal
+        ]
+
+        if not job_ids_to_check:
             return
 
         try:
-            subprocess.run(["scancel", slurm_job_id], check=True)
-            job.state = JobState.CANCELLED
-            self.jobs.pop(job.job_id, None)
-        except subprocess.CalledProcessError:
-            pass  # Job might already be completed
+            # Check job statuses with squeue
+            cmd = ["squeue", "-h", "-j", ",".join(job_ids_to_check), "-o", "%i %t"]
+            result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+            
+            # Create a map of Slurm job ID to status
+            slurm_status_map = {}
+            for line in result.stdout.strip().split("\n"):
+                if not line:
+                    continue
+                parts = line.split()
+                slurm_job_id, slurm_state = parts[0], parts[1]
+                slurm_status_map[slurm_job_id] = slurm_state
+
+        except subprocess.CalledProcessError as e:
+            _logger.error(f"Failed to get job statuses from squeue: {e.stderr}")
+            # If squeue fails, we can't update status, so we return.
+            return
+
+        for job in jobs:
+            if job.trial.id not in self.jobs or job.status in JobStatusTerminal:
+                continue
+
+            slurm_job = self.jobs[job.trial.id]
+            slurm_id_str = str(slurm_job.job_id)
+            
+            if slurm_id_str in slurm_status_map:
+                # Job is still in queue or running
+                slurm_state = slurm_status_map[slurm_id_str]
+                # Map Slurm state to our JobStatus
+                # Example mapping: PD -> pending, R -> running, CG -> running
+                if slurm_state in ("PD",):
+                    job.status = JobStatus.pending
+                elif slurm_state in ("R", "CG"):
+                    job.status = JobStatus.running
+                else:
+                    # Other states like F, CA, TO, etc., are considered finished/failed
+                    # We will rely on checking the exit code for the final status
+                    pass 
+            else:
+                # Job is no longer in squeue, so it's finished, failed, or cancelled.
+                # We check the output/error logs or use `sacct` to be sure.
+                # For simplicity, we'll check for an exit code file.
+                exit_code_path = os.path.join(slurm_job.job_dir, "run_script.sh.exit_code") # This needs to be created by the run script
+                if os.path.exists(exit_code_path):
+                     with open(exit_code_path, "r") as f:
+                        exit_code = int(f.read().strip())
+                        job.status = JobStatus.finished if exit_code == 0 else JobStatus.failed
+                else:
+                    # If the exit code file doesn't exist, something might be wrong.
+                    # Or the job was cancelled. We can assume failed for now.
+                    job.status = JobStatus.failed
+
+    def get_output(self, job: Job, task: str = "stdout", tail: Optional[int] = None) -> Optional[str]:
+        """
+        Get the output of a job.
+        """
+        if job.trial.id not in self.jobs:
+            return None
+
+        slurm_job = self.jobs[job.trial.id]
+        log_file = "slurm.out" if task == "stdout" else "slurm.err"
+        log_path = os.path.join(slurm_job.job_dir, log_file)
+
+        if not os.path.exists(log_path):
+            return None
+
+        with open(log_path, "r") as f:
+            if tail:
+                lines = f.readlines()
+                return "".join(lines[-tail:])
+            else:
+                return f.read()
+
+    def cancel(self, jobs: List[Job]) -> None:
+        """
+        Cancel a list of jobs.
+        """
+        job_ids_to_cancel = [
+            str(self.jobs[j.trial.id].job_id)
+            for j in jobs
+            if j.trial.id in self.jobs and j.status not in JobStatusTerminal
+        ]
+
+        if not job_ids_to_cancel:
+            return
+
+        try:
+            cmd = ["scancel"] + job_ids_to_cancel
+            subprocess.run(cmd, check=True)
+            _logger.info(f"Cancelled jobs: {job_ids_to_cancel}")
+            for job in jobs:
+                if str(self.jobs[job.trial.id].job_id) in job_ids_to_cancel:
+                    job.status = JobStatus.cancelled
+        except subprocess.CalledProcessError as e:
+            _logger.error(f"Failed to cancel jobs: {e}")
