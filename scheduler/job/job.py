@@ -5,11 +5,27 @@ Job - Defines a job that can be run by a runner.
 import copy
 import logging
 from typing import Dict, Any, Optional, Callable, List
-from enum import Enum
+from enum import Enum, auto
 import os
 from datetime import datetime
-from .job_state import JobState
 
+class JobState(Enum):
+    """
+    Enum representing the possible states of a job.
+    """
+
+    NEW = auto()
+    CREATED = auto()
+    READY = auto()
+    RUNNING = auto()
+    COMPLETED = auto()
+    FAILED = auto()
+    PAUSED = auto()
+    CANCELLED = auto()
+    RUNNINGNOMONITOR = auto()
+    
+    def __str__(self):
+        return self.name
 
 class JobType(Enum):
     """Type of job to run."""
@@ -19,6 +35,13 @@ class JobType(Enum):
     CONTAINER = "container"  # Docker/Singularity container
     MULTISTEPSFUNCTION = "multistepsfunction"  # Multiple python function
 
+class BaseJob:
+    """
+    Base class for jobs.
+    """
+    def __init__(self, job_id: str
+                 ):
+        self.job_id = job_id
 
 class Job:
     """
@@ -260,3 +283,96 @@ class Job:
         Cancel the job.
         """
         self.runner.cancel_job(self)
+
+class ParallelJob(Job):
+    """
+    A Job subclass that can manage parallel subjobs.
+
+    Each subjob is itself a Job instance (usually SCRIPT or FUNCTION type),
+    managed under the same runner context.
+    """
+
+    def __init__(
+        self,
+        job_id: str,
+        subjobs: Optional[List[Job]] = None,
+        sequential_steps: Optional[List["ParallelJob"]] = None,
+        *args,
+        **kwargs,
+    ):
+        super().__init__(job_id, *args, **kwargs)
+        self.subjobs = subjobs or []  # Parallel subjobs
+        self.sequential_steps = sequential_steps or []  # For Multi-step jobs
+        self.logger = logging.getLogger(f"ParallelJob[{job_id}]")
+
+    # -------------------------------
+    # Subjob handling
+    # -------------------------------
+    def add_subjob(self, subjob: Job):
+        self.subjobs.append(subjob)
+
+    def run_subjobs(self):
+        """Run all subjobs in parallel (runner decides how)."""
+        if not self.subjobs:
+            return
+
+        self.logger.info(f"Running {len(self.subjobs)} subjobs for {self.job_id}")
+
+        for subjob in self.subjobs:
+            subjob.set_runner(self.runner)
+            subjob.run()
+
+        # Optionally, poll until all complete
+        while not all(sj.is_completed() or sj.has_failed() for sj in self.subjobs):
+            for sj in self.subjobs:
+                sj.check_status()
+
+        # Aggregate subjob results
+        self._aggregate_subjob_results()
+
+    def _aggregate_subjob_results(self):
+        """Combine all subjob results into a single result dictionary."""
+        all_results = [sj.get_results() for sj in self.subjobs if sj.is_completed()]
+        if not all_results:
+            self.fail("No successful subjob results found")
+            return
+
+        # Default aggregation: mean objective if numeric
+        merged = {}
+        for result in all_results:
+            for k, v in result.items():
+                if isinstance(v, (int, float)):
+                    merged.setdefault(k, []).append(v)
+                else:
+                    merged.setdefault(k, []).append(v)
+
+        aggregated = {k: sum(v) / len(v) if isinstance(v[0], (int, float)) else v for k, v in merged.items()}
+        self.complete(aggregated)
+
+    # -------------------------------
+    # Multi-step handling
+    # -------------------------------
+    def run(self):
+        """Override base run to support multi-step parallel execution."""
+        self.logger.info(f"Running ParallelJob {self.job_id}")
+        self.state = JobState.RUNNING
+        self.start_time = datetime.now()
+
+        if not self.sequential_steps:
+            # No steps — just run subjobs directly
+            self.run_subjobs()
+            return
+
+        # Execute each step sequentially
+        for step in self.sequential_steps:
+            self.logger.info(f"Starting step {step.job_id} for {self.job_id}")
+            step.set_runner(self.runner)
+            step.run()
+            if step.has_failed():
+                self.fail(f"Step {step.job_id} failed")
+                return
+            self.logger.info(f"Completed step {step.job_id}")
+
+        self.state = JobState.COMPLETED
+        self.end_time = datetime.now()
+        self.logger.info(f"ParallelJob {self.job_id} completed successfully")

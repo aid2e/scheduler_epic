@@ -12,8 +12,7 @@ import shutil
 import traceback
 from typing import Dict, Any
 from concurrent.futures import ThreadPoolExecutor
-from ..job.job import JobType
-from ..job.job_state import JobState
+from ..job.job import JobType, JobState
 from .base_runner import BaseRunner
 
 

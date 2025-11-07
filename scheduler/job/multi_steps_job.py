@@ -9,8 +9,7 @@ from collections import defaultdict
 from datetime import datetime
 from itertools import product
 from typing import Dict, Any, Optional, List, Union
-from .job import Job, JobType
-from .job_state import JobState
+from .job import Job, JobType, JobState
 
 
 class MultiStepsFunction(object):

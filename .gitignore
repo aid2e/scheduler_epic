@@ -6,6 +6,7 @@
 /site/
 
 *ignore*
+*.json*
 
 # Python bytecode
 __pycache__/

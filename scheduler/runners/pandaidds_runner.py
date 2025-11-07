@@ -6,7 +6,7 @@ import datetime
 import logging
 import os
 from typing import Dict, Any
-from ..job.job_state import JobState
+from ..job.job import JobState
 from .base_runner import BaseRunner
 
 

@@ -5,22 +5,22 @@
 from typing import Any, Dict, Type
 
 from .base_runner import BaseRunner
-from .joblib_runner import JoblibRunner
-from .pandaidds_runner import PandaIDDSRunner
+from .joblib_runner import JobLibRunner
+from .pandaidds_runner import PanDAiDDSRunner
 from .slurm_runner import SlurmRunner
 
 __all__ = [
     "BaseRunner",
-    "JoblibRunner",
-    "PandaIDDSRunner",
+    "JobLibRunner",
+    "PanDAiDDSRunner",
     "SlurmRunner",
     "get_runner",
 ]
 
 
 RUNNERS: Dict[str, Type[BaseRunner]] = {
-    "joblib": JoblibRunner,
-    "panda-idds": PandaIDDSRunner,
+    "joblib": JobLibRunner,
+    "panda-idds": PanDAiDDSRunner,
     "slurm": SlurmRunner,
 }
 
