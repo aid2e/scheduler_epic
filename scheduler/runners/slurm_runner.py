@@ -6,7 +6,7 @@ import logging
 from pathlib import Path
 from datetime import datetime
 from typing import Optional
-from .job import Job, JobType, JobState
+from ..job import Job, JobType, JobState
 
 class SlurmRunner:
     """
