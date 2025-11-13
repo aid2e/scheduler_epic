@@ -47,7 +47,7 @@ class Trial:
         """
         self.jobs.append(job)
 
-    def run(self) -> None:
+    def run(self, **kwargs) -> None:
         """
         Run all jobs in this trial.
         """
@@ -56,7 +56,7 @@ class Trial:
         self.start_time = datetime.utcnow()
 
         for job in self.jobs:
-            job.run()
+            job.run(**kwargs)
 
     def check_status(self) -> TrialState:
         """

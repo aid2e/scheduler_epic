@@ -89,7 +89,7 @@ class AxScheduler:
         self.trials = {}  # trial_index -> Trial
         self.running_trials = []   # trial_index
         self.trials_metrics = {}   # trial_index -> {"start_time": <>, "end_time": <>, "time_used": <>}
-        self.monitoring_interval = self.config.get("monitoring_interval", 10)  # seconds
+        self.monitoring_interval = self.config.get("monitoring_interval", 5)  # seconds
         self.max_trial_monitoring_time = self.config.get("max_trial_monitoring_time", 86400)  # 24 hours
         self.job_output_dir = self.config.get("job_output_dir", os.path.expanduser("~/ax_scheduler_output"))
         self.cleanup_after_completion = self.config.get("cleanup_after_completion", False)
@@ -180,7 +180,7 @@ class AxScheduler:
         self.container_command = container_command
         self.job_type = JobType.CONTAINER
 
-    def _create_trial_from_ax(self, ax_trial: BaseTrial) -> Trial:
+    def _create_trial_from_ax(self, ax_trial: BaseTrial, extra_job_params = {}) -> Trial:
         """
         Create a Trial object from an Ax trial.
 
@@ -216,6 +216,7 @@ class AxScheduler:
                 function=self.objective_fn,
                 params=parameters,
                 working_dir=working_dir,
+                **extra_job_params
             )
 
         elif self.job_type == JobType.SCRIPT:
@@ -229,6 +230,7 @@ class AxScheduler:
                 params=parameters,
                 working_dir=working_dir,
                 output_files=["result.json"],
+                **extra_job_params
             )
 
         elif self.job_type == JobType.CONTAINER:
@@ -243,6 +245,7 @@ class AxScheduler:
                 params=parameters,
                 working_dir=working_dir,
                 output_files=["result.json"],
+                **extra_job_params
             )
 
         elif self.job_type == JobType.MULTISTEPSFUNCTION:
@@ -256,6 +259,7 @@ class AxScheduler:
                 params=parameters,
                 working_dir=working_dir,
                 trial_id=trial_id,
+                **extra_job_params
             )
 
         else:

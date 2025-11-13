@@ -2,7 +2,7 @@ import logging
 
 
 # Define your objective function
-def objective_function(x, y):
+def objective_function(**params):
     return {"objective": (x - 0.5) ** 2 + (y - 0.5) ** 2}
 # This file will be imported to load the objective function at remote sites in PanDA
 # to avoid excuting the whole file, __name__ == "__main__" must be used.
@@ -68,6 +68,7 @@ if __name__ == "__main__":
 
     # Set the objective function
     scheduler.set_objective_function(objective_function)
+    scheduler.set_additional_params
 
     logging.info("running optimization")
     # Run the optimization

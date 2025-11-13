@@ -5,6 +5,18 @@ import sys
 import time
 
 
+import inspect
+
+def write_function_to_file(func, path):
+    """Write a standalone version of a user-defined function to a Python file."""
+    func_source = inspect.getsource(func).strip()
+
+    with open(path, "w") as f:
+        f.write(func_source + "\n")
+
+    return path
+
+
 def setup_logging(log_file=None, log_level=None):
     """
     setup logging

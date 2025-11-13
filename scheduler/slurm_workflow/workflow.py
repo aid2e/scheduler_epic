@@ -10,13 +10,18 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 import yaml
 from pydantic import ValidationError
-
+from enum import Enum, auto
 from .models import SlurmWorkflowModel, SlurmWorkModel
 
 
 JsonDict = Dict[str, Any]
 ConfigInput = Union[str, Path, Dict[str, Any], SlurmWorkflowModel]
 
+class SlurmWorkflowStatus(str, Enum):
+    PENDING = auto()
+    RUNNING = auto()
+    COMPLETED = auto()
+    FAILED = auto()
 
 class SlurmWorkflow:
     """
@@ -82,8 +87,6 @@ class SlurmWorkflow:
 
         # Ensure base directories exist
         self.work_dir.mkdir(parents=True, exist_ok=True)
-        (self.work_dir / "scripts").mkdir(exist_ok=True)
-        (self.work_dir / "logs").mkdir(exist_ok=True)
 
         # Clean up old logs (optional but tidy)
         for ext in ("*.out", "*.err"):

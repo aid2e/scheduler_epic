@@ -63,6 +63,7 @@ class Job:
         container_command: Optional[str] = None,
         params: Dict[str, Any] = None,
         env_vars: Dict[str, str] = None,
+        init_env: Optional[List[str]] = None,
         working_dir: Optional[str] = None,
         output_files: Optional[List[str]] = None,
         parent_result_parameter_name: Optional[str] = "parent_result_parameter",
@@ -74,6 +75,7 @@ class Job:
         num_events_per_job: int = 1,
         with_input_datasets: bool = False,
         input_datasets: dict = {},
+        **kwargs,
     ):
         """
         Initialize a new job.
@@ -98,6 +100,7 @@ class Job:
         self.container_command = container_command
         self.params = params or {}
         self.env_vars = env_vars or {}
+        self.init_env = init_env or []
         self.working_dir = working_dir
         self.output_files = output_files or []
 
@@ -108,7 +111,7 @@ class Job:
         self.results: Dict[str, Any] = {}
         self.metrics: Dict[str, Any] = {}
         self.runner = None
-
+        self.extra_args = kwargs
         # Validate job configuration
         self._validate()
 
@@ -129,6 +132,7 @@ class Job:
         self.parent_internal_id = None
 
         self.logger = logging.getLogger("Job")
+        self.logger.setLevel(logging.DEBUG)
 
     def _validate(self):
         """Validate that the job is properly configured."""
@@ -245,11 +249,12 @@ class Job:
         Args:
             error: The error that caused the job to fail
         """
-        self.logger.info(f"Fail job {self.job_id}")
+        self.logger.error(f"Fail job {self.job_id}, error: {error}")
         self.state = JobState.FAILED
         self.end_time = datetime.now()
         if error:
             self.results["error"] = error
+        raise Exception(f"Job {self.job_id} failed: {error}")
 
     def get_results(self) -> Dict[str, Any]:
         """
@@ -304,6 +309,7 @@ class ParallelJob(Job):
         self.subjobs = subjobs or []  # Parallel subjobs
         self.sequential_steps = sequential_steps or []  # For Multi-step jobs
         self.logger = logging.getLogger(f"ParallelJob[{job_id}]")
+        self.logger.setLevel(logging.DEBUG)
 
     # -------------------------------
     # Subjob handling

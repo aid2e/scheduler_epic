@@ -85,6 +85,7 @@ class MultiStepsJob(Job):
         num_events_per_job: int = 1,
         with_input_datasets: bool = False,
         input_datasets: dict = {},
+        **kwargs,
     ):
         """
         Initialize a new job.
@@ -114,6 +115,7 @@ class MultiStepsJob(Job):
         self.results: Dict[str, Any] = {}
         self.metrics: Dict[str, Any] = {}
         self.runner = None
+        self.extra_args = kwargs
 
         # Validate job configuration
         self._validate()
