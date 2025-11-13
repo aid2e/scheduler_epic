@@ -58,6 +58,7 @@ class AxScheduler:
         ax_client_or_experiment: Union[AxClient, Experiment],
         runner: BaseRunner,
         config: Dict[str, Any] = None,
+        additional_params: Dict[str, Any] = None
     ):
         """
         Initialize a new AxScheduler.
@@ -76,7 +77,7 @@ class AxScheduler:
             raise ImportError("Ax is not installed. Install with: pip install ax-platform")
 
         self.config = config or {}
-
+        self.additional_params = additional_params or {}
         # Extract the experiment from the client if a client was provided
         if isinstance(ax_client_or_experiment, AxClient):
             self.ax_client = ax_client_or_experiment

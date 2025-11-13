@@ -31,8 +31,8 @@ class SlurmRunner:
 
     def run_job(self, job: Job):
         job_dir = Path(job.working_dir) or Path.cwd() / f"job_{job.job_id}"
-        job_dir.mkdir(parents=True, exist_ok=True)
-
+        job_dir.mkdirs(parents=True, exist_ok=True)
+        time.sleep(0.5)  # ensure unique timestamps if many jobs created quickly
         # Write parameters to JSON (optional if script wants to read it)
         all_params = job.params.copy()
         function_additional_args = getattr(job, 'extra_args', {}).get('func_args', {})
@@ -110,6 +110,8 @@ class SlurmRunner:
         # Lets change the output and err files to be inside job working dir
         slurm_script += f"#SBATCH --error={job.working_dir}/slurm-%j.err\n"
         slurm_script += f"#SBATCH --output={job.working_dir}/slurm-%j.out\n"
+        # change working directory
+        slurm_script += f"#SBATCH --chdir={job.working_dir}\n"
         slurm_script += "\n# Initial environment setup commands\n"
         for cmd in self.init_env:
             slurm_script += cmd + "\n"
