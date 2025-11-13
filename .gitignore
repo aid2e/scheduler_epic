@@ -2,6 +2,9 @@
 *fieldmaps
 *.qodo
 
+*.log*
+*.err*
+*.out*
 # MkDocs documentation
 /site/
 

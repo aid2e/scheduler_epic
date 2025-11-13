@@ -22,7 +22,7 @@ class SlurmRunner:
                  ):
         self.slurm_template = Path(slurm_template)
         self.logger = logging.getLogger("SlurmRunner")
-        self.logger.setLevel(logging.DEBUG)
+        #self.logger.setLevel(logging.DEBUG)
         self.init_env = init_env or []
         self.manifest = {"jobs": [],
                          }
@@ -31,7 +31,7 @@ class SlurmRunner:
 
     def run_job(self, job: Job):
         job_dir = Path(job.working_dir) or Path.cwd() / f"job_{job.job_id}"
-        job_dir.mkdirs(parents=True, exist_ok=True)
+        job_dir.mkdir(parents=True, exist_ok=True)
         time.sleep(0.5)  # ensure unique timestamps if many jobs created quickly
         # Write parameters to JSON (optional if script wants to read it)
         all_params = job.params.copy()
@@ -72,19 +72,19 @@ class SlurmRunner:
             wrapper_file = job_dir / "function_wrapper.py"
             with open(wrapper_file, "w") as f:
                 f.write(wrapper_code)
-        output_json_file = job_dir / "output.json"
-        # Write the slurm job script by appending user’s command to the template
-        script_path = self._compose_slurm_script(job, wrapper_file, 
-                                                 job_func_file, job.function.__name__, 
-                                                 params_file, output_json_file
-                                                 )
-
+            output_json_file = job_dir / "result.json"
+            job.output_files.append(output_json_file)
+            
+            # Write the slurm job script by appending user’s command to the template
+            script_path = self._compose_slurm_script(job, wrapper_file, 
+                                                    job_func_file, job.function.__name__, 
+                                                    params_file, output_json_file
+                                                    )
         submit_cmd = ["sbatch", str(script_path)]
         
         self.logger.info(f"Submitting SLURM job: {' '.join(submit_cmd)}")
 
         result = subprocess.run(submit_cmd, capture_output=True, text=True)
-        time.sleep(1)  # brief pause to ensure SLURM processes the submission
         if result.returncode != 0:
             job.fail(result.stderr)
             job.state = JobState.FAILED
@@ -92,9 +92,12 @@ class SlurmRunner:
             return
 
         slurm_id = self._parse_job_id(result.stdout)
+        
         job.set_internal_id(slurm_id)
         job.state = JobState.RUNNING
         job.start_time = datetime.now()
+        job.logs["stdout"] = job_dir / "slurm-{}.out".format(slurm_id)
+        job.logs["stderr"] = job_dir / "slurm-{}.err".format(slurm_id)
 
         self.logger.info(f"Submitted job {job.job_id} with SLURM ID {slurm_id}")
 
@@ -107,11 +110,14 @@ class SlurmRunner:
 
         with open(self.slurm_template, "r") as template_file:
             slurm_script = template_file.read().rstrip() + "\n\n"
+        # Lets define the job name 
+        slurm_script += f"#SBATCH --job-name=job_{job.job_id}\n"
+        # change working directory
+        slurm_script += f"#SBATCH --chdir={job.working_dir}\n"
         # Lets change the output and err files to be inside job working dir
         slurm_script += f"#SBATCH --error={job.working_dir}/slurm-%j.err\n"
         slurm_script += f"#SBATCH --output={job.working_dir}/slurm-%j.out\n"
-        # change working directory
-        slurm_script += f"#SBATCH --chdir={job.working_dir}\n"
+        
         slurm_script += "\n# Initial environment setup commands\n"
         for cmd in self.init_env:
             slurm_script += cmd + "\n"
@@ -168,23 +174,23 @@ class SlurmRunner:
             capture_output=True,
             text=True
         )
-        self.logger.info(f"Checking status of SLURM job ID {job.internal_id} has result code {result.returncode}")
+        self.logger.debug(f"Checking status of SLURM job ID {job.internal_id}")
         if result.returncode != 0 or not result.stdout.strip():
             # Job disappeared from queue — assume done
-            self._collect_results(job)
+            self._collect_results(job, )
         else:
             job.state = JobState.RUNNING
 
-    def _collect_results(self, job: Job):
-        job_dir = Path(job.working_dir) or Path.cwd() / f"job_{job.job_id}"
-        output_file = job_dir / "output.json"
+    def _collect_results(self, job: Job, outputPath: Optional[Path] = None):
+        output_file = job.output_files[0]
 
         if not output_file.exists():
-            job.fail(f"Missing output.json after SLURM job completion at {output_file}")
+            job.fail(f"Missing result.json after SLURM job completion at {output_file}")
             return
 
         with open(output_file, "r") as f:
-            job.complete(json.load(f))
+            job.complete(json.load(f)) # updates and sets the results of the job
+        job.endtime = datetime.now()
 
     def cancel_job(self, job: Job):
         if job.internal_id:

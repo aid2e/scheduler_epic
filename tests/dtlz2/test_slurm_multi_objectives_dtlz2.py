@@ -137,11 +137,12 @@ if __name__ == "__main__":
     )
 
     config = {
-        "max_concurrent_trials": 10,
+        "max_concurrent_trials": 5,
         "early_stopping_threshold": None,
         "early_stopping_begin_at": 0,
         "restart_from_checkpoint": True,
-        "work_dir": "/sciclone/home/ksuresh/scr10/ax-outputs",
+        "work_dir": f"/sciclone/home/ksuresh/scr10/ax-outputs/dtlz2-{num_obj}-{num_trials}",
+        "job_output_dir" : f"/sciclone/home/ksuresh/scr10/ax-jobs/dtlz2-{num_obj}-{num_trials}/jobs",
         "checkpoint_name": None,    # will use experiment name
     }
 

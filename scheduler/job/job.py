@@ -130,9 +130,8 @@ class Job:
 
         self.internal_id = None
         self.parent_internal_id = None
-
+        self.logs = {"stdout": None, "stderr": None} #path to stdout and stderr logs
         self.logger = logging.getLogger("Job")
-        self.logger.setLevel(logging.DEBUG)
 
     def _validate(self):
         """Validate that the job is properly configured."""
