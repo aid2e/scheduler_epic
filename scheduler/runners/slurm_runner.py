@@ -5,7 +5,7 @@ import subprocess
 import logging
 from pathlib import Path
 from datetime import datetime
-from typing import Optional
+from typing import Optional, List
 from ..job import Job, JobType, JobState
 from ..utils.common import write_function_to_file
 import textwrap
@@ -46,40 +46,16 @@ class SlurmRunner:
             raise NotImplementedError("Script jobs are not supported.")
         
         if job.job_type == JobType.FUNCTION:
-            job_func_file = write_function_to_file(job.function, job_dir / f"user_objective_{job.function.__name__}.py")
-            wrapper_code = '''
-            import argparse, json, importlib.util, sys
-            parser = argparse.ArgumentParser()
-            parser.add_argument("--file", required=True)
-            parser.add_argument("--function", required=True, help = "Name of the function to execute")
-            parser.add_argument("--params", required=True)
-            parser.add_argument("--output", default="output.json")
-            args = parser.parse_args()
-
-            spec = importlib.util.spec_from_file_location("user_module", args.file)
-            mod = importlib.util.module_from_spec(spec)
-            sys.modules["user_module"] = mod
-            spec.loader.exec_module(mod)
-            func = getattr(mod, args.function)
-
-            with open(args.params, "r") as f:
-                params = json.load(f)
-            result = func(**params)
-            with open(args.output, "w") as f:
-                json.dump(result, f)
-                            '''
-            wrapper_code = textwrap.dedent(wrapper_code)
-            wrapper_file = job_dir / "function_wrapper.py"
-            with open(wrapper_file, "w") as f:
-                f.write(wrapper_code)
-            output_json_file = job_dir / "result.json"
-            job.output_files.append(output_json_file)
-            
-            # Write the slurm job script by appending user’s command to the template
-            script_path = self._compose_slurm_script(job, wrapper_file, 
-                                                    job_func_file, job.function.__name__, 
-                                                    params_file, output_json_file
-                                                    )
+            script_path = self._prepare_function_job(job, job_dir, params_file)
+        elif job.job_type == JobType.SCRIPT:
+            script_path = self._prepare_script_job(job, job_dir, params_file)
+        elif job.job_type == JobType.CONTAINER:
+            job.fail("Container jobs are not supported.")
+            raise NotImplementedError("Container jobs are not supported.")
+        else:
+            job.fail(f"Unsupported job type: {job.job_type}")
+            raise ValueError(f"Unsupported job type: {job.job_type}")
+        
         submit_cmd = ["sbatch", str(script_path)]
         
         self.logger.info(f"Submitting SLURM job: {' '.join(submit_cmd)}")
@@ -100,6 +76,56 @@ class SlurmRunner:
         job.logs["stderr"] = job_dir / "slurm-{}.err".format(slurm_id)
 
         self.logger.info(f"Submitted job {job.job_id} with SLURM ID {slurm_id}")
+    def _prepare_script_job(self, job: Job, job_dir: Path, params_file: Path) -> Path:
+        """Prepare a Slurm script for a user-provided executable or script job."""
+        # Check script path
+        script_path = Path(job.script_path)
+        if not script_path.exists():
+            self.logger.error(f"Script file for objective computation not found: {script_path}")
+            job.fail(f"Script file for objective computation not found: {script_path}")
+            raise FileNotFoundError(f"Script file for objective computation not found: {script_path}")
+
+        # Build SLURM script
+        output_script = job_dir / "submit.slurm"
+        with open(self.slurm_template, "r") as template_file:
+            slurm_script = template_file.read().rstrip() + "\n\n"
+
+        slurm_script += f"#SBATCH --job-name=job_{job.job_id}\n"
+        slurm_script += f"#SBATCH --chdir={job.working_dir}\n"
+        slurm_script += f"#SBATCH --output={job.working_dir}/slurm-%j.out\n"
+        slurm_script += f"#SBATCH --error={job.working_dir}/slurm-%j.err\n\n"
+        
+        # Running on Host
+        slurm_script += "# Some information about the job environment\n"
+        slurm_script += 'echo "Running on host $(hostname)"\n'
+        slurm_script += 'echo "Current directory: $(pwd)"\n'
+        slurm_script += 'echo "SLURM Job ID: $SLURM_JOB_ID"\n\n'
+        # Add initialization commands
+        for cmd in self.init_env:
+            slurm_script += cmd + "\n"
+
+        # Export any environment variables
+        for k, v in job.env_vars.items():
+            slurm_script += f"export {k}={v}\n"
+
+        slurm_script += f"\ncd {job.working_dir}\n"
+        slurm_script += f"export TRAILID={job.job_id}\n\n"
+
+        # --- Build the run command ---
+        # e.g., "python script.py --x 0.3 --y 0.7"
+        cmd_parts = [str(script_path)]
+        for k, v in job.params.items():
+            cmd_parts.append(f"--{k}")
+            cmd_parts.append(str(v))
+        cmd_str = " ".join(cmd_parts)
+
+        slurm_script += f"# Run user script\n{cmd_str}\n"
+
+        # Write it out
+        with open(output_script, "w") as out:
+            out.write(slurm_script)
+
+        return output_script
 
     def _compose_slurm_script(self, job: Job, wrapper_file: Path, 
                               job_func_file: Path, function_name: str, 
@@ -143,27 +169,41 @@ class SlurmRunner:
             out.write(slurm_script)
 
         return output_script
-    def __compose_slurm_script(self, job: Job, job_dir: Path, params_file: Path) -> Path:
-        """Generate a new SLURM script from the user template."""
-        output_script = job_dir / "submit.slurm"
+    def _prepare_function_job(self, job: Job, job_dir: Path, params_file: Path) -> Path:
+        job_func_file = write_function_to_file(
+            job.function, job_dir / f"user_objective_{job.function.__name__}.py"
+        )
+        output_json_file = job_dir / "result.json"
+        job.output_files.append(output_json_file)
 
-        with open(self.slurm_template, "r") as template_file:
-            slurm_script = template_file.read().rstrip() + "\n\n"
-        for k, v in job.env_vars.items():
-            slurm_script += f"export {k}={v}\n"
-        # Build command string
-        # Example: python myscript.py --x 0.2 --y 0.4
-        cmd_parts = [job.script_path]
-        for k, v in job.params.items():
-            cmd_parts += [f"--{k}", str(v)]
-        cmd_str = " ".join(cmd_parts)
+        wrapper_file = job_dir / "function_wrapper.py"
+        wrapper_code = textwrap.dedent("""
+        import argparse, json, importlib.util, sys
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--file", required=True)
+        parser.add_argument("--function", required=True)
+        parser.add_argument("--params", required=True)
+        parser.add_argument("--output", default="output.json")
+        args = parser.parse_args()
 
-        slurm_script += f"# User command appended by SlurmRunner\n{cmd_str}\n"
+        spec = importlib.util.spec_from_file_location("user_module", args.file)
+        mod = importlib.util.module_from_spec(spec)
+        sys.modules["user_module"] = mod
+        spec.loader.exec_module(mod)
+        func = getattr(mod, args.function)
 
-        with open(output_script, "w") as out:
-            out.write(slurm_script)
+        with open(args.params) as f:
+            params = json.load(f)
+        result = func(**params)
+        with open(args.output, "w") as f:
+            json.dump(result, f)
+        """)
+        with open(wrapper_file, "w") as f:
+            f.write(wrapper_code)
 
-        return output_script
+        return self._compose_slurm_script(
+            job, wrapper_file, job_func_file, job.function.__name__, params_file, output_json_file
+        )
 
     def check_job_status(self, job: Job):
         if not job.internal_id:

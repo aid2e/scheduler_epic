@@ -8,9 +8,3 @@
 #SBATCH --time=00:10:00              # hh:mm:ss
 #SBATCH --ntasks=1                   # number of tasks
 #SBATCH --cpus-per-task=1            # number of CPU cores per task
-
-echo "Running on host $(hostname)"
-echo "Current directory: $(pwd)"
-echo "SLURM Job ID: $SLURM_JOB_ID"
-
-# ==== User commands appended by SlurmRunner ====

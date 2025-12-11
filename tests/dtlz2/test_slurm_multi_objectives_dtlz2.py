@@ -137,7 +137,7 @@ if __name__ == "__main__":
     )
 
     config = {
-        "max_concurrent_trials": 5,
+        "max_concurrent_trials": 10,
         "early_stopping_threshold": None,
         "early_stopping_begin_at": 0,
         "restart_from_checkpoint": True,

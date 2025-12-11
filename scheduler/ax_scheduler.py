@@ -6,7 +6,7 @@ import logging
 import os
 import time
 import uuid
-from typing import Dict, Any, Optional, Callable, Union
+from typing import Dict, Any, Optional, Callable, Union, List
 from contextlib import contextmanager
 from concurrent.futures import ThreadPoolExecutor
 
@@ -389,7 +389,70 @@ class AxScheduler:
         except Exception as e:
             self.logger.error(f"Error generating next trial: {str(e)}")
             return None
+    def _num_trials_to_generate(self, max_trials: int) -> int:
+        """
+        Calculate how many new trials can be generated at the moment.
+        """
+        num_running = self.get_num_of_running_trials()
+        num_trials = self.get_num_of_trials()
+        num_generating = self.get_num_of_generating_trials()
 
+        available_slots = self.max_concurrent_trials - (num_running + num_generating)
+        remaining_trials = max_trials - num_trials
+
+        return max(0, min(available_slots, remaining_trials))
+    
+    def get_next_trials_async(self, max_trials: int) -> Optional[List[int]]:
+        """
+        Generate new trials using Ax asynchronously.
+
+        Args:
+            max_trials: Maximum number of trials to generate
+
+        Returns:
+            Number of trials generated
+        """
+        if self.ax_client is None:
+            raise ValueError("An AxClient is required to generate new trials")
+
+        if self.incomplete_trials_from_restart:
+            return self.incomplete_trials_from_restart.pop(0)
+
+        if self.executor is None:
+            # self.executor = ThreadPoolExecutor(max_workers=self.max_concurrent_trials)
+            # If the trial is generated in parallel, the trial parameters will be close
+            self.executor = ThreadPoolExecutor(max_workers=1)
+
+        for future in list(self.waiting_futures):  # iterate over a copy
+            if future.done():
+                self.waiting_futures.remove(future)
+                try:
+                    return future.result()
+                except Exception as e:
+                    self.logger.error(f"Future raise exception: {e}")
+                    return None
+
+        if self.waiting_futures:
+            # ax_client should generate trials in sequence.
+            # If there are already trials in generating, not to generate new trials
+            return None
+
+        def worker() -> Optional[int]:
+            try:
+                trial_indices = []
+                for _ in range(max_trials):
+                    _, trial_index = self.ax_client.get_next_trial()
+                    trial_indices.append(trial_index)
+                return trial_indices
+            except Exception as e:
+                self.logger.error(f"Error generating next trial: {str(e)}")
+                return None
+        if max_trials > 0:
+            future = self.executor.submit(worker)
+            self.waiting_futures.append(future)
+        return None
+
+        return num_to_generate
     def get_next_trial_async(self, to_generate=False) -> Optional[int]:
         """
         Generate a new trial using Ax and return its index.
@@ -566,11 +629,17 @@ class AxScheduler:
                         to_generate = True
                     self.logger.info(f"Getting new trial: to_generate={to_generate}")
                     trial_index = self.get_next_trial_async(to_generate)
-                    self.logger.info(f"Got new trial {trial_index}")
+                    # trial_indices = self.get_next_trials_async(
+                    #     self._num_trials_to_generate(max_trials)
+                    # )
+
+                    # if trial_indices:
+                    #     for trial_index in trial_indices:
+                    #         self.logger.info(f"Running new trial {trial_index}")
+                    #         self.run_trial(trial_index)
                     if trial_index is not None:
                         self.logger.info(f"Running new trial {trial_index}")
                         self.run_trial(trial_index)
-
             terminated_trials = []
             self.logger.debug(f"Running trials: {self.running_trials}")
             for trial_index in self.running_trials:
