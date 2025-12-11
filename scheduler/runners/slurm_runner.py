@@ -71,7 +71,7 @@ class SlurmRunner:
         
         job.set_internal_id(slurm_id)
         job.state = JobState.RUNNING
-        job.start_time = datetime.now()
+        job.start_time = datetime.utcnow()
         job.logs["stdout"] = job_dir / "slurm-{}.out".format(slurm_id)
         job.logs["stderr"] = job_dir / "slurm-{}.err".format(slurm_id)
 
