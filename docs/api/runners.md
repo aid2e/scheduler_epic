@@ -14,7 +14,7 @@ A runner that uses joblib for parallel execution.
 
 ### [SlurmRunner](slurm_runner.md)
 
-A runner that submits jobs to a Slurm cluster.
+Strict Slurm Runner that only executes user-provided scripts
 
 ### [PanDAiDDSRunner](pandaidds_runner.md)
 
@@ -25,8 +25,8 @@ A runner that submits jobs to the PanDA system.
 ```
 BaseRunner
 ├── JobLibRunner
-├── SlurmRunner
 └── PanDAiDDSRunner
+SlurmRunner
 ```
 
 ## Usage Examples

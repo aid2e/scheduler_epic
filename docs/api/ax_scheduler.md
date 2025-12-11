@@ -8,7 +8,7 @@ This scheduler allows running Ax trials using different runners.
 ## Class Definition
 
 ```python
-class AxScheduler(self, ax_client_or_experiment: Union[ax.service.ax_client.AxClient, ax.core.experiment.Experiment], runner: <class 'BaseRunner'>, config: Dict[str, Any] = None):
+class AxScheduler(self, ax_client_or_experiment: Union[ax.service.ax_client.AxClient, ax.core.experiment.Experiment], runner: <class 'BaseRunner'>, config: Dict[str, Any] = None, additional_params: Dict[str, Any] = None):
     """
     Initialize a new AxScheduler.
     **Args:**
@@ -27,12 +27,19 @@ class AxScheduler(self, ax_client_or_experiment: Union[ax.service.ax_client.AxCl
 
 | Method | Description |
 |--------|-------------|
+| [`add_running_trial`](#add_running_trial) | Remove a trial_index from the running trials |
 | [`batch_trial_context`](#batch_trial_context) | Context manager for creating and running a batch of trials. |
 | [`complete_trial`](#complete_trial) | Mark a trial as completed in Ax. |
 | [`get_next_trial`](#get_next_trial) | Generate a new trial using Ax and return its index. |
+| [`get_next_trial_async`](#get_next_trial_async) | Generate a new trial using Ax and return its index. |
+| [`get_next_trials_async`](#get_next_trials_async) | Generate new trials using Ax asynchronously. |
+| [`get_num_of_generating_trials`](#get_num_of_generating_trials) | Get number of generating trials |
+| [`get_num_of_running_trials`](#get_num_of_running_trials) | Get number of running trials |
+| [`get_num_of_trials`](#get_num_of_trials) | Get number of trials |
 | [`is_multi_objective`](#is_multi_objective) | Check whether it's multiple objectives |
 | [`load_experiment`](#load_experiment) | Load an experiment from a file. |
 | [`monitor_trials`](#monitor_trials) | Monitor all running trials. |
+| [`remove_running_trial`](#remove_running_trial) | Remove a trial_index from the running trials |
 | [`run_optimization`](#run_optimization) | Run the optimization process. |
 | [`run_trial`](#run_trial) | Run a specific trial. |
 | [`save_experiment`](#save_experiment) | Save the experiment to a file. |
@@ -41,6 +48,18 @@ class AxScheduler(self, ax_client_or_experiment: Union[ax.service.ax_client.AxCl
 | [`set_script_objective`](#set_script_objective) | Set a script to use as the objective function. |
 
 ## Method Details
+
+### add_running_trial
+
+```python
+def add_running_trial(self, trial_index: <class 'int'>) -> Any
+```
+
+Remove a trial_index from the running trials
+**Args:**
+* **trial_index**: The index of the trial to run
+
+---
 
 ### batch_trial_context
 
@@ -86,6 +105,63 @@ Generate a new trial using Ax and return its index.
 
 ---
 
+### get_next_trial_async
+
+```python
+def get_next_trial_async(self, to_generate: Any = False) -> Optional[int]
+```
+
+Generate a new trial using Ax and return its index.
+**Returns:**
+  The index of the new trial, or None if no more trials can be generated
+
+---
+
+### get_next_trials_async
+
+```python
+def get_next_trials_async(self, max_trials: <class 'int'>) -> Optional[List[int]]
+```
+
+Generate new trials using Ax asynchronously.
+**Args:**
+* **max_trials**: Maximum number of trials to generate
+
+**Returns:**
+  Number of trials generated
+
+---
+
+### get_num_of_generating_trials
+
+```python
+def get_num_of_generating_trials(self) -> <class 'int'>
+```
+
+Get number of generating trials
+
+---
+
+### get_num_of_running_trials
+
+```python
+def get_num_of_running_trials(self) -> <class 'int'>
+```
+
+Get number of running trials
+
+---
+
+### get_num_of_trials
+
+```python
+def get_num_of_trials(self) -> <class 'int'>
+```
+
+Get number of trials
+
+---
+
 ### is_multi_objective
 
 ```python
@@ -101,7 +177,7 @@ Check whether it's multiple objectives
 ### load_experiment
 
 ```python
-def load_experiment(self, path: <class 'str'>) -> None
+def load_experiment(self, path: <class 'str'> = None) -> None
 ```
 
 Load an experiment from a file.
@@ -117,6 +193,18 @@ def monitor_trials(self) -> None
 ```
 
 Monitor all running trials.
+
+---
+
+### remove_running_trial
+
+```python
+def remove_running_trial(self, trial_index: <class 'int'>) -> Any
+```
+
+Remove a trial_index from the running trials
+**Args:**
+* **trial_index**: The index of the trial to run
 
 ---
 
@@ -153,7 +241,7 @@ Run a specific trial.
 ### save_experiment
 
 ```python
-def save_experiment(self, path: <class 'str'>) -> None
+def save_experiment(self, path: <class 'str'> = None) -> None
 ```
 
 Save the experiment to a file.

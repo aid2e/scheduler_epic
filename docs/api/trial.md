@@ -23,6 +23,7 @@ class Trial(self, trial_id: <class 'str'>, parameters: Dict[str, Any]):
 |--------|-------------|
 | [`add_job`](#add_job) | Add a job to this trial. |
 | [`check_status`](#check_status) | Check the status of all jobs and update the trial state. |
+| [`get_metrics`](#get_metrics) | Gather metrics from all jobs. |
 | [`get_results`](#get_results) | Gather results from all jobs. |
 | [`run`](#run) | Run all jobs in this trial. |
 
@@ -52,6 +53,18 @@ Check the status of all jobs and update the trial state.
 
 ---
 
+### get_metrics
+
+```python
+def get_metrics(self) -> Dict[str, Any]
+```
+
+Gather metrics from all jobs.
+**Returns:**
+  Dictionary of metrics
+
+---
+
 ### get_results
 
 ```python
@@ -67,7 +80,7 @@ Gather results from all jobs.
 ### run
 
 ```python
-def run(self) -> None
+def run(self, kwargs: Any) -> None
 ```
 
 Run all jobs in this trial.
