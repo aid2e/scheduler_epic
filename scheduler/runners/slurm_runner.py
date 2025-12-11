@@ -20,6 +20,17 @@ class SlurmRunner:
                  init_env: Optional[list] = None,
                  source_dir: Optional[str] = None
                  ):
+        """
+        Initialize a new SlurmRunner.
+
+        Args:
+            slurm_template: Path to the SLURM template file to use for job submission.
+            init_env: Optional list of environment setup commands to run before job execution.
+            source_dir: Optional source directory to include in the job environment.
+
+        Raises:
+            FileNotFoundError: If the SLURM template file does not exist.
+        """
         self.slurm_template = Path(slurm_template)
         self.logger = logging.getLogger("SlurmRunner")
         #self.logger.setLevel(logging.DEBUG)
@@ -30,6 +41,20 @@ class SlurmRunner:
             raise FileNotFoundError(f"SLURM template not found: {self.slurm_template}")
 
     def run_job(self, job: Job):
+        """
+        Submit a job to the Slurm cluster.
+
+        Prepares the job environment, generates necessary scripts, and submits
+        the job to Slurm using sbatch. Updates job state and internal ID upon
+        successful submission.
+
+        Args:
+            job: The Job object to submit. Must have job_type of FUNCTION or SCRIPT.
+
+        Raises:
+            NotImplementedError: If job type is SCRIPT or CONTAINER (not supported).
+            ValueError: If job type is unsupported.
+        """
         job_dir = Path(job.working_dir) or Path.cwd() / f"job_{job.job_id}"
         job_dir.mkdir(parents=True, exist_ok=True)
         time.sleep(0.5)  # ensure unique timestamps if many jobs created quickly
@@ -206,6 +231,16 @@ class SlurmRunner:
         )
 
     def check_job_status(self, job: Job):
+        """
+        Check the current status of a submitted job.
+
+        Queries the Slurm scheduler to determine if the job is pending, running,
+        or completed. Updates the job state and collects results if the job
+        has finished execution.
+
+        Args:
+            job: The Job object whose status should be checked.
+        """
         if not job.internal_id:
             return
 
@@ -233,6 +268,15 @@ class SlurmRunner:
         job.endtime = datetime.now()
 
     def cancel_job(self, job: Job):
+        """
+        Cancel a job that has been submitted to Slurm.
+
+        Sends a signal to the Slurm scheduler to terminate the job and updates
+        the job state to CANCELLED.
+
+        Args:
+            job: The Job object to cancel.
+        """
         if job.internal_id:
             subprocess.run(["scancel", str(job.internal_id)])
             job.state = JobState.CANCELLED

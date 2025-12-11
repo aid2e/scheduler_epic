@@ -41,6 +41,12 @@ class BaseJob:
     """
     def __init__(self, job_id: str
                  ):
+        """
+        Initialize a new BaseJob.
+
+        Args:
+            job_id: Unique identifier for the job.
+        """
         self.job_id = job_id
 
 class Job:
@@ -304,6 +310,16 @@ class ParallelJob(Job):
         *args,
         **kwargs,
     ):
+        """
+        Initialize a new ParallelJob.
+
+        Args:
+            job_id: Unique identifier for the parallel job.
+            subjobs: Optional list of Job objects to run in parallel.
+            sequential_steps: Optional list of ParallelJob objects for sequential execution.
+            *args: Variable length argument list passed to parent Job class.
+            **kwargs: Arbitrary keyword arguments passed to parent Job class.
+        """
         super().__init__(job_id, *args, **kwargs)
         self.subjobs = subjobs or []  # Parallel subjobs
         self.sequential_steps = sequential_steps or []  # For Multi-step jobs
@@ -314,6 +330,12 @@ class ParallelJob(Job):
     # Subjob handling
     # -------------------------------
     def add_subjob(self, subjob: Job):
+        """
+        Add a subjob to be run in parallel.
+
+        Args:
+            subjob: The Job object to add to the parallel execution list.
+        """
         self.subjobs.append(subjob)
 
     def run_subjobs(self):

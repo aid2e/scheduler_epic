@@ -18,6 +18,15 @@ JsonDict = Dict[str, Any]
 ConfigInput = Union[str, Path, Dict[str, Any], SlurmWorkflowModel]
 
 class SlurmWorkflowStatus(str, Enum):
+    """
+    Enumeration of possible states for a Slurm workflow.
+
+    Attributes:
+        PENDING: Workflow is queued but not yet running.
+        RUNNING: Workflow is currently executing.
+        COMPLETED: Workflow has finished successfully.
+        FAILED: Workflow execution failed.
+    """
     PENDING = auto()
     RUNNING = auto()
     COMPLETED = auto()
@@ -34,6 +43,20 @@ class SlurmWorkflow:
     """
 
     def __init__(self, config: ConfigInput, *, auto_init_manifest: bool = True) -> None:
+        """
+        Initialize a new SlurmWorkflow.
+
+        Args:
+            config: Configuration input - can be a SlurmWorkflowModel instance, a YAML file path,
+                or a dictionary of configuration parameters.
+            auto_init_manifest: If True, automatically initialize the manifest.json file in the
+                work directory (default: True).
+
+        Raises:
+            TypeError: If config is not a SlurmWorkflowModel, dict, or Path to a YAML file.
+            FileNotFoundError: If config is a Path and the file does not exist.
+            ValueError: If the YAML configuration is invalid.
+        """
         # Load/validate workflow model
         if isinstance(config, SlurmWorkflowModel):
             self.model: SlurmWorkflowModel = config
@@ -361,6 +384,13 @@ class SlurmWork:
     """
 
     def __init__(self, model: SlurmWorkModel, workflow: SlurmWorkflow) -> None:
+        """
+        Initialize a new SlurmWork (individual job within a workflow).
+
+        Args:
+            model: The SlurmWorkModel containing the job configuration and metadata.
+            workflow: The parent SlurmWorkflow instance managing this job.
+        """
         self.model = model
         self.workflow = workflow
         self.log = logging.getLogger(f"SlurmWork[{self.model.internal_id}]")

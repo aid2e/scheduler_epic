@@ -112,6 +112,22 @@ class SlurmWorkflowModel(BaseModel):
 
     @field_validator("output")
     def validate_output(cls, v):
+        """
+        Validate the output specification for a Slurm workflow model.
+
+        Ensures that if an output specification is provided, it contains a 'path' key
+        and that 'keys' (if present) is a list or tuple of strings.
+
+        Args:
+            v: The output specification dictionary to validate.
+
+        Returns:
+            The validated output specification.
+
+        Raises:
+            ValueError: If output spec is missing 'path', 'path' is not a string,
+                or 'keys' is not a list/tuple.
+        """
         if v is None:
             return v
         if "path" not in v:
