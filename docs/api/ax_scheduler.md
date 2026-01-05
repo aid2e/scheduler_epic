@@ -27,7 +27,7 @@ class AxScheduler(self, ax_client_or_experiment: Union[ax.service.ax_client.AxCl
 
 | Method | Description |
 |--------|-------------|
-| [`add_running_trial`](#add_running_trial) | Remove a trial_index from the running trials |
+| [`add_running_trial`](#add_running_trial) | Add a trial_index from the running trials |
 | [`batch_trial_context`](#batch_trial_context) | Context manager for creating and running a batch of trials. |
 | [`complete_trial`](#complete_trial) | Mark a trial as completed in Ax. |
 | [`get_next_trial`](#get_next_trial) | Generate a new trial using Ax and return its index. |
