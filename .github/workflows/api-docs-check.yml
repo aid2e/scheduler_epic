@@ -62,9 +62,13 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
-          github.rest.issues.createComment({
-            issue_number: context.issue.number,
-            owner: context.repo.owner,
-            repo: context.repo.repo,
-            body: "⚠️ **API Documentation Needs Update**\n\nThe API documentation is not up to date with the current code.\n\nPlease run the following command locally and commit the changes:\n\n\\`\\`\\`bash\n./api_docs_helper.sh generate\n\\`\\`\\`\n\nDocumentation has been generated and uploaded as an artifact for reference."
-          })
+          try {
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: "⚠️ **API Documentation Needs Update**\n\nThe API documentation is not up to date with the current code.\n\nPlease run the following command locally and commit the changes:\n\n```\nbash\n./api_docs_helper.sh generate\n```"
+            });
+          } catch (error) {
+            console.log("Skipping PR comment due to insufficient permissions.");
+          }
