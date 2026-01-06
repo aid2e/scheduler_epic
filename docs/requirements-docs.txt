@@ -5,4 +5,35 @@ cairosvg>=2.5.0
 pillow>=9.0.0
 pygments>=2.14.0
 pydoc-markdown>=4.8.2
-ax-platform
+ax-platform==1.0.0
+# Core dependencies
+ax-platform==1.0.0
+
+# Data and numerical computing
+numpy==2.3.4
+scipy==1.16.3
+pandas==2.3.1
+scikit-learn==1.7.1
+
+# Job execution and parallelization
+joblib==1.5.1
+cloudpickle==3.1.1
+
+# Configuration and validation
+pydantic==2.12.3
+PyYAML==6.0.3
+
+# Utilities
+matplotlib==3.10.7
+plotly==6.2.0
+requests==2.32.1
+python-dateutil==2.9.0.post0
+pytz==2025.2
+
+# Development and testing
+pytest==8.4.2
+ipython==9.4.0
+Jupyter==1.0.0
+
+# Optional: GPU support (comment out if not needed)
+torch==2.9.0

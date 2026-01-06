@@ -9,8 +9,7 @@ from collections import defaultdict
 from datetime import datetime
 from itertools import product
 from typing import Dict, Any, Optional, List, Union
-from .job import Job, JobType
-from .job_state import JobState
+from .job import Job, JobType, JobState
 
 
 class MultiStepsFunction(object):
@@ -86,6 +85,7 @@ class MultiStepsJob(Job):
         num_events_per_job: int = 1,
         with_input_datasets: bool = False,
         input_datasets: dict = {},
+        **kwargs,
     ):
         """
         Initialize a new job.
@@ -113,7 +113,9 @@ class MultiStepsJob(Job):
         self.start_time: Optional[datetime] = None
         self.end_time: Optional[datetime] = None
         self.results: Dict[str, Any] = {}
+        self.metrics: Dict[str, Any] = {}
         self.runner = None
+        self.extra_args = kwargs
 
         # Validate job configuration
         self._validate()
@@ -240,7 +242,8 @@ class MultiStepsJob(Job):
         """
         if not key:
             return "None"
-        return tuple(sorted(key.items()))
+        # return tuple(sorted(key.items()))
+        return ",".join(f"{k}={key[k]}" for k in sorted(key))
 
     def is_multi_objectives_in_one_step(self, step_name, step) -> bool:
         """
@@ -300,7 +303,9 @@ class MultiStepsJob(Job):
         job_type = step_objective.get("job_type", JobType.FUNCTION)
         parent_result_parameter_name = step_objective.get("parent_result_parameter_name", None)
 
-        return_func_results = step_objective.get("return_func_results", True)
+        # always set return_func_results, so that the metrics can be retrieved
+        # return_func_results = step_objective.get("return_func_results", True)
+        return_func_results = True
         with_output_dataset = step_objective.get("with_output_dataset", False)
         output_file = step_objective.get("output_file", None)
         orig_output_dataset = step_objective.get("output_dataset", None)
@@ -407,7 +412,8 @@ class MultiStepsJob(Job):
                 "with_global_parameters": self.global_parameters and step_name in self.global_parameters_steps,
                 "return_func_results": return_func_results,
                 "results": {},
-                "step_results": {}
+                "step_results": {},
+                "metrics": {}
             }
         else:
             step_objectives = objective_funcs[step_name]
@@ -424,7 +430,8 @@ class MultiStepsJob(Job):
                 "with_global_parameters": self.global_parameters and step_name in self.global_parameters_steps,
                 "return_func_results": all_return_func_results,
                 "results": {},
-                "step_results": {}
+                "step_results": {},
+                "metrics": {}
             }
 
     def _initialize(self) -> None:
@@ -642,19 +649,26 @@ class MultiStepsJob(Job):
         Returns:
             results with different metrics
         """
-        self.logger.debug(f"get_objective_results with_global_parameters: {with_global_parameters}, objective_jobs: {objective_jobs}")
-        if with_global_parameters:
-            results = defaultdict(dict)
-            for job_key, job in objective_jobs.items():
-                for metric, value in job.results.items():
-                    results[metric][job_key] = value
-        else:
-            if len(list(objective_jobs.keys())) > 1:
-                error = f"objective_jobs {objective_jobs} has more than one global parameter key. However, with_global_parameters is {with_global_parameters}"
-                self.logger.error(error)
-                self.fail({"error": error})
-            results = list(objective_jobs.values())[0].results
-        return results
+        try:
+            self.logger.debug(f"get_objective_results with_global_parameters: {with_global_parameters}, objective_jobs: {objective_jobs}")
+            if with_global_parameters:
+                results = defaultdict(dict)
+                metrics = {}
+                for job_key, job in objective_jobs.items():
+                    for metric, value in job.results.items():
+                        results[metric][job_key] = value
+                    metrics[job_key] = job.get_metrics()
+            else:
+                if len(list(objective_jobs.keys())) > 1:
+                    error = f"objective_jobs {objective_jobs} has more than one global parameter key. However, with_global_parameters is {with_global_parameters}"
+                    self.logger.error(error)
+                    self.fail({"error": error})
+                results = list(objective_jobs.values())[0].results
+                metrics = list(objective_jobs.values())[0].get_metrics()
+            return results, metrics
+        except Exception as ex:
+            self.logger.error(f"get_objective_results raise exceptions: {ex}")
+        return None, None
 
     def get_step_results(self, objective_results) -> Dict:
         """
@@ -684,6 +698,7 @@ class MultiStepsJob(Job):
             for objective in self.step_jobs[step_name]:
                 for g_param_key in self.step_jobs[step_name][objective]:
                     if not self.step_jobs[step_name][objective][g_param_key].return_func_results:
+                        self.step_jobs[step_name][objective][g_param_key].check_status()
                         continue
                     self.step_jobs[step_name][objective][g_param_key].check_status()
                     if self.step_jobs[step_name][objective][g_param_key].has_failed():
@@ -710,11 +725,19 @@ class MultiStepsJob(Job):
 
                 if completed:
                     self.logger.info(f"Job {self.job_id} step {step_name} objective {objective} completed")
-                    obj_results = self.get_objective_results(objective_jobs, with_global_parameters=self.step_states[step_name]["with_global_parameters"])
+                    # retrieve results
+                    obj_results, obj_metrics = self.get_objective_results(objective_jobs, with_global_parameters=self.step_states[step_name]["with_global_parameters"])
+                    if not obj_results:
+                        step_failed = True
                     self.step_states[step_name]["results"][objective] = obj_results
-                    self.logger.info(f"Job {self.job_id} step {step_name} objective {objective} results {obj_results}")
+                    self.step_states[step_name]["metrics"][objective] = obj_metrics
+                    self.logger.info(f"Job {self.job_id} step {step_name} objective {objective} results {obj_results}, metrics: {obj_metrics}")
                 elif failed:
                     self.logger.info(f"Job {self.job_id} step {step_name} objective {objective} has failed")
+                    obj_results, obj_metrics = self.get_objective_results(objective_jobs, with_global_parameters=self.step_states[step_name]["with_global_parameters"])
+                    self.step_states[step_name]["results"][objective] = obj_results
+                    self.step_states[step_name]["metrics"][objective] = obj_metrics
+                    self.logger.info(f"Job {self.job_id} step {step_name} failed, objective {objective} results {obj_results}, metrics: {obj_metrics}")
                     step_failed = True
                 else:
                     all_completed = False  # Still waiting on jobs to complete
@@ -805,3 +828,29 @@ class MultiStepsJob(Job):
             Dictionary of results
         """
         return self.results
+
+    def set_metrics(self, metrics: Optional[Dict[str, Any]] = None) -> None:
+        """
+        Set job's metrics
+
+        Args:
+            metrics: Dictionary of job metrics
+        """
+        self.metrics = metrics
+
+    def get_metrics(self) -> Dict[str, Any]:
+        """
+        Get metrics of this job.
+
+        Returns:
+            Dictionary of metrics
+        """
+        metrics = defaultdict(dict)
+        for step_name in self.step_jobs:
+            for objective in self.step_jobs[step_name]:
+                r_metrics = self.step_states[step_name]["metrics"][objective]
+                self.logger.debug(f"Job {self.job_id} step {step_name} objective {objective} metrics: {r_metrics}")
+                metrics[step_name][objective] = r_metrics
+        self.metrics.update(metrics)
+        self.logger.debug(f"Job {self.job_id} metrics: {self.metrics}")
+        return self.metrics

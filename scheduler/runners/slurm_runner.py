@@ -1,352 +1,288 @@
-"""
-SlurmRunner - Runner that submits jobs to a Slurm cluster.
-"""
-
+# slurm_runner.py
 import os
-import subprocess
-import pickle
 import json
-from typing import Dict, Any
-from ..job.job import JobType
-from ..job.job_state import JobState
-from .base_runner import BaseRunner
-
-
-class SlurmRunner(BaseRunner):
+import subprocess
+import logging
+from pathlib import Path
+from datetime import datetime
+from typing import Optional, List
+from ..job import Job, JobType, JobState
+from ..utils.common import write_function_to_file
+import textwrap
+import time
+class SlurmRunner:
     """
-    A runner that submits jobs to a Slurm cluster.
-
-    This runner creates temporary job scripts and submits them to Slurm.
-    It can handle different job types:
-    - Function: Serializes and runs Python functions
-    - Script: Executes scripts directly
-    - Container: Runs containers using Singularity
+    Strict Slurm Runner that only executes user-provided scripts
+    using a user-supplied SLURM template.
     """
 
-    def __init__(
-        self,
-        partition: str = "batch",
-        time_limit: str = "01:00:00",
-        memory: str = "4G",
-        cpus_per_task: int = 1,
-        config: Dict[str, Any] = None,
-    ):
+    def __init__(self, slurm_template: str,
+                 init_env: Optional[list] = None,
+                 source_dir: Optional[str] = None
+                 ):
         """
         Initialize a new SlurmRunner.
 
         Args:
-            partition: Slurm partition to submit jobs to
-            time_limit: Time limit for jobs (HH:MM:SS)
-            memory: Memory to allocate per job
-            cpus_per_task: Number of CPUs to allocate per job
-            config: Additional configuration options:
-                modules: List of modules to load (default: ['python'])
-                singularity_path: Path to singularity executable (default: 'singularity')
-                job_dir: Directory to store job files (default: ~/slurm_jobs)
+            slurm_template: Path to the SLURM template file to use for job submission.
+            init_env: Optional list of environment setup commands to run before job execution.
+            source_dir: Optional source directory to include in the job environment.
+
+        Raises:
+            FileNotFoundError: If the SLURM template file does not exist.
         """
-        super().__init__(config or {})
-        self.partition = partition
-        self.time_limit = time_limit
-        self.memory = memory
-        self.cpus_per_task = cpus_per_task
-        self.jobs = {}  # job_id -> slurm_job_id
+        self.slurm_template = Path(slurm_template)
+        self.logger = logging.getLogger("SlurmRunner")
+        #self.logger.setLevel(logging.DEBUG)
+        self.init_env = init_env or []
+        self.manifest = {"jobs": [],
+                         }
+        if not self.slurm_template.exists():
+            raise FileNotFoundError(f"SLURM template not found: {self.slurm_template}")
 
-        # Additional configuration
-        self.modules = self.config.get("modules", ["python"])
-        self.singularity_path = self.config.get("singularity_path", "singularity")
-
-        # Directory to store job files
-        self.job_dir = self.config.get("job_dir", os.path.expanduser("~/slurm_jobs"))
-        os.makedirs(self.job_dir, exist_ok=True)
-
-    def _create_job_script(self, job) -> str:
+    def run_job(self, job: Job):
         """
-        Create a job script for Slurm.
+        Submit a job to the Slurm cluster.
+
+        Prepares the job environment, generates necessary scripts, and submits
+        the job to Slurm using sbatch. Updates job state and internal ID upon
+        successful submission.
 
         Args:
-            job: The job to create a script for
+            job: The Job object to submit. Must have job_type of FUNCTION or SCRIPT.
 
-        Returns:
-            Path to the job script
+        Raises:
+            NotImplementedError: If job type is SCRIPT or CONTAINER (not supported).
+            ValueError: If job type is unsupported.
         """
-        # Create a directory for this job
-        job_path = os.path.join(self.job_dir, job.job_id)
-        os.makedirs(job_path, exist_ok=True)
+        job_dir = Path(job.working_dir) or Path.cwd() / f"job_{job.job_id}"
+        job_dir.mkdir(parents=True, exist_ok=True)
+        time.sleep(0.5)  # ensure unique timestamps if many jobs created quickly
+        # Write parameters to JSON (optional if script wants to read it)
+        all_params = job.params.copy()
+        function_additional_args = getattr(job, 'extra_args', {}).get('func_args', {})
+        all_params.update(function_additional_args)
+        params_file = job_dir / "params.json"
+        with open(params_file, "w") as f:
+            json.dump(all_params, f)
+        
+        if job.job_type == JobType.SCRIPT:
+            job.state = JobState.FAILED
+            raise NotImplementedError("Script jobs are not supported.")
+        
+        if job.job_type == JobType.FUNCTION:
+            script_path = self._prepare_function_job(job, job_dir, params_file)
+        elif job.job_type == JobType.SCRIPT:
+            script_path = self._prepare_script_job(job, job_dir, params_file)
+        elif job.job_type == JobType.CONTAINER:
+            job.fail("Container jobs are not supported.")
+            raise NotImplementedError("Container jobs are not supported.")
+        else:
+            job.fail(f"Unsupported job type: {job.job_type}")
+            raise ValueError(f"Unsupported job type: {job.job_type}")
+        
+        submit_cmd = ["sbatch", str(script_path)]
+        
+        self.logger.info(f"Submitting SLURM job: {' '.join(submit_cmd)}")
 
-        # Create the job script
-        script_path = os.path.join(job_path, "job.sh")
-        with open(script_path, "w") as f:
-            f.write("#!/bin/bash\n")
-            f.write(f"#SBATCH --job-name={job.job_id}\n")
-            f.write(f"#SBATCH --output={job_path}/job.out\n")
-            f.write(f"#SBATCH --error={job_path}/job.err\n")
-            f.write(f"#SBATCH --partition={self.partition}\n")
-            f.write(f"#SBATCH --time={self.time_limit}\n")
-            f.write(f"#SBATCH --mem={self.memory}\n")
-            f.write(f"#SBATCH --cpus-per-task={self.cpus_per_task}\n")
+        result = subprocess.run(submit_cmd, capture_output=True, text=True)
+        if result.returncode != 0:
+            job.fail(result.stderr)
+            job.state = JobState.FAILED
+            self.logger.error(f"SLURM job submission failed: {result.stderr}")
+            return
 
-            # Add any additional options from config
-            for k, v in self.config.get("sbatch_options", {}).items():
-                f.write(f"#SBATCH --{k}={v}\n")
+        slurm_id = self._parse_job_id(result.stdout)
+        
+        job.set_internal_id(slurm_id)
+        job.state = JobState.RUNNING
+        job.start_time = datetime.utcnow()
+        job.logs["stdout"] = job_dir / "slurm-{}.out".format(slurm_id)
+        job.logs["stderr"] = job_dir / "slurm-{}.err".format(slurm_id)
 
-            f.write("\n")
-            f.write("# Load modules\n")
-            for module in self.modules:
-                f.write(f"module load {module}\n")
+        self.logger.info(f"Submitted job {job.job_id} with SLURM ID {slurm_id}")
+    def _prepare_script_job(self, job: Job, job_dir: Path, params_file: Path) -> Path:
+        """Prepare a Slurm script for a user-provided executable or script job."""
+        # Check script path
+        script_path = Path(job.script_path)
+        if not script_path.exists():
+            self.logger.error(f"Script file for objective computation not found: {script_path}")
+            job.fail(f"Script file for objective computation not found: {script_path}")
+            raise FileNotFoundError(f"Script file for objective computation not found: {script_path}")
 
-            f.write("\n")
-            f.write("# Set environment variables\n")
-            for key, value in job.env_vars.items():
-                f.write(f'export {key}="{value}"\n')
+        # Build SLURM script
+        output_script = job_dir / "submit.slurm"
+        with open(self.slurm_template, "r") as template_file:
+            slurm_script = template_file.read().rstrip() + "\n\n"
 
-            f.write("\n")
-            f.write("# Run the job\n")
+        slurm_script += f"#SBATCH --job-name=job_{job.job_id}\n"
+        slurm_script += f"#SBATCH --chdir={job.working_dir}\n"
+        slurm_script += f"#SBATCH --output={job.working_dir}/slurm-%j.out\n"
+        slurm_script += f"#SBATCH --error={job.working_dir}/slurm-%j.err\n\n"
+        
+        # Running on Host
+        slurm_script += "# Some information about the job environment\n"
+        slurm_script += 'echo "Running on host $(hostname)"\n'
+        slurm_script += 'echo "Current directory: $(pwd)"\n'
+        slurm_script += 'echo "SLURM Job ID: $SLURM_JOB_ID"\n\n'
+        # Add initialization commands
+        for cmd in self.init_env:
+            slurm_script += cmd + "\n"
 
-            # Different job types need different handling
-            if job.job_type == JobType.FUNCTION:
-                # Pickle the job function and parameters
-                pickle_path = os.path.join(job_path, "job.pkl")
-                with open(pickle_path, "wb") as pkl_file:
-                    pickle.dump((job.function, job.params), pkl_file)
+        # Export any environment variables
+        for k, v in job.env_vars.items():
+            slurm_script += f"export {k}={v}\n"
 
-                # Write Python code to execute the function
-                f.write('python -c "\n')
-                f.write("import pickle\n")
-                f.write("import os\n")
-                f.write("import sys\n")
-                f.write("import json\n")
-                f.write(f"with open('{pickle_path}', 'rb') as f:\n")
-                f.write("    function, params = pickle.load(f)\n")
-                f.write("try:\n")
-                f.write("    result = function(**params)\n")
-                f.write(f"    with open('{job_path}/result.json', 'w') as f:\n")
-                f.write('        json.dump({"result": result}, f)\n')
-                f.write("    sys.exit(0)\n")
-                f.write("except Exception as e:\n")
-                f.write(f"    with open('{job_path}/error.json', 'w') as f:\n")
-                f.write('        json.dump({"error": str(e)}, f)\n')
-                f.write("    sys.exit(1)\n")
-                f.write('"\n')
+        slurm_script += f"\ncd {job.working_dir}\n"
+        slurm_script += f"export TRAILID={job.job_id}\n\n"
 
-            elif job.job_type == JobType.SCRIPT:
-                # Create a file with the parameters
-                params_file = os.path.join(job_path, "params.json")
-                with open(params_file, "w") as params_f:
-                    json.dump(job.params, params_f)
+        # --- Build the run command ---
+        # e.g., "python script.py --x 0.3 --y 0.7"
+        cmd_parts = [str(script_path)]
+        for k, v in job.params.items():
+            cmd_parts.append(f"--{k}")
+            cmd_parts.append(str(v))
+        cmd_str = " ".join(cmd_parts)
 
-                # Set environment variable for the params file
-                f.write(f'export JOB_PARAMS_FILE="{params_file}"\n')
+        slurm_script += f"# Run user script\n{cmd_str}\n"
 
-                # Set working directory
-                working_dir = job.working_dir if job.working_dir else job_path
-                f.write(f"cd {working_dir}\n")
+        # Write it out
+        with open(output_script, "w") as out:
+            out.write(slurm_script)
 
-                # Execute the script
-                if job.script_path.endswith(".sh"):
-                    f.write(f"bash {job.script_path}\n")
-                else:
-                    f.write(f"python {job.script_path}\n")
+        return output_script
 
-                # Capture the exit code
-                f.write("EXIT_CODE=$?\n")
-                f.write("if [ $EXIT_CODE -ne 0 ]; then\n")
-                f.write(f'  echo "{{\\"error\\": \\"Script exited with code $EXIT_CODE\\"}}" > {job_path}/error.json\n')
-                f.write("  exit $EXIT_CODE\n")
-                f.write("fi\n")
+    def _compose_slurm_script(self, job: Job, wrapper_file: Path, 
+                              job_func_file: Path, function_name: str, 
+                              params_file: Path, output_json_file: Path
+                              ) -> Path:
+        """Generate a new SLURM script from the user template."""
+        output_script = Path(job.working_dir) / "submit.slurm"
 
-                # If no result file was created, create one with the output
-                f.write(f"if [ ! -f {job_path}/result.json ]; then\n")
-                f.write(f'  echo "{{\\"stdout\\": \\"$(cat {job_path}/job.out)\\"}}" > {job_path}/result.json\n')
-                f.write("fi\n")
+        with open(self.slurm_template, "r") as template_file:
+            slurm_script = template_file.read().rstrip() + "\n\n"
+        # Lets define the job name 
+        slurm_script += f"#SBATCH --job-name=job_{job.job_id}\n"
+        # change working directory
+        slurm_script += f"#SBATCH --chdir={job.working_dir}\n"
+        # Lets change the output and err files to be inside job working dir
+        slurm_script += f"#SBATCH --error={job.working_dir}/slurm-%j.err\n"
+        slurm_script += f"#SBATCH --output={job.working_dir}/slurm-%j.out\n"
+        
+        slurm_script += "\n# Initial environment setup commands\n"
+        for cmd in self.init_env:
+            slurm_script += cmd + "\n"
+        slurm_script += "\n# Environment variables\n"
+        for k, v in job.env_vars.items():
+            slurm_script += f"export {k}={v}\n"
+        # Lets move to job working directory
+        slurm_script += f"\ncd {job.working_dir}\n"
+        # Lets set TrailID which is the internal job ID
+        slurm_script += f"export TRAILID={job.job_id}\n"
+        # Build command string
+        # Example: python function_wrapper.py --file user_objective.py --function my_func --params params.json --output output.json
+        cmd_parts = ["python", str(wrapper_file)]
+        cmd_parts += [f"--file", str(job_func_file)]
+        cmd_parts += [f"--function", function_name]
+        cmd_parts += [f"--params", str(params_file)]
+        cmd_parts += [f"--output", str(output_json_file)]
+        cmd_str = " ".join(cmd_parts)
 
-            elif job.job_type == JobType.CONTAINER:
-                # Create a file with the parameters
-                params_file = os.path.join(job_path, "params.json")
-                with open(params_file, "w") as params_f:
-                    json.dump(job.params, params_f)
+        slurm_script += f"# User command appended by SlurmRunner\n{cmd_str}\n"
 
-                # Set environment variable for the params file
-                f.write(f'export JOB_PARAMS_FILE="{params_file}"\n')
+        with open(output_script, "w") as out:
+            out.write(slurm_script)
 
-                # Execute the container using Singularity
-                working_dir = job.working_dir if job.working_dir else job_path
+        return output_script
+    def _prepare_function_job(self, job: Job, job_dir: Path, params_file: Path) -> Path:
+        job_func_file = write_function_to_file(
+            job.function, job_dir / f"user_objective_{job.function.__name__}.py"
+        )
+        output_json_file = job_dir / "result.json"
+        job.output_files.append(output_json_file)
 
-                # Build Singularity command
-                cmd = [self.singularity_path, "run"]
+        wrapper_file = job_dir / "function_wrapper.py"
+        wrapper_code = textwrap.dedent("""
+        import argparse, json, importlib.util, sys
+        parser = argparse.ArgumentParser()
+        parser.add_argument("--file", required=True)
+        parser.add_argument("--function", required=True)
+        parser.add_argument("--params", required=True)
+        parser.add_argument("--output", default="output.json")
+        args = parser.parse_args()
 
-                # Add environment variables
-                for key, value in job.env_vars.items():
-                    cmd.extend(["--env", f"{key}={value}"])
+        spec = importlib.util.spec_from_file_location("user_module", args.file)
+        mod = importlib.util.module_from_spec(spec)
+        sys.modules["user_module"] = mod
+        spec.loader.exec_module(mod)
+        func = getattr(mod, args.function)
 
-                # Add bind mounts
-                cmd.extend(["--bind", f"{job_path}:/job"])
-                if job.working_dir:
-                    cmd.extend(["--bind", f"{job.working_dir}:/workdir"])
-                    cmd.extend(["--pwd", "/workdir"])
-                else:
-                    cmd.extend(["--pwd", "/job"])
+        with open(args.params) as f:
+            params = json.load(f)
+        result = func(**params)
+        with open(args.output, "w") as f:
+            json.dump(result, f)
+        """)
+        with open(wrapper_file, "w") as f:
+            f.write(wrapper_code)
 
-                # Add image
-                cmd.append(job.container_image)
+        return self._compose_slurm_script(
+            job, wrapper_file, job_func_file, job.function.__name__, params_file, output_json_file
+        )
 
-                # Add command if specified
-                if job.container_command:
-                    cmd.extend(job.container_command.split())
-
-                # Write the command to the script
-                f.write(f"{' '.join(cmd)}\n")
-
-                # Capture the exit code
-                f.write("EXIT_CODE=$?\n")
-                f.write("if [ $EXIT_CODE -ne 0 ]; then\n")
-                f.write(f'  echo "{{\\"error\\": \\"Container exited with code $EXIT_CODE\\"}}" > {job_path}/error.json\n')
-                f.write("  exit $EXIT_CODE\n")
-                f.write("fi\n")
-
-                # If no result file was created, create one with the output
-                f.write(f"if [ ! -f {job_path}/result.json ]; then\n")
-                f.write(f'  echo "{{\\"stdout\\": \\"$(cat {job_path}/job.out)\\"}}" > {job_path}/result.json\n')
-                f.write("fi\n")
-
-            else:
-                f.write(f'echo "{{\\"error\\": \\"Unsupported job type: {job.job_type}\\"}}" > {job_path}/error.json\n')
-                f.write("exit 1\n")
-
-            # Collect output files if specified
-            if job.output_files:
-                f.write("\n# Collect output files\n")
-                f.write(f"mkdir -p {job_path}/output_files\n")
-                f.write('OUTPUT_FILES_JSON="{\\"output_files\\":{\\n')
-
-                for i, file_path in enumerate(job.output_files):
-                    src_path = os.path.join(working_dir if job.working_dir else job_path, file_path)
-                    dest_path = os.path.join(job_path, "output_files", os.path.basename(file_path))
-
-                    f.write(f'if [ -f "{src_path}" ]; then\n')
-                    f.write(f'  cp "{src_path}" "{dest_path}"\n')
-                    f.write(f"  FILE_CONTENT=$(cat \"{dest_path}\" | sed 's/\"/\\\\\"/g' | tr '\\n' ' ')\n")
-                    f.write(f'  OUTPUT_FILES_JSON+="\\"{file_path}\\": \\"$FILE_CONTENT\\"')
-                    if i < len(job.output_files) - 1:
-                        f.write(",")
-                    f.write('\\n"\n')
-                    f.write("else\n")
-                    f.write(f'  OUTPUT_FILES_JSON+="\\"{file_path}\\": \\"File not found\\"')
-                    if i < len(job.output_files) - 1:
-                        f.write(",")
-                    f.write('\\n"\n')
-                    f.write("fi\n")
-
-                f.write('OUTPUT_FILES_JSON+="}}}"\n')
-
-                # Merge with result.json if it exists
-                f.write(f"if [ -f {job_path}/result.json ]; then\n")
-                f.write("  # Combine the output files with the existing result\n")
-                f.write(f"  RESULT=$(cat {job_path}/result.json)\n")
-                f.write("  # Remove the closing brace\n")
-                f.write("  RESULT=${RESULT%?}\n")
-                f.write("  # Add a comma if the JSON isn't empty\n")
-                f.write('  if [ "$RESULT" != "{" ]; then\n')
-                f.write('    RESULT="$RESULT,"\n')
-                f.write("  fi\n")
-                f.write("  # Add the output files and closing brace\n")
-                f.write("  OUTPUT_FILES_JSON=${OUTPUT_FILES_JSON#*{}\n")
-                f.write('  echo "$RESULT$OUTPUT_FILES_JSON" > {job_path}/result.json\n')
-                f.write("else\n")
-                f.write("  # Just write the output files as the result\n")
-                f.write('  echo "$OUTPUT_FILES_JSON" > {job_path}/result.json\n')
-                f.write("fi\n")
-
-        # Make the script executable
-        os.chmod(script_path, 0o755)
-        return script_path
-
-    def run_job(self, job) -> None:
+    def check_job_status(self, job: Job):
         """
-        Submit a job to Slurm.
+        Check the current status of a submitted job.
+
+        Queries the Slurm scheduler to determine if the job is pending, running,
+        or completed. Updates the job state and collects results if the job
+        has finished execution.
 
         Args:
-            job: The job to run
+            job: The Job object whose status should be checked.
         """
-        job_script = self._create_job_script(job)
+        if not job.internal_id:
+            return
 
-        # Submit the job to Slurm
-        try:
-            result = subprocess.run(["sbatch", job_script], capture_output=True, text=True, check=True)
-
-            # Extract the job ID (format: "Submitted batch job 123456")
-            slurm_job_id = result.stdout.strip().split()[-1]
-            self.jobs[job.job_id] = slurm_job_id
-
-            # Update job state
+        result = subprocess.run(
+            ["squeue", "--noheader", "--job", str(job.internal_id)],
+            capture_output=True,
+            text=True
+        )
+        self.logger.debug(f"Checking status of SLURM job ID {job.internal_id}")
+        if result.returncode != 0 or not result.stdout.strip():
+            # Job disappeared from queue — assume done
+            self._collect_results(job, )
+        else:
             job.state = JobState.RUNNING
 
-        except subprocess.CalledProcessError as e:
-            job.fail(f"Failed to submit job to Slurm: {e.stderr}")
+    def _collect_results(self, job: Job, outputPath: Optional[Path] = None):
+        output_file = job.output_files[0]
 
-    def check_job_status(self, job) -> None:
-        """
-        Check the status of a job and update its state.
-
-        Args:
-            job: The job to check
-        """
-        slurm_job_id = self.jobs.get(job.job_id)
-        if slurm_job_id is None:
+        if not output_file.exists():
+            job.fail(f"Missing result.json after SLURM job completion at {output_file}")
             return
 
-        # Check if the job is still running
-        try:
-            result = subprocess.run(["squeue", "-j", slurm_job_id, "-h"], capture_output=True, text=True)
+        with open(output_file, "r") as f:
+            job.complete(json.load(f)) # updates and sets the results of the job
+        job.endtime = datetime.now()
 
-            if result.returncode == 0 and result.stdout.strip():
-                # Job is still running or queued
-                job.state = JobState.RUNNING
-                return
-
-            # Job has finished, check if it completed successfully
-            job_path = os.path.join(self.job_dir, job.job_id)
-            result_path = os.path.join(job_path, "result.json")
-            error_path = os.path.join(job_path, "error.json")
-
-            if os.path.exists(result_path):
-                with open(result_path, "r") as f:
-                    results = json.load(f)
-                job.complete(results)
-            elif os.path.exists(error_path):
-                with open(error_path, "r") as f:
-                    error = json.load(f)
-                job.fail(error.get("error", "Unknown error"))
-            else:
-                # Check the exit code
-                sacct_result = subprocess.run(
-                    ["sacct", "-j", slurm_job_id, "-o", "ExitCode", "-n"],
-                    capture_output=True,
-                    text=True,
-                )
-                exit_code = sacct_result.stdout.strip().split()[0]
-
-                if exit_code == "0:0":
-                    job.complete({"result": "Job completed but no results found"})
-                else:
-                    job.fail(f"Job failed with exit code {exit_code}")
-
-        except subprocess.CalledProcessError as e:
-            job.fail(f"Failed to check job status: {e.stderr}")
-
-    def cancel_job(self, job) -> None:
+    def cancel_job(self, job: Job):
         """
-        Cancel a job.
+        Cancel a job that has been submitted to Slurm.
+
+        Sends a signal to the Slurm scheduler to terminate the job and updates
+        the job state to CANCELLED.
 
         Args:
-            job: The job to cancel
+            job: The Job object to cancel.
         """
-        slurm_job_id = self.jobs.get(job.job_id)
-        if slurm_job_id is None:
-            return
-
-        try:
-            subprocess.run(["scancel", slurm_job_id], check=True)
+        if job.internal_id:
+            subprocess.run(["scancel", str(job.internal_id)])
             job.state = JobState.CANCELLED
-            self.jobs.pop(job.job_id, None)
-        except subprocess.CalledProcessError:
-            pass  # Job might already be completed
+
+    def _parse_job_id(self, sbatch_output: str) -> Optional[str]:
+        try:
+            return sbatch_output.strip().split()[-1]
+        except Exception:
+            return None

@@ -7,13 +7,12 @@ __version__ = "0.1.0"
 from .ax_scheduler import AxScheduler
 from .trial.trial import Trial
 from .trial.trial_state import TrialState
-from .job.job import Job
-from .job.job_state import JobState
+from .job.job import Job, JobState
 from .runners.base_runner import BaseRunner
 from .runners.joblib_runner import JobLibRunner
 from .runners.slurm_runner import SlurmRunner
 from .runners.pandaidds_runner import PanDAiDDSRunner
-
+from .slurm_workflow import SlurmWorkflow
 __all__ = [
     "AxScheduler",
     "Trial",
@@ -24,4 +23,5 @@ __all__ = [
     "JobLibRunner",
     "SlurmRunner",
     "PanDAiDDSRunner",
+    "SlurmWorkflow",
 ]

@@ -11,7 +11,7 @@ Each job has a state that is tracked. Jobs can be one of several types:
 ## Class Definition
 
 ```python
-class Job(self, job_id: <class 'str'>, job_type: <enum 'JobType'> = JobType.FUNCTION, function: Optional[Callable] = None, script_path: Optional[str] = None, container_image: Optional[str] = None, container_command: Optional[str] = None, params: Dict[str, Any] = None, env_vars: Dict[str, str] = None, working_dir: Optional[str] = None, output_files: Optional[List[str]] = None, parent_result_parameter_name: Optional[str] = parent_result_parameter, return_func_results: <class 'bool'> = True, with_output_dataset: <class 'bool'> = False, output_file: <class 'str'> = None, output_dataset: <class 'str'> = None, num_events: <class 'int'> = 1, num_events_per_job: <class 'int'> = 1, with_input_datasets: <class 'bool'> = False, input_datasets: <class 'dict'> = {}):
+class Job(self, job_id: <class 'str'>, job_type: <enum 'JobType'> = JobType.FUNCTION, function: Optional[Callable] = None, script_path: Optional[str] = None, container_image: Optional[str] = None, container_command: Optional[str] = None, params: Dict[str, Any] = None, env_vars: Dict[str, str] = None, init_env: Optional[List[str]] = None, working_dir: Optional[str] = None, output_files: Optional[List[str]] = None, parent_result_parameter_name: Optional[str] = parent_result_parameter, return_func_results: <class 'bool'> = True, with_output_dataset: <class 'bool'> = False, output_file: <class 'str'> = None, output_dataset: <class 'str'> = None, num_events: <class 'int'> = 1, num_events_per_job: <class 'int'> = 1, with_input_datasets: <class 'bool'> = False, input_datasets: <class 'dict'> = {}, kwargs: Any):
     """
     Initialize a new job.
     **Args:**
@@ -32,19 +32,32 @@ class Job(self, job_id: <class 'str'>, job_type: <enum 'JobType'> = JobType.FUNC
 
 | Method | Description |
 |--------|-------------|
+| [`cancel`](#cancel) | Cancel the job. |
 | [`check_status`](#check_status) | Run to check the status of the job. |
 | [`complete`](#complete) | Mark the job as completed and store its results. |
 | [`fail`](#fail) | Mark the job as failed and store the error. |
+| [`get_metrics`](#get_metrics) | Get metrics of this job. |
 | [`get_results`](#get_results) | Get the results of this job. |
 | [`has_failed`](#has_failed) | Check if the job has failed. |
 | [`is_completed`](#is_completed) | Check if the job is completed. |
 | [`is_running`](#is_running) | Check if the job is running. |
 | [`run`](#run) | Run this job using its assigned runner. |
 | [`set_internal_id`](#set_internal_id) | Set internal id for the job. |
+| [`set_metrics`](#set_metrics) | Set job's metrics |
 | [`set_parent_results`](#set_parent_results) | Set results for the parent job. |
 | [`set_runner`](#set_runner) | Set the runner for this job. |
 
 ## Method Details
+
+### cancel
+
+```python
+def cancel(self) -> None
+```
+
+Cancel the job.
+
+---
 
 ### check_status
 
@@ -77,6 +90,18 @@ def fail(self, error: Optional[str] = None) -> None
 Mark the job as failed and store the error.
 **Args:**
 * **error**: The error that caused the job to fail
+
+---
+
+### get_metrics
+
+```python
+def get_metrics(self) -> Dict[str, Any]
+```
+
+Get metrics of this job.
+**Returns:**
+  Dictionary of metrics
 
 ---
 
@@ -149,6 +174,18 @@ def set_internal_id(self, internal_id: Any) -> None
 Set internal id for the job.
 **Args:**
 * **internal_id**: The internal id for the job.
+
+---
+
+### set_metrics
+
+```python
+def set_metrics(self, metrics: Optional[Dict[str, Any]] = None) -> None
+```
+
+Set job's metrics
+**Args:**
+* **metrics**: Dictionary of job metrics
 
 ---
 

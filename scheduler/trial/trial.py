@@ -33,6 +33,7 @@ class Trial:
         self.start_time: Optional[datetime] = None
         self.end_time: Optional[datetime] = None
         self.results: Dict[str, Any] = {}
+        self.metrics: Dict[str, Any] = {}
 
         self.logger = logging.getLogger("Trial")
         self.num_checks = 0
@@ -46,16 +47,16 @@ class Trial:
         """
         self.jobs.append(job)
 
-    def run(self) -> None:
+    def run(self, **kwargs) -> None:
         """
         Run all jobs in this trial.
         """
         self.logger.info(f"Running trial {self.trial_id}")
         self.state = TrialState.RUNNING
-        self.start_time = datetime.now()
+        self.start_time = datetime.utcnow()
 
         for job in self.jobs:
-            job.run()
+            job.run(**kwargs)
 
     def check_status(self) -> TrialState:
         """
@@ -74,12 +75,12 @@ class Trial:
         elif all(job.is_completed() for job in self.jobs):
             self.state = TrialState.COMPLETED
             if not self.end_time:
-                self.end_time = datetime.now()
+                self.end_time = datetime.utcnow()
         # If any job has failed, the trial has failed
         elif any(job.has_failed() for job in self.jobs):
             self.state = TrialState.FAILED
             if not self.end_time:
-                self.end_time = datetime.now()
+                self.end_time = datetime.utcnow()
 
         if self.num_checks % 60 == 0:
             self.logger.info(f"Checking trial {self.trial_id} status: {self.state}")
@@ -100,3 +101,19 @@ class Trial:
                 self.results.update(job.get_results())
 
         return self.results
+
+    def get_metrics(self) -> Dict[str, Any]:
+        """
+        Gather metrics from all jobs.
+
+        Returns:
+            Dictionary of metrics
+        """
+        for job in self.jobs:
+            if job.is_completed() or job.has_failed():
+                # Merge job results with trial results
+                self.logger.debug(f"Trial {self.trial_id} job {job.job_id} metrics: {job.get_metrics()}")
+                self.metrics.update(job.get_metrics())
+
+        self.logger.debug(f"Trial {self.trial_id} metrics: {self.metrics}")
+        return self.metrics

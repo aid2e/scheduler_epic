@@ -2,30 +2,22 @@
 
 *Defined in [`scheduler.runners.slurm_runner`](https://github.com/aid2e/scheduler_epic/blob/main/scheduler/runners/slurm_runner.py)*
 
-A runner that submits jobs to a Slurm cluster.
-This runner creates temporary job scripts and submits them to Slurm.
-It can handle different job types:
-- Function: Serializes and runs Python functions
-- Script: Executes scripts directly
-- Container: Runs containers using Singularity
-
-**Inherits from:** [BaseRunner](base_runner.md)
+Strict Slurm Runner that only executes user-provided scripts
+using a user-supplied SLURM template.
 
 ## Class Definition
 
 ```python
-class SlurmRunner(self, partition: <class 'str'> = batch, time_limit: <class 'str'> = 01:00:00, memory: <class 'str'> = 4G, cpus_per_task: <class 'int'> = 1, config: Dict[str, Any] = None):
+class SlurmRunner(self, slurm_template: <class 'str'>, init_env: Optional[list] = None, source_dir: Optional[str] = None):
     """
     Initialize a new SlurmRunner.
     **Args:**
-    * **partition**: Slurm partition to submit jobs to
-    * **time_limit**: Time limit for jobs (HH:MM:SS)
-    * **memory**: Memory to allocate per job
-    * **cpus_per_task**: Number of CPUs to allocate per job
-    * **config**: Additional configuration options:
-    * **modules**: List of modules to load (default: ['python'])
-    * **singularity_path**: Path to singularity executable (default: 'singularity')
-    * **job_dir**: Directory to store job files (default: ~/slurm_jobs)
+    * **slurm_template**: Path to the SLURM template file to use for job submission.
+    * **init_env**: Optional list of environment setup commands to run before job execution.
+    * **source_dir**: Optional source directory to include in the job environment.
+    
+    **Raises:**
+    * **FileNotFoundError**: If the SLURM template file does not exist.
     """
 ```
 
@@ -33,43 +25,55 @@ class SlurmRunner(self, partition: <class 'str'> = batch, time_limit: <class 'st
 
 | Method | Description |
 |--------|-------------|
-| [`cancel_job`](#cancel_job) | Cancel a job. |
-| [`check_job_status`](#check_job_status) | Check the status of a job and update its state. |
-| [`run_job`](#run_job) | Submit a job to Slurm. |
+| [`cancel_job`](#cancel_job) | Cancel a job that has been submitted to Slurm. |
+| [`check_job_status`](#check_job_status) | Check the current status of a submitted job. |
+| [`run_job`](#run_job) | Submit a job to the Slurm cluster. |
 
 ## Method Details
 
 ### cancel_job
 
 ```python
-def cancel_job(self, job: Any) -> None
+def cancel_job(self, job: <class 'Job'>) -> Any
 ```
 
-Cancel a job.
+Cancel a job that has been submitted to Slurm.
+Sends a signal to the Slurm scheduler to terminate the job and updates
+the job state to CANCELLED.
 **Args:**
-* **job**: The job to cancel
+* **job**: The Job object to cancel.
 
 ---
 
 ### check_job_status
 
 ```python
-def check_job_status(self, job: Any) -> None
+def check_job_status(self, job: <class 'Job'>) -> Any
 ```
 
-Check the status of a job and update its state.
+Check the current status of a submitted job.
+Queries the Slurm scheduler to determine if the job is pending, running,
+or completed. Updates the job state and collects results if the job
+has finished execution.
 **Args:**
-* **job**: The job to check
+* **job**: The Job object whose status should be checked.
 
 ---
 
 ### run_job
 
 ```python
-def run_job(self, job: Any) -> None
+def run_job(self, job: <class 'Job'>) -> Any
 ```
 
-Submit a job to Slurm.
+Submit a job to the Slurm cluster.
+Prepares the job environment, generates necessary scripts, and submits
+the job to Slurm using sbatch. Updates job state and internal ID upon
+successful submission.
 **Args:**
-* **job**: The job to run
+* **job**: The Job object to submit. Must have job_type of FUNCTION or SCRIPT.
+
+**Raises:**
+* **NotImplementedError**: If job type is SCRIPT or CONTAINER (not supported).
+* **ValueError**: If job type is unsupported.
 

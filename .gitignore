@@ -2,8 +2,14 @@
 *fieldmaps
 *.qodo
 
+*.log*
+*.err*
+*.out*
 # MkDocs documentation
 /site/
+
+*ignore*
+*.json*
 
 # Python bytecode
 __pycache__/

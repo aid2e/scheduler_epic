@@ -1,34 +1,27 @@
 import logging
 
 from ax.service.ax_client import AxClient, ObjectiveProperties
-# from ax.modelbridge.registry import Models
-# from ax.modelbridge.generation_strategy import GenerationStrategy, GenerationStep
-# from ax.core.objective import MultiObjective
-# from ax.core.optimization_config import MultiObjectiveOptimizationConfig, ObjectiveThreshold
-from ax.modelbridge.registry import Generators
-from ax.generation_strategy.generation_strategy import GenerationStrategy, GenerationStep
 from scheduler import AxScheduler, JobLibRunner
 from scheduler.utils.common import setup_logging
 
 
 # Define your objective function
+def objective_function1(parameterization):
+    x = parameterization["x"]
+    y = parameterization["y"]
+    return {"objective": (x - 0.5) ** 2 + (y - 0.5) ** 2}
+
+
 def objective_function(x, y):
-    return {"objective1": (x - 0.5) ** 2 + (y - 0.5) ** 2, "objective2": (x - 0.5) * 2 + (y - 0.5) * 2}
+    return {"objective": (x - 0.5) ** 2 + (y - 0.5) ** 2}
 
 
 if __name__ == "__main__":
     setup_logging(log_level="debug")
 
-    generation_strategy = GenerationStrategy(
-        steps=[
-            GenerationStep(model=Generators.SOBOL, num_trials=5, min_trials_observed=3, max_parallelism=5),   # SOBOL, GPEL, MOO, GPMultiObjective
-            GenerationStep(model=Generators.BOTORCH_MODULAR, num_trials=-1, max_parallelism=10),  # MOBO continues indefinitely
-        ]
-    )
-
     logging.debug("setup ax client")
     # Initialize Ax client
-    ax_client = AxClient(generation_strategy=generation_strategy)
+    ax_client = AxClient()
 
     logging.info("Creating experiment")
 
@@ -49,10 +42,7 @@ if __name__ == "__main__":
                 "value_type": "float",
             },
         ],
-        objectives={
-            "objective1": ObjectiveProperties(minimize=True, threshold=1),
-            "objective2": ObjectiveProperties(minimize=True, threshold=2),
-        },
+        objectives={"objective": ObjectiveProperties(minimize=True)},
     )
 
     logging.info("defining objectives")
@@ -65,11 +55,10 @@ if __name__ == "__main__":
         "max_concurrent_trials": 3,
         "early_stopping_threshold": None,
         "early_stopping_begin_at": 0,
-        "restart_from_checkpoint": False,
+        "restart_from_checkpoint": True,
         "work_dir": "./work",
         "checkpoint_name": None,    # will use experiment name
     }
-
     # Create the scheduler
     scheduler = AxScheduler(ax_client, runner, config=config)
     logging.info(f"created scheduler: {scheduler}")
@@ -79,5 +68,5 @@ if __name__ == "__main__":
 
     logging.info("running optimization")
     # Run the optimization
-    best_params = scheduler.run_optimization(max_trials=10)
+    best_params = scheduler.run_optimization(max_trials=30)
     print("Best parameters:", best_params)

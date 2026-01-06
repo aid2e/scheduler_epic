@@ -1,0 +1,6 @@
+cd /afs/cern.ch/user/w/wguan/workdisk/eic/scheduler_epic
+source setup.sh; source setup_panda_bnl.sh;
+
+# cd tests/dtlz2;
+python tests/dtlz2/test_panda_multi_objectives_dtlz2.py --name dtlz2_panda_osg_5_100_1 --objectives 5 --parameters 100 --trials 50 --queue BNL_OSG_PanDA_1 >> /afs/cern.ch/user/w/wguan/workdisk/eic/scheduler_epic/work/dtlz2_panda_osg_5_100_1.log 2>&1 & tail -f /afs/cern.ch/user/w/wguan/workdisk/eic/scheduler_epic/work/dtlz2_panda_osg_5_100_1.log &
+

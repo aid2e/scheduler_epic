@@ -1,0 +1,10 @@
+#!/bin/bash
+#
+# ==== SLURM TEMPLATE ====
+# This section is preserved and reused by SlurmRunner.
+# User commands will be appended automatically below.
+# please do not define --error, --output and --job-name here. This will be set by SlurmRunner.
+
+#SBATCH --time=00:10:00              # hh:mm:ss
+#SBATCH --ntasks=1                   # number of tasks
+#SBATCH --cpus-per-task=1            # number of CPU cores per task

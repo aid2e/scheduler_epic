@@ -5,6 +5,18 @@ import sys
 import time
 
 
+import inspect
+
+def write_function_to_file(func, path):
+    """Write a standalone version of a user-defined function to a Python file."""
+    func_source = inspect.getsource(func).strip()
+
+    with open(path, "w") as f:
+        f.write(func_source + "\n")
+
+    return path
+
+
 def setup_logging(log_file=None, log_level=None):
     """
     setup logging
@@ -29,3 +41,12 @@ def setup_logging(log_file=None, log_level=None):
         )
 
     logging.Formatter.converter = time.gmtime
+
+
+def list_to_tuple(data):
+    if isinstance(data, list):
+        return tuple(list_to_tuple(item) for item in data)
+    elif isinstance(data, dict):
+        return {key: list_to_tuple(value) for key, value in data.items()}
+    else:
+        return data

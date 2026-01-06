@@ -6,7 +6,7 @@ import datetime
 import logging
 import os
 from typing import Dict, Any
-from ..job.job_state import JobState
+from ..job.job import JobState
 from .base_runner import BaseRunner
 
 
@@ -197,6 +197,7 @@ class PanDAiDDSRunner(BaseRunner):
                 "return_func_results": job.return_func_results,
                 "results": None,
                 "job_key": work_name,
+                "metrics": None,
             }
         else:
             if job.return_func_results:
@@ -241,12 +242,15 @@ class PanDAiDDSRunner(BaseRunner):
 
             ret = work.get_results()
             job_key = self.running_funcs[job.job_id]["funcs"][func_name][g_param_str]["job_key"]
-            results = ret.get_result(name=work.name, key=job_key, verbose=True)
+            results, ret_details = ret.get_result(name=work.name, key=job_key, verbose=True, with_details=True)
+            metrics = ret_details['metrics']
             self.running_funcs[job.job_id]["funcs"][func_name][g_param_str]["results"] = results
             self.running_funcs[job.job_id]["funcs"][func_name][g_param_str]["status"] = "finished"
+            self.running_funcs[job.job_id]["funcs"][func_name][g_param_str]["metrics"] = metrics
             if job.state != JobState.COMPLETED:
                 self.logger.info(f"Job {job.job_id} with transform_id {tf_id} complete with results: {results}")
                 job.complete(results)
+            job.set_metrics(metrics)
             self.running_funcs.pop(job.job_id, None)
         elif work.is_failed(status):
             self.logger.info(f"Job {job.job_id} with transform_id {tf_id} failed")
