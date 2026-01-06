@@ -66,14 +66,5 @@ jobs:
             issue_number: context.issue.number,
             owner: context.repo.owner,
             repo: context.repo.repo,
-            body: `⚠️ **API Documentation Needs Update**
-            
-            The API documentation is not up to date with the current code.
-            
-            Please run the following command locally and commit the changes:
-            ```bash
-            ./api_docs_helper.sh generate
-            ```
-            
-            Documentation has been generated and uploaded as an artifact for reference.`
+            body: "⚠️ **API Documentation Needs Update**\n\nThe API documentation is not up to date with the current code.\n\nPlease run the following command locally and commit the changes:\n\n\\`\\`\\`bash\n./api_docs_helper.sh generate\n\\`\\`\\`\n\nDocumentation has been generated and uploaded as an artifact for reference."
           })
